@@ -20,5 +20,5 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_configure() {
-	./configure --prefix=/usr
+	./configure --prefix=${D}/usr
 }
