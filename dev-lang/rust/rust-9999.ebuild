@@ -20,5 +20,13 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_configure() {
-	./configure --prefix=${D}/usr
+	./configure --prefix=/usr 
+}
+
+pkg_postinst() {
+	rm -f "/usr/lib/librusti.so"
+	rm -f "/usr/lib/librustc.so"
+	rm -f "/usr/lib/librust.so"
+	rm -f "/usr/lib/librustpkg.so"
+	rm -f "/usr/lib/librustdoc.so"
 }
