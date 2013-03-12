@@ -10,7 +10,7 @@ DESCRIPTION="Open source programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 EGIT_REPO_URI="git://github.com/mozilla/rust.git"
 
-LICENSE="AGPL-3"
+LICENSE="APACHE"
 SLOT="0"
 KEYWORDS=""
 IUSE=""
