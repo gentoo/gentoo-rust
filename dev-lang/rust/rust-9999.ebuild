@@ -27,14 +27,6 @@ src_configure() {
 		--local-rust-root=${EPREFIX}/usr      \
 	|| die
 }
- 
-src_compile() {
-	emake || die
-}
- 
-src_install() {
-	emake DESTDIR="${D}" install || die
-}
 
 pkg_postinst() {
 	rm -f "/usr/lib/librusti.so"
