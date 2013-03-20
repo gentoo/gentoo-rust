@@ -4,7 +4,12 @@
 	<maintainer>
 		<email>Heather@Cynede.net</email>
 	</maintainer>
-<longdescription>
-  Mozilla Rust
-</longdescription>
+	<longdescription>
+	  Mozilla Rust
+	</longdescription>
+	<use>
+	  <flag name='clang'>
+		clang codegeneration
+	  </flag>
+	</use>
 </pkgmetadata>

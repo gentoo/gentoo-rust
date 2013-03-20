@@ -23,10 +23,10 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
-	${ECONF_SOURCE:-.}/configure \
-		--prefix=${EPREFIX}/usr \
+	"${ECONF_SOURCE:-.}"/configure \
+		--prefix="${EPREFIX}"/usr \
 		$(use_enable clang) \
-		--local-rust-root=${EPREFIX}/usr \
+		--local-rust-root="${EPREFIX}"/usr \
 	|| die
 }
 
