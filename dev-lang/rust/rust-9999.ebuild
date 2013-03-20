@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
+EAPI="5"
+
 inherit git-2
 
 DESCRIPTION="Open source programming language from Mozilla"
