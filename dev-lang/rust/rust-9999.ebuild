@@ -10,7 +10,7 @@ EGIT_REPO_URI="git://github.com/mozilla/rust.git"
 
 LICENSE="MIT Apache-2.0"
 SLOT="0"
-KEYWORDS="~x86 ~amd64"
+KEYWORDS=""
 IUSE="clang"
 
 RDEPEND="sys-devel/llvm"
@@ -22,9 +22,9 @@ DEPEND="${RDEPEND}
 
 src_configure() {
 	${ECONF_SOURCE:-.}/configure \
-		$(use_enable clang)         \
-		--prefix=${EPREFIX}/usr               \
-		--local-rust-root=${EPREFIX}/usr      \
+		--prefix=${EPREFIX}/usr \
+		$(use_enable clang) \
+		--local-rust-root=${EPREFIX}/usr \
 	|| die
 }
 
