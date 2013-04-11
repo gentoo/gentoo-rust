@@ -29,9 +29,9 @@ src_configure() {
 }
 
 pkg_postinst() {
-	rm -f "/usr/lib/librusti.so"
-	rm -f "/usr/lib/librustc.so"
-	rm -f "/usr/lib/librust.so"
-	rm -f "/usr/lib/librustpkg.so"
-	rm -f "/usr/lib/librustdoc.so"
+	rm -f "/usr/$(getlibdir)/librusti.so"
+	rm -f "/usr/$(getlibdir)/librustc.so"
+	rm -f "/usr/$(getlibdir)/librust.so"
+	rm -f "/usr/$(getlibdir)/librustpkg.so"
+	rm -f "/usr/$(getlibdir)/librustdoc.so"
 }
