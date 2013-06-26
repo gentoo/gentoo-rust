@@ -4,6 +4,8 @@
 
 EAPI="5"
 
+inherit multilib
+
 DESCRIPTION="Opensource programming language from mozilla"
 HOMEPAGE="http://www.rust-lang.org"
 SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
@@ -29,9 +31,9 @@ src_configure() {
 }
 
 pkg_postinst() {
-	rm -f "/usr/$(getlibdir)/librusti.so"
-	rm -f "/usr/$(getlibdir)/librustc.so"
-	rm -f "/usr/$(getlibdir)/librust.so"
-	rm -f "/usr/$(getlibdir)/librustpkg.so"
-	rm -f "/usr/$(getlibdir)/librustdoc.so"
+	rm -f "/usr/$(get_libdir)/librusti.so"
+	rm -f "/usr/$(get_libdir)/librustc.so"
+	rm -f "/usr/$(get_libdir)/librust.so"
+	rm -f "/usr/$(get_libdir)/librustpkg.so"
+	rm -f "/usr/$(get_libdir)/librustdoc.so"
 }

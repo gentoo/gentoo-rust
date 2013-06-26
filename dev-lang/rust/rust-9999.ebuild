@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit git-2
+inherit git-2 multilib
 
 DESCRIPTION="Open source programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -31,9 +31,9 @@ src_configure() {
 }
 
 pkg_postinst() {
-	rm -f "/usr/$(getlibdir)/librusti.so"
-	rm -f "/usr/$(getlibdir)/librustc.so"
-	rm -f "/usr/$(getlibdir)/librust.so"
-	rm -f "/usr/$(getlibdir)/librustpkg.so"
-	rm -f "/usr/$(getlibdir)/librustdoc.so"
+	rm -f "/usr/$(get_libdir)/librusti.so"
+	rm -f "/usr/$(get_libdir)/librustc.so"
+	rm -f "/usr/$(get_libdir)/librust.so"
+	rm -f "/usr/$(get_libdir)/librustpkg.so"
+	rm -f "/usr/$(get_libdir)/librustdoc.so"
 }
