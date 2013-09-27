@@ -11,5 +11,8 @@
 	  <flag name='clang'>
 		clang codegeneration
 	  </flag>
+	  <flag name='heather'>
+		Heather fork
+	  </flag>
 	</use>
 </pkgmetadata>

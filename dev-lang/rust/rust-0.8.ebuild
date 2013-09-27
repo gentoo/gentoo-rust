@@ -31,9 +31,9 @@ src_configure() {
 
 src_install() {
 	default
-	rm -f "${ED}/usr/$(get_libdir)/librusti.so"
-	rm -f "${ED}/usr/$(get_libdir)/librustc.so"
-	rm -f "${ED}/usr/$(get_libdir)/librust.so"
-	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so"
-	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so"
+	rm -f "${ED}/usr/$(get_libdir)/librusti.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustc.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librust.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so" || die
 }

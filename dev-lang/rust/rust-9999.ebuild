@@ -8,12 +8,19 @@ inherit git-2 multilib
 
 DESCRIPTION="Open source programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-EGIT_REPO_URI="git://github.com/mozilla/rust.git"
 
 LICENSE="MIT Apache-2.0"
 SLOT="0"
 KEYWORDS=""
-IUSE="clang"
+IUSE="clang +heather"
+
+if use heather; then
+EGIT_REPO_URI="git://github.com/Heather/rust.git"
+EGIT_MASTER="heather"
+else
+EGIT_REPO_URI="git://github.com/mozilla/rust.git"
+EGIT_MASTER="master"
+fi
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
@@ -23,17 +30,24 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
-	"${ECONF_SOURCE:-.}"/configure \
-		--prefix="${EPREFIX}"/usr \
-		$(use_enable clang) \
-		--local-rust-root="${EPREFIX}"/usr \
-	|| die
+	if use heather; then
+		econf	--prefix="${EPREFIX}"/usr \
+			$(use_enable clang) \
+			--local-rust-root="${EPREFIX}"/usr
+	else
+		"${ECONF_SOURCE:-.}"/configure \
+			--prefix="${EPREFIX}"/usr \
+			$(use_enable clang) \
+			--local-rust-root="${EPREFIX}"/usr \
+		|| die
+	fi
 }
 
-pkg_postinst() {
-	rm -f "/usr/$(get_libdir)/librusti.so"
-	rm -f "/usr/$(get_libdir)/librustc.so"
-	rm -f "/usr/$(get_libdir)/librust.so"
-	rm -f "/usr/$(get_libdir)/librustpkg.so"
-	rm -f "/usr/$(get_libdir)/librustdoc.so"
+src_install() {
+	default
+	rm -f "${ED}/usr/$(get_libdir)/librusti.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustc.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librust.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so" || die
+	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so" || die
 }
