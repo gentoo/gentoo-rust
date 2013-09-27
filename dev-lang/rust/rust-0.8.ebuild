@@ -19,21 +19,21 @@ RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
-	>=dev-lang/python-2.6
-"
+	>=dev-lang/python-2.6"
 
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
 		$(use_enable clang) \
 		--local-rust-root="${EPREFIX}"/usr \
-	|| die
+	|| die "configure failed"
 }
 
-pkg_postinst() {
-	rm -f "/usr/$(get_libdir)/librusti.so"
-	rm -f "/usr/$(get_libdir)/librustc.so"
-	rm -f "/usr/$(get_libdir)/librust.so"
-	rm -f "/usr/$(get_libdir)/librustpkg.so"
-	rm -f "/usr/$(get_libdir)/librustdoc.so"
+src_install() {
+	default
+	rm -f "${ED}/usr/$(get_libdir)/librusti.so"
+	rm -f "${ED}/usr/$(get_libdir)/librustc.so"
+	rm -f "${ED}/usr/$(get_libdir)/librust.so"
+	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so"
+	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so"
 }
