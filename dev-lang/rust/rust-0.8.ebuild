@@ -6,7 +6,7 @@ EAPI="5"
 
 inherit multilib
 
-DESCRIPTION="Opensource programming language from mozilla"
+DESCRIPTION="Opensource programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org"
 SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 
