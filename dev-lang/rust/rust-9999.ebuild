@@ -16,11 +16,10 @@ IUSE="clang +heather"
 
 if use heather; then
 EGIT_REPO_URI="git://github.com/Heather/rust.git"
-EGIT_MASTER="heather"
 else
 EGIT_REPO_URI="git://github.com/mozilla/rust.git"
-EGIT_MASTER="master"
 fi
+EGIT_MASTER="master"
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
