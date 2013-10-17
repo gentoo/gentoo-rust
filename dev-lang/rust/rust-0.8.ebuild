@@ -25,6 +25,7 @@ src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
 		$(use_enable clang) \
+		$(use_enable debug) \
 		--local-rust-root="${EPREFIX}"/usr \
 	|| die "configure failed"
 }

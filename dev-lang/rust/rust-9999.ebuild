@@ -12,7 +12,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="MIT Apache-2.0"
 SLOT="0"
 KEYWORDS=""
-IUSE="clang +heather"
+IUSE="clang +heather debug"
 
 if use heather; then
 EGIT_REPO_URI="git://github.com/Heather/rust.git"
@@ -32,11 +32,13 @@ src_configure() {
 	if use heather; then
 		econf	--prefix="${EPREFIX}"/usr \
 			$(use_enable clang) \
+			$(use_enable debug) \
 			--local-rust-root="${EPREFIX}"/usr
 	else
 		"${ECONF_SOURCE:-.}"/configure \
 			--prefix="${EPREFIX}"/usr \
 			$(use_enable clang) \
+			$(use_enable debug) \
 			--local-rust-root="${EPREFIX}"/usr \
 		|| die
 	fi
