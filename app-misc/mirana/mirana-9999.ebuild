@@ -5,16 +5,16 @@
 EAPI="5"
 inherit git-2
 
-DESCRIPTION="Rylai sync util"
-EGIT_REPO_URI="git://github.com/Heather/Rylai.git"
-HOMEPAGE="https://github.com/Heather/Rylai"
+DESCRIPTION="Mirana sync util"
+EGIT_REPO_URI="git://github.com/Heather/Mirana.git"
+HOMEPAGE="https://github.com/Heather/Mirana"
 
-LICENSE="GPL-3"
+LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
 IUSE=""
 
-DEPEND=">=dev-lang/rust-0.8"
+DEPEND=">=dev-lang/rust-0.9"
 RDEPEND="${DEPEND}"
 
 src_install() {
