@@ -15,11 +15,12 @@ KEYWORDS=""
 IUSE="clang +heather debug"
 
 if use heather; then
-EGIT_REPO_URI="git://github.com/Cynede/rust.git"
+EGIT_REPO_URI="git://github.com/Heather/rust.git"
+EGIT_MASTER="heather"
 else
 EGIT_REPO_URI="git://github.com/mozilla/rust.git"
-fi
 EGIT_MASTER="master"
+fi
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
