@@ -16,11 +16,10 @@ IUSE="clang +heather debug"
 
 if use heather; then
 EGIT_REPO_URI="git://github.com/Heather/rust.git"
-EGIT_MASTER="heather"
 else
 EGIT_REPO_URI="git://github.com/mozilla/rust.git"
-EGIT_MASTER="master"
 fi
+EGIT_MASTER="master"
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
@@ -30,19 +29,19 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
-	if use heather; then
-		econf	--prefix="${EPREFIX}"/usr \
-			$(use_enable clang) \
-			$(use_enable debug) \
-			--local-rust-root="${EPREFIX}"/usr
-	else
+#	if use heather; then
+#		econf	--prefix="${EPREFIX}"/usr \
+#			$(use_enable clang) \
+#			$(use_enable debug) \
+#			--local-rust-root="${EPREFIX}"/usr
+#	else
 		"${ECONF_SOURCE:-.}"/configure \
 			--prefix="${EPREFIX}"/usr \
 			$(use_enable clang) \
 			$(use_enable debug) \
 			--local-rust-root="${EPREFIX}"/usr \
 		|| die
-	fi
+#	fi
 }
 
 src_install() {
