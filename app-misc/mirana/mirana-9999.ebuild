@@ -16,7 +16,3 @@ IUSE=""
 
 DEPEND=">=dev-lang/rust-0.9"
 RDEPEND="${DEPEND}"
-
-src_install() {
-	emake DESTDIR="${D}" install || die "Install failed"
-}
