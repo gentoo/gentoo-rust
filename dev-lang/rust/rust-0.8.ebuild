@@ -13,7 +13,7 @@ SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 LICENSE="MIT Apache-2.0"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
-IUSE="clang"
+IUSE="clang debug"
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
