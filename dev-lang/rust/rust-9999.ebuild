@@ -9,7 +9,7 @@ inherit git-2 multilib
 DESCRIPTION="Open source programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
-LICENSE="|| (MIT Apache-2.0)"
+LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 IUSE="clang +heather debug"
