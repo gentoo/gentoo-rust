@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit git-2 multilib
+inherit multilib
 
 DESCRIPTION="Open source programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -12,14 +12,23 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
-IUSE="clang +heather debug"
 
-if use heather; then
-EGIT_REPO_URI="git://github.com/Heather/rust.git"
+if [[ ${PV}	!= 9999 ]]; then
+	IUSE="clang debug"
+
+	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 else
-EGIT_REPO_URI="git://github.com/mozilla/rust.git"
+	inherit git-2
+	IUSE="clang +heather debug"
+
+	if use heather; then
+		EGIT_REPO_URI="git://github.com/Heather/rust.git"
+	else
+		EGIT_REPO_URI="git://github.com/mozilla/rust.git"
+	fi
+	EGIT_MASTER="master"
 fi
-EGIT_MASTER="master"
+
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
@@ -29,19 +38,12 @@ DEPEND="${RDEPEND}
 "
 
 src_configure() {
-#	if use heather; then
-#		econf	--prefix="${EPREFIX}"/usr \
-#			$(use_enable clang) \
-#			$(use_enable debug) \
-#			--local-rust-root="${EPREFIX}"/usr
-#	else
-		"${ECONF_SOURCE:-.}"/configure \
-			--prefix="${EPREFIX}"/usr \
-			$(use_enable clang) \
-			$(use_enable debug) \
-			--local-rust-root="${EPREFIX}"/usr \
-		|| die
-#	fi
+	"${ECONF_SOURCE:-.}"/configure \
+		--prefix="${EPREFIX}"/usr \
+		$(use_enable clang) \
+		$(use_enable debug) \
+		--local-rust-root="${EPREFIX}"/usr \
+	|| die
 }
 
 src_install() {

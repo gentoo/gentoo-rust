@@ -6,20 +6,36 @@ EAPI="5"
 
 inherit multilib
 
-DESCRIPTION="Opensource programming language from Mozilla"
-HOMEPAGE="http://www.rust-lang.org"
-SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
+DESCRIPTION="Open source programming language from Mozilla"
+HOMEPAGE="http://www.rust-lang.org/"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS="~x86 ~amd64"
-IUSE="clang debug"
+KEYWORDS="~amd64 ~x86"
+
+if [[ ${PV}	!= 9999 ]]; then
+	IUSE="clang debug"
+
+	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
+else
+	inherit git-2
+	IUSE="clang +heather debug"
+
+	if use heather; then
+		EGIT_REPO_URI="git://github.com/Heather/rust.git"
+	else
+		EGIT_REPO_URI="git://github.com/mozilla/rust.git"
+	fi
+	EGIT_MASTER="master"
+fi
+
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
-	>=dev-lang/python-2.6"
+	>=dev-lang/python-2.6
+"
 
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
@@ -27,7 +43,7 @@ src_configure() {
 		$(use_enable clang) \
 		$(use_enable debug) \
 		--local-rust-root="${EPREFIX}"/usr \
-	|| die "configure failed"
+	|| die
 }
 
 src_install() {
