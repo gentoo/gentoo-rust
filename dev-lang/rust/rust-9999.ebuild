@@ -13,28 +13,29 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 
-if [[ ${PV}	!= 9999 ]]; then
-	IUSE="clang debug"
+IUSE="clang debug emacs vim-syntax"
 
+if [[ ${PV}	!= 9999 ]]; then
 	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 else
 	inherit git-2
-	IUSE="clang heather debug"
+	IUSE="${IUSE} heather"
 
 	if use heather; then
 		EGIT_REPO_URI="git://github.com/Heather/rust.git"
 	else
 		EGIT_REPO_URI="git://github.com/mozilla/rust.git"
 	fi
-	EGIT_MASTER="master"
 fi
-
 
 RDEPEND="sys-devel/llvm"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
 	>=dev-lang/python-2.6
+"
+PDEPEND="emacs? ( app-emacs/rust-mode )
+	vim-syntax? ( app-vim/rust-mode )
 "
 
 src_configure() {
