@@ -19,7 +19,7 @@ if [[ ${PV}	!= 9999 ]]; then
 	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 else
 	inherit git-2
-	IUSE="clang +heather debug"
+	IUSE="clang heather debug"
 
 	if use heather; then
 		EGIT_REPO_URI="git://github.com/Heather/rust.git"
