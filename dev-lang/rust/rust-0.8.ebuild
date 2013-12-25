@@ -13,7 +13,7 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="clang debug emacs vim-syntax"
+IUSE="clang debug emacs vim-syntax zsh-completion"
 
 if [[ ${PV}	!= 9999 ]]; then
 	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
@@ -28,7 +28,9 @@ else
 	fi
 fi
 
-RDEPEND="sys-devel/llvm"
+RDEPEND="sys-devel/llvm
+	zsh-completion? ( app-shells/zsh )
+"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
@@ -49,6 +51,12 @@ src_configure() {
 
 src_install() {
 	default
+
+	if use zsh-completion; then
+		insinto "/usr/share/zsh/site-functions"
+		doins src/etc/zsh/_rust
+	fi
+
 	rm -f "${ED}/usr/$(get_libdir)/librusti.so" || die
 	rm -f "${ED}/usr/$(get_libdir)/librustc.so" || die
 	rm -f "${ED}/usr/$(get_libdir)/librust.so" || die
