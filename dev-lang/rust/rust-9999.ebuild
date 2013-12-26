@@ -45,6 +45,11 @@ src_configure() {
 		--prefix="${EPREFIX}"/usr \
 		$(use_enable clang) \
 		$(use_enable debug) \
+		$(use_enable debug llvm-assertions) \
+		$(use_enable !debug optimize) \
+		$(use_enable !debug optimize-cxx) \
+		$(use_enable !debug optimize-llvm) \
+		$(use_enable !debug optimize-tests) \
 		--local-rust-root="${EPREFIX}"/usr \
 	|| die
 }
