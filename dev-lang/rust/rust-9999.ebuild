@@ -13,12 +13,12 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="clang debug emacs vim-syntax zsh-completion"
+IUSE="+bootstrap clang debug emacs vim-syntax zsh-completion"
 
 if [[ ${PV}	!= 9999 ]]; then
 	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
 else
-	inherit git-2
+	inherit git-r3
 	IUSE="${IUSE} heather"
 
 	if use heather; then
@@ -28,9 +28,8 @@ else
 	fi
 fi
 
-RDEPEND="sys-devel/llvm
-	zsh-completion? ( app-shells/zsh )
-"
+
+RDEPEND="zsh-completion? ( app-shells/zsh )"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
@@ -50,7 +49,9 @@ src_configure() {
 		$(use_enable !debug optimize-cxx) \
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
+		$(use_enable !bootstrap local-rust) \
 		--local-rust-root="${EPREFIX}"/usr \
+		--disable-manage-submodules \
 	|| die
 }
 
