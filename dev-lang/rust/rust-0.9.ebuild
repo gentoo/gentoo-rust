@@ -39,22 +39,6 @@ PDEPEND="emacs? ( app-emacs/rust-mode )
 	vim-syntax? ( app-vim/rust-mode )
 "
 
-src_prepare() {
-	default
-
-	# To avoid using environment variables in snapshot.py, substitute them. It
-	# won't work well if ${ECONF_SOURCE} contains '|' or '"'. It is not the
-	# right way to go, but it works.
-	#
-	# See https://github.com/Heather/gentoo-rust/issues/14 for details.
-	if use bootstrap; then
-		sed -e "s|os\\.getenv(\"CFG_SRC_DIR\")|\"${ECONF_SOURCE:-.}\"|" \
-			src/etc/snapshot.py > snapshot.py.new \
-		|| die
-		mv snapshot.py.new src/etc/snapshot.py || die
-	fi
-}
-
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
@@ -72,8 +56,9 @@ src_configure() {
 }
 
 src_compile() {
-	# Fetch current build snapshot before execute make.
+	# Fetch current build snapshot before executing make.
 	if use bootstrap; then
+		CFG_SRC_DIR="${ECONF_SOURCE:-.}" \
 		"${ECONF_SOURCE:-.}"/src/etc/get-snapshot.py \
 			`grep 'CFG_BUILD\s' config.mk | tail -n1 | sed -e 's/.*:=\s//'` \
 		|| die
