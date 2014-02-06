@@ -59,7 +59,7 @@ src_compile() {
 	# Fetch current build snapshot before executing make.
 	if use bootstrap; then
 		CFG_SRC_DIR="${ECONF_SOURCE:-.}" \
-		"${ECONF_SOURCE:-.}"/src/etc/get-snapshot.py \
+		python "${ECONF_SOURCE:-.}"/src/etc/get-snapshot.py \
 			`grep 'CFG_BUILD\s' config.mk | tail -n1 | sed -e 's/.*:=\s//'` \
 		|| die
 	fi
