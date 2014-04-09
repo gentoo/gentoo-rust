@@ -74,10 +74,4 @@ src_install() {
 		insinto "/usr/share/zsh/site-functions"
 		doins src/etc/zsh/_rust
 	fi
-
-	rm -f "${ED}/usr/$(get_libdir)/librusti.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustc.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librust.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so" || die
 }
