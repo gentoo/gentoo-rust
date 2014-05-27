@@ -28,7 +28,6 @@ else
 	fi
 fi
 
-
 RDEPEND="zsh-completion? ( app-shells/zsh )"
 DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
