@@ -13,7 +13,7 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="+bootstrap clang debug emacs vim-syntax zsh-completion"
+IUSE="+bootstrap clang debug doc emacs vim-syntax zsh-completion"
 
 if [[ ${PV}	!= 9999 ]]; then
 	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
@@ -42,6 +42,7 @@ src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
 		$(use_enable clang) \
+		$(use_enable doc docs) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
 		$(use_enable !debug optimize) \
@@ -68,6 +69,10 @@ src_compile() {
 
 src_install() {
 	default
+
+	if use doc; then
+		dohtml -r doc/*
+	fi
 
 	if use zsh-completion; then
 		insinto "/usr/share/zsh/site-functions"
