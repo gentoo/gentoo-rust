@@ -11,7 +11,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 IUSE="+bootstrap clang debug doc emacs vim-syntax zsh-completion"
 
