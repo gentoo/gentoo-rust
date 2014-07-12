@@ -24,7 +24,7 @@ else
 	if use heather; then
 		EGIT_REPO_URI="git://github.com/Heather/rust.git"
 	else
-		EGIT_REPO_URI="git://github.com/mozilla/rust.git"
+		EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
 	fi
 fi
 
