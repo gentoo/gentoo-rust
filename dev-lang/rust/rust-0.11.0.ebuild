@@ -33,6 +33,7 @@ DEPEND="${RDEPEND}
 	clang? ( sys-devel/clang )
 	>=dev-lang/perl-5.0
 	>=dev-lang/python-2.6
+	sys-libs/libcxx
 "
 PDEPEND="emacs? ( app-emacs/rust-mode )
 	vim-syntax? ( app-vim/rust-mode )
