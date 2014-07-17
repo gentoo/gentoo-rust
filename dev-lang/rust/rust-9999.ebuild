@@ -39,6 +39,10 @@ PDEPEND="emacs? ( app-emacs/rust-mode )
 	vim-syntax? ( app-vim/rust-mode )
 "
 
+src_prepare() {
+	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch"
+}
+
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
