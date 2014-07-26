@@ -11,7 +11,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 if [[ ${PV} != 9999 ]]; then
 	MY_P="rust-${PV}"
