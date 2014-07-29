@@ -20,10 +20,6 @@ EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 DEPEND="=dev-lang/rust-9999"
 RDEPEND="${DEPEND}"
 
-src_configure() {
-	echo "noop" > /dev/null
-}
-
 src_install() {
 	emake DESTDIR="${D}" PREFIX="${EPREFIX}/usr" install || die
 }
