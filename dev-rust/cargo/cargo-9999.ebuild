@@ -20,6 +20,18 @@ EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 DEPEND="=dev-lang/rust-9999"
 RDEPEND="${DEPEND}"
 
+src_configure() {
+	"${ECONF_SOURCE:-.}"/configure \
+		--prefix="${EPREFIX}"/usr \
+		--local-rust-root="${EPREFIX}"/usr \
+	|| die
+}
+
+src_compile() {
+	# See https://github.com/rust-lang/cargo/issues/287
+	emake clean || die
+}
+
 src_install() {
-	emake DESTDIR="${D}" PREFIX="${EPREFIX}/usr" install || die
+	emake DESTDIR="${D}" install || die
 }
