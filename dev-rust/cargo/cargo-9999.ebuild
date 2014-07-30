@@ -27,11 +27,6 @@ src_configure() {
 	|| die
 }
 
-src_compile() {
-	# See https://github.com/rust-lang/cargo/issues/287
-	emake clean || die
-}
-
 src_install() {
 	emake DESTDIR="${D}" install || die
 }
