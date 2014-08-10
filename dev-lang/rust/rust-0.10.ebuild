@@ -4,43 +4,44 @@
 
 EAPI="5"
 
-inherit multilib
+PYTHON_COMPAT=( python{2_6,2_7} )
 
-DESCRIPTION="Open source programming language from Mozilla"
+inherit elisp-common python-any-r1
+
+DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
-LICENSE="|| ( MIT Apache-2.0 )"
+ARCH_SRC_URI="amd64? ( mirror://gentoo/${PN}-bin-amd64-${PV}.tbz2 )
+	x86? ( mirror://gentoo/${PN}-bin-x86-${PV}.tbz2 )"
+SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz
+	binary-bootstrap? ( ${ARCH_SRC_URI} )"
+
+LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="+bootstrap clang debug emacs vim-syntax zsh-completion"
+IUSE="+binary-bootstrap clang debug emacs vim-syntax zsh-completion"
 
-if [[ ${PV}	!= 9999 ]]; then
-	SRC_URI="http://static.rust-lang.org/dist/${P}.tar.gz"
-else
-	inherit git-r3
-	IUSE="${IUSE} heather"
-
-	if use heather; then
-		EGIT_REPO_URI="git://github.com/Heather/rust.git"
-	else
-		EGIT_REPO_URI="git://github.com/mozilla/rust.git"
-	fi
-fi
-
-RDEPEND="zsh-completion? ( app-shells/zsh )"
+RDEPEND="emacs? ( virtual/emacs )
+	vim-syntax? ( || ( app-editors/vim app-editors/gvim ) )
+	zsh-completion? ( app-shells/zsh )"
 DEPEND="${RDEPEND}
-	clang? ( sys-devel/clang )
+	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
-	>=dev-lang/python-2.6
-"
-PDEPEND="emacs? ( app-emacs/rust-mode )
-	vim-syntax? ( app-vim/rust-mode )
-"
+	clang? ( sys-devel/clang )"
+
+SITEFILE="50${PN}-mode-gentoo.el"
 
 src_configure() {
+	local LOCAL_RUST_PATH=/usr
+	if use binary-bootstrap; then
+		LOCAL_RUST_PATH="${WORKDIR}${LOCAL_RUST_PATH}"
+	else
+		LOCAL_RUST_PATH="${EPREFIX}${LOCAL_RUST_PATH}"
+	fi
+
 	"${ECONF_SOURCE:-.}"/configure \
-		--prefix="${EPREFIX}"/usr \
+		--prefix="${EPREFIX}/usr/" \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -48,35 +49,45 @@ src_configure() {
 		$(use_enable !debug optimize-cxx) \
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
-		$(use_enable !bootstrap local-rust) \
-		--local-rust-root="${EPREFIX}"/usr \
+		--enable-local-rust \
+		--local-rust-root="${LOCAL_RUST_PATH}" \
 		--disable-manage-submodules \
-	|| die
+		|| die
 }
 
 src_compile() {
-	# Fetch current build snapshot before executing make.
-	if use bootstrap; then
-		CFG_SRC_DIR="${ECONF_SOURCE:-.}" \
-		python "${ECONF_SOURCE:-.}"/src/etc/get-snapshot.py \
-			`grep 'CFG_BUILD\s' config.mk | tail -n1 | sed -e 's/.*:=\s//'` \
-		|| die
-	fi
-
 	default
+
+	if use emacs; then
+		cd src/etc/emacs || die
+		elisp-compile *.el
+		elisp-make-autoload-file "${PN}-mode-autoloads.el" .
+	fi
 }
 
 src_install() {
 	default
 
+	if use emacs; then
+		elisp-install ${PN}-mode src/etc/emacs/*.el src/etc/emacs/*.elc
+		elisp-site-file-install "${FILESDIR}/${SITEFILE}"
+	fi
+
+	if use vim-syntax; then
+		insinto /usr/share/vim/vimfiles
+		doins -r src/etc/vim/*
+	fi
+
 	if use zsh-completion; then
 		insinto "/usr/share/zsh/site-functions"
 		doins src/etc/zsh/_rust
 	fi
+}
 
-	rm -f "${ED}/usr/$(get_libdir)/librusti.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustc.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librust.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustpkg.so" || die
-	rm -f "${ED}/usr/$(get_libdir)/librustdoc.so" || die
+pkg_postinst() {
+	use emacs && elisp-site-regen
+}
+
+pkg_postrm() {
+	use emacs && elisp-site-regen
 }

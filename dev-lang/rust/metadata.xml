@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
-		<email>Heather@Cynede.net</email>
-	</maintainer>
-	<longdescription>
-	  Mozilla Rust
-	</longdescription>
-	<use>
-	  <flag name='clang'>
-		clang codegeneration
-	  </flag>
-	  <flag name='heather'>
-		Heather fork
-	  </flag>
-	</use>
+  <maintainer>
+    <email>jauhien@gentoo.org</email>
+    <name>Jauhien Piatlicki</name>
+  </maintainer>
+  <maintainer>
+    <email>Heather@Cynede.net</email>
+  </maintainer>
+  <use>
+    <flag name="binary-bootstrap">Download precompiled rust for compilator bootstrap</flag>
+    <flag name="clang">Use <pkg>sys-devel/clang</pkg> for building</flag>
+    <flag name="heather">Heather fork</flag>
+    <flag name="libcxx">Use <pkg>sys-libs/libcxx</pkg> as standard
+    library when building with <pkg>sys-devel/clang</pkg></flag>
+  </use>
 </pkgmetadata>
