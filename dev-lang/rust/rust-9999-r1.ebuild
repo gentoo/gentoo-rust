@@ -10,28 +10,25 @@ inherit elisp-common eutils git-r3 python-any-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-
-if use heather; then
-	EGIT_REPO_URI="git://github.com/Heather/rust.git"
-else
-	EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
-fi
+EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="0"
+SLOT="git"
 KEYWORDS=""
 
-IUSE="clang debug emacs heather libcxx vim-syntax zsh-completion"
+IUSE="clang debug emacs libcxx vim-syntax zsh-completion"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="vim-syntax? ( || ( app-editors/vim app-editors/gvim ) )
 	zsh-completion? ( app-shells/zsh )"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
+	app-admin/eselect-rust
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
 	emacs? ( virtual/emacs )
-	libcxx? ( sys-libs/libcxx )"
+	libcxx? ( sys-libs/libcxx )
+	!dev-lang/rust:0"
 
 SITEFILE="50${PN}-mode-gentoo.el"
 
@@ -48,12 +45,14 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch"
+	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch" "${FILESDIR}/${P}-libdir.patch"
 }
 
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
-		--prefix="${EPREFIX}/usr/" \
+		--prefix="${EPREFIX}/usr" \
+		--libdir="${EPREFIX}/usr/lib/${P}" \
+		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -63,11 +62,12 @@ src_configure() {
 		$(use_enable !debug optimize-tests) \
 		$(use_enable libcxx libcpp) \
 		--disable-manage-submodules \
+		--disable-verify-install \
 		|| die
 }
 
 src_compile() {
-	default
+	emake VERBOSE=1
 
 	if use emacs; then
 		cd src/etc/emacs || die
@@ -80,25 +80,42 @@ src_install() {
 	default
 
 	if use emacs; then
-		elisp-install ${PN}-mode src/etc/emacs/*.el src/etc/emacs/*.elc
-		elisp-site-file-install "${FILESDIR}/${SITEFILE}"
+		local sf="${T}/${SITEFILE}"
+		local my_elisp_pn=${PN}-mode
+
+		insinto "/usr/share/${P}/emacs/site-lisp/${my_elisp_pn}"
+		doins -r src/etc/emacs/*.el src/etc/emacs/*.elc
+
+		cp "${FILESDIR}/${SITEFILE}" "${sf}" || die
+		sed -i -e "s:@SITELISP@:${EPREFIX}${SITELISP}/${my_elisp_pn}:g" "${sf}" || die
+		insinto "/usr/share/${P}/emacs/site-lisp/site-gentoo.d/"
+		doins "${sf}"
 	fi
 
 	if use vim-syntax; then
-		insinto /usr/share/vim/vimfiles
+		insinto /usr/share/${P}/vim/vimfiles
 		doins -r src/etc/vim/*
 	fi
 
 	if use zsh-completion; then
-		insinto "/usr/share/zsh/site-functions"
+		insinto "/usr/share/${P}/zsh/site-functions"
 		doins src/etc/zsh/_rust
 	fi
+
+	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
+	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
+
+	cat <<-EOF > "${T}"/50${P}
+	LDPATH="/usr/lib/${P}"
+	MANPATH="/usr/share/${P}/man"
+	EOF
+	doenvd "${T}"/50${P}
 }
 
 pkg_postinst() {
-	use emacs && elisp-site-regen
+	eselect rust update --if-unset
 }
 
 pkg_postrm() {
-	use emacs && elisp-site-regen
+	eselect rust unset --if-invalid
 }

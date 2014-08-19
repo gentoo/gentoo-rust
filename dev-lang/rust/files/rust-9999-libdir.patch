@@ -1,0 +1,113 @@
+This patch adds proper support for --libdir configure option
+See https://github.com/rust-lang/rust/issues/11671 and
+https://github.com/rust-lang/rust/pull/16552
+
+diff --git a/configure b/configure
+index 636d502..fff67b6 100755
+--- a/configure
++++ b/configure
+@@ -459,6 +459,14 @@ fi
+ 
+ valopt libdir "${CFG_PREFIX}/${CFG_LIBDIR_RELATIVE}" "install libraries"
+ 
++case "$CFG_LIBDIR" in
++    "$CFG_PREFIX"/*) CAT_INC=2;;
++    "$CFG_PREFIX"*)  CAT_INC=1;;
++    *)
++        err "libdir must begin with the prefix. Use --prefix to set it accordingly.";;
++esac
++CFG_LIBDIR_RELATIVE=`echo ${CFG_LIBDIR} | cut -c$((${#CFG_PREFIX}+${CAT_INC}))-`
++
+ if [ $HELP -eq 1 ]
+ then
+     echo
+@@ -855,6 +863,15 @@ for h in $CFG_HOST
+ do
+     for t in $CFG_TARGET
+     do
++        # host lib dir stage0
++        make_dir $h/stage0/lib
++
++        # target bin dir stage0
++        make_dir $h/stage0/lib/rustlib/$t/bin
++
++        # target lib dir stage0
++        make_dir $h/stage0/lib/rustlib/$t/lib
++
+         for i in 0 1 2 3
+         do
+             # host bin dir
+diff --git a/mk/main.mk b/mk/main.mk
+index 2bdfc1b..bca5b3b 100644
+--- a/mk/main.mk
++++ b/mk/main.mk
+@@ -311,7 +311,11 @@ define SREQ
+ # Destinations of artifacts for the host compiler
+ HROOT$(1)_H_$(3) = $(3)/stage$(1)
+ HBIN$(1)_H_$(3) = $$(HROOT$(1)_H_$(3))/bin
++ifeq ($(1),0)
++HLIB$(1)_H_$(3) = $$(HROOT$(1)_H_$(3))/lib
++else
+ HLIB$(1)_H_$(3) = $$(HROOT$(1)_H_$(3))/$$(CFG_LIBDIR_RELATIVE)
++endif
+ 
+ # Destinations of artifacts for target architectures
+ TROOT$(1)_T_$(2)_H_$(3) = $$(HLIB$(1)_H_$(3))/rustlib/$(2)
+diff --git a/src/etc/install.sh b/src/etc/install.sh
+index c949743..1a472c6 100644
+--- a/src/etc/install.sh
++++ b/src/etc/install.sh
+@@ -301,9 +301,16 @@ fi
+ flag uninstall "only uninstall from the installation prefix"
+ opt verify 1 "verify that the installed binaries run correctly"
+ valopt prefix "/usr/local" "set installation prefix"
+-# NB This isn't quite the same definition as in `configure`.
+-# just using 'lib' instead of CFG_LIBDIR_RELATIVE
++# NB This is exactly the same definition as in `configure`.
+ valopt libdir "${CFG_PREFIX}/${CFG_LIBDIR_RELATIVE}" "install libraries"
++case "$CFG_LIBDIR" in
++    "$CFG_PREFIX"/*) CAT_INC=2;;
++    "$CFG_PREFIX"*)  CAT_INC=1;;
++    *)
++        err "libdir must begin with the prefix. Use --prefix to set it accordingly.";;
++esac
++CFG_LIBDIR_RELATIVE=`echo ${CFG_LIBDIR} | cut -c$((${#CFG_PREFIX}+${CAT_INC}))-`
++
+ valopt mandir "${CFG_PREFIX}/share/man" "install man pages in PATH"
+ 
+ if [ $HELP -eq 1 ]
+@@ -428,9 +435,9 @@ while read p; do
+     # Decide the destination of the file
+     FILE_INSTALL_PATH="${CFG_PREFIX}/$p"
+ 
+-    if echo "$p" | grep "^lib/" > /dev/null
++    if echo "$p" | grep "^${CFG_LIBDIR_RELATIVE}/" > /dev/null
+     then
+-        pp=`echo $p | sed 's/^lib\///'`
++        pp=`echo $p | sed "s%^${CFG_LIBDIR_RELATIVE}/%%"`
+         FILE_INSTALL_PATH="${CFG_LIBDIR}/$pp"
+     fi
+ 
+diff --git a/src/librustc/metadata/filesearch.rs b/src/librustc/metadata/filesearch.rs
+index 99b98b6..f3e37ff 100644
+--- a/src/librustc/metadata/filesearch.rs
++++ b/src/librustc/metadata/filesearch.rs
+@@ -243,10 +243,14 @@ fn find_libdir(sysroot: &Path) -> String {
+     // of the directory where librustc is located, rather than where the rustc
+     // binary is.
+ 
+-    if sysroot.join(primary_libdir_name()).join(rustlibdir()).exists() {
+-        return primary_libdir_name();
+-    } else {
+-        return secondary_libdir_name();
++    match option_env!("CFG_LIBDIR_RELATIVE") {
++        None => if sysroot.join(primary_libdir_name()).join(rustlibdir()).exists() {
++            return primary_libdir_name();
++        } else {
++            return secondary_libdir_name();
++        },
++
++        Some(libdir) => return libdir.to_string()
+     }
+ 
+     #[cfg(target_word_size = "64")]
