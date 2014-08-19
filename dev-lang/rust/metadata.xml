@@ -11,7 +11,6 @@
   <use>
     <flag name="binary-bootstrap">Download precompiled rust for compilator bootstrap</flag>
     <flag name="clang">Use <pkg>sys-devel/clang</pkg> for building</flag>
-    <flag name="heather">Heather fork</flag>
     <flag name="libcxx">Use <pkg>sys-libs/libcxx</pkg> as standard
     library when building with <pkg>sys-devel/clang</pkg></flag>
   </use>
