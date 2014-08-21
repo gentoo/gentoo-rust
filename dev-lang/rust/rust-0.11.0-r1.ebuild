@@ -112,6 +112,11 @@ src_install() {
 
 pkg_postinst() {
 	eselect rust update --if-unset
+
+	elog "Rust uses slots now, use 'eselect rust list'"
+	elog "and 'eselect rust set' to list and set rust version."
+	elog "For more information see 'eselect rust help'"
+	elog "and http://wiki.gentoo.org/wiki/Project:Eselect/User_guide"
 }
 
 pkg_postrm() {
