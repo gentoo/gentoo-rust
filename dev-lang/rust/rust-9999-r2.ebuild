@@ -46,6 +46,8 @@ src_unpack() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch" "${FILESDIR}/${P}-libdir.patch"
+	local commit_hash=`git rev-parse --short HEAD`
+	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${commit_hash}/" mk/main.mk || die
 }
 
 src_configure() {
