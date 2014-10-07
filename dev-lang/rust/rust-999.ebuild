@@ -69,6 +69,7 @@ src_configure() {
 		$(use_enable libcxx libcpp) \
 		--disable-manage-submodules \
 		--disable-verify-install \
+		--disable-docs \
 		|| die
 }
 
