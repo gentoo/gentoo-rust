@@ -14,8 +14,12 @@ KEYWORDS="~amd64 ~x86"
 
 RDEPEND="app-admin/eselect"
 
+pkg_preinst() {
+	eselect rust unset
+}
+
 pkg_postinst() {
-	if has_version 'dev-lang/rust'; then
+	if has_version 'dev-lang/rust' || has_version 'dev-lang/rust-bin' ; then
 		eselect rust update --if-unset
 	fi
 }
