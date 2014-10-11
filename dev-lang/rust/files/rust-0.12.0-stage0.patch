@@ -1,0 +1,322 @@
+diff -u -r rust-0.12.0.orig/src/libcollections/string.rs rust-0.12.0/src/libcollections/string.rs
+--- rust-0.12.0.orig/src/libcollections/string.rs	2014-10-11 14:54:06.303867073 +0200
++++ rust-0.12.0/src/libcollections/string.rs	2014-10-11 14:54:44.063471071 +0200
+@@ -928,29 +928,6 @@
+     }
+ }
+ 
+-#[cfg(stage0)]
+-impl ops::Slice<uint, str> for String {
+-    #[inline]
+-    fn as_slice_<'a>(&'a self) -> &'a str {
+-        self.as_slice()
+-    }
+-
+-    #[inline]
+-    fn slice_from_<'a>(&'a self, from: &uint) -> &'a str {
+-        self[][*from..]
+-    }
+-
+-    #[inline]
+-    fn slice_to_<'a>(&'a self, to: &uint) -> &'a str {
+-        self[][..*to]
+-    }
+-
+-    #[inline]
+-    fn slice_<'a>(&'a self, from: &uint, to: &uint) -> &'a str {
+-        self[][*from..*to]
+-    }
+-}
+-#[cfg(not(stage0))]
+ impl ops::Slice<uint, str> for String {
+     #[inline]
+     fn as_slice_<'a>(&'a self) -> &'a str {
+diff -u -r rust-0.12.0.orig/src/libcollections/trie.rs rust-0.12.0/src/libcollections/trie.rs
+--- rust-0.12.0.orig/src/libcollections/trie.rs	2014-10-11 14:54:06.303867073 +0200
++++ rust-0.12.0/src/libcollections/trie.rs	2014-10-11 14:55:10.623192469 +0200
+@@ -389,15 +389,6 @@
+ 
+ impl<T> TrieMap<T> {
+     // If `upper` is true then returns upper_bound else returns lower_bound.
+-    #[cfg(stage0)]
+-    #[inline]
+-    fn bound<'a>(&'a self, key: uint, upper: bool) -> Entries<'a, T> {
+-        bound!(Entries, self = self,
+-               key = key, is_upper = upper,
+-               slice_from = slice_from_, iter = iter,
+-               mutability = )
+-    }
+-    #[cfg(not(stage0))]
+     #[inline]
+     fn bound<'a>(&'a self, key: uint, upper: bool) -> Entries<'a, T> {
+         bound!(Entries, self = self,
+@@ -440,15 +431,6 @@
+         self.bound(key, true)
+     }
+     // If `upper` is true then returns upper_bound else returns lower_bound.
+-    #[cfg(stage0)]
+-    #[inline]
+-    fn bound_mut<'a>(&'a mut self, key: uint, upper: bool) -> MutEntries<'a, T> {
+-        bound!(MutEntries, self = self,
+-               key = key, is_upper = upper,
+-               slice_from = slice_from_mut_, iter = iter_mut,
+-               mutability = mut)
+-    }
+-    #[cfg(not(stage0))]
+     #[inline]
+     fn bound_mut<'a>(&'a mut self, key: uint, upper: bool) -> MutEntries<'a, T> {
+         bound!(MutEntries, self = self,
+diff -u -r rust-0.12.0.orig/src/libcollections/vec.rs rust-0.12.0/src/libcollections/vec.rs
+--- rust-0.12.0.orig/src/libcollections/vec.rs	2014-10-11 14:54:06.303867073 +0200
++++ rust-0.12.0/src/libcollections/vec.rs	2014-10-11 14:55:35.422932321 +0200
+@@ -460,28 +460,6 @@
+     }
+ }*/
+ 
+-#[cfg(stage0)]
+-impl<T> ops::Slice<uint, [T]> for Vec<T> {
+-    #[inline]
+-    fn as_slice_<'a>(&'a self) -> &'a [T] {
+-        self.as_slice()
+-    }
+-
+-    #[inline]
+-    fn slice_from_<'a>(&'a self, start: &uint) -> &'a [T] {
+-        self.as_slice().slice_from_(start)
+-    }
+-
+-    #[inline]
+-    fn slice_to_<'a>(&'a self, end: &uint) -> &'a [T] {
+-        self.as_slice().slice_to_(end)
+-    }
+-    #[inline]
+-    fn slice_<'a>(&'a self, start: &uint, end: &uint) -> &'a [T] {
+-        self.as_slice().slice_(start, end)
+-    }
+-}
+-#[cfg(not(stage0))]
+ impl<T> ops::Slice<uint, [T]> for Vec<T> {
+     #[inline]
+     fn as_slice_<'a>(&'a self) -> &'a [T] {
+@@ -503,28 +481,6 @@
+     }
+ }
+ 
+-#[cfg(stage0)]
+-impl<T> ops::SliceMut<uint, [T]> for Vec<T> {
+-    #[inline]
+-    fn as_mut_slice_<'a>(&'a mut self) -> &'a mut [T] {
+-        self.as_mut_slice()
+-    }
+-
+-    #[inline]
+-    fn slice_from_mut_<'a>(&'a mut self, start: &uint) -> &'a mut [T] {
+-        self.as_mut_slice().slice_from_mut_(start)
+-    }
+-
+-    #[inline]
+-    fn slice_to_mut_<'a>(&'a mut self, end: &uint) -> &'a mut [T] {
+-        self.as_mut_slice().slice_to_mut_(end)
+-    }
+-    #[inline]
+-    fn slice_mut_<'a>(&'a mut self, start: &uint, end: &uint) -> &'a mut [T] {
+-        self.as_mut_slice().slice_mut_(start, end)
+-    }
+-}
+-#[cfg(not(stage0))]
+ impl<T> ops::SliceMut<uint, [T]> for Vec<T> {
+     #[inline]
+     fn as_mut_slice_<'a>(&'a mut self) -> &'a mut [T] {
+diff -u -r rust-0.12.0.orig/src/libcore/intrinsics.rs rust-0.12.0/src/libcore/intrinsics.rs
+--- rust-0.12.0.orig/src/libcore/intrinsics.rs	2014-10-11 14:54:06.313867033 +0200
++++ rust-0.12.0/src/libcore/intrinsics.rs	2014-10-11 14:57:53.081488143 +0200
+@@ -254,7 +254,6 @@
+     /// enabling further optimizations.
+     ///
+     /// NB: This is very different from the `unreachable!()` macro!
+-    #[cfg(not(stage0))]
+     pub fn unreachable() -> !;
+ 
+     /// Execute a breakpoint trap, for inspection by a debugger.
+diff -u -r rust-0.12.0.orig/src/libcore/ops.rs rust-0.12.0/src/libcore/ops.rs
+--- rust-0.12.0.orig/src/libcore/ops.rs	2014-10-11 14:54:06.313867033 +0200
++++ rust-0.12.0/src/libcore/ops.rs	2014-10-11 14:56:38.552270110 +0200
+@@ -711,7 +711,6 @@
+  * }
+  * ```
+  */
+-#[cfg(not(stage0))]
+ #[lang="slice"]
+ pub trait Slice<Idx, Sized? Result> for Sized? {
+     /// The method for the slicing operation foo[]
+@@ -723,21 +722,6 @@
+     /// The method for the slicing operation foo[from..to]
+     fn slice_or_fail<'a>(&'a self, from: &Idx, to: &Idx) -> &'a Result;
+ }
+-#[cfg(stage0)]
+-/**
+- *
+- */
+-#[lang="slice"]
+-pub trait Slice<Idx, Sized? Result> for Sized? {
+-    /// The method for the slicing operation foo[]
+-    fn as_slice_<'a>(&'a self) -> &'a Result;
+-    /// The method for the slicing operation foo[from..]
+-    fn slice_from_<'a>(&'a self, from: &Idx) -> &'a Result;
+-    /// The method for the slicing operation foo[..to]
+-    fn slice_to_<'a>(&'a self, to: &Idx) -> &'a Result;
+-    /// The method for the slicing operation foo[from..to]
+-    fn slice_<'a>(&'a self, from: &Idx, to: &Idx) -> &'a Result;
+-}
+ 
+ /**
+  *
+@@ -776,7 +760,7 @@
+  * }
+  * ```
+  */
+-#[cfg(not(stage0))]
++
+ #[lang="slice_mut"]
+ pub trait SliceMut<Idx, Sized? Result> for Sized? {
+     /// The method for the slicing operation foo[]
+@@ -788,21 +772,7 @@
+     /// The method for the slicing operation foo[from..to]
+     fn slice_or_fail_mut<'a>(&'a mut self, from: &Idx, to: &Idx) -> &'a mut Result;
+ }
+-#[cfg(stage0)]
+-/**
+- *
+- */
+-#[lang="slice_mut"]
+-pub trait SliceMut<Idx, Sized? Result> for Sized? {
+-    /// The method for the slicing operation foo[mut]
+-    fn as_mut_slice_<'a>(&'a mut self) -> &'a mut Result;
+-    /// The method for the slicing operation foo[mut from..]
+-    fn slice_from_mut_<'a>(&'a mut self, from: &Idx) -> &'a mut Result;
+-    /// The method for the slicing operation foo[mut ..to]
+-    fn slice_to_mut_<'a>(&'a mut self, to: &Idx) -> &'a mut Result;
+-    /// The method for the slicing operation foo[mut from..to]
+-    fn slice_mut_<'a>(&'a mut self, from: &Idx, to: &Idx) -> &'a mut Result;
+-}
++
+ /**
+  *
+  * The `Deref` trait is used to specify the functionality of dereferencing
+diff -u -r rust-0.12.0.orig/src/libcore/slice.rs rust-0.12.0/src/libcore/slice.rs
+--- rust-0.12.0.orig/src/libcore/slice.rs	2014-10-11 14:54:06.313867033 +0200
++++ rust-0.12.0/src/libcore/slice.rs	2014-10-11 14:57:08.101960051 +0200
+@@ -488,7 +488,6 @@
+ 
+ 
+ 
+-#[cfg(not(stage0))]
+ impl<T> ops::Slice<uint, [T]> for [T] {
+     #[inline]
+     fn as_slice_<'a>(&'a self) -> &'a [T] {
+@@ -516,36 +515,7 @@
+         }
+     }
+ }
+-#[cfg(stage0)]
+-impl<T> ops::Slice<uint, [T]> for [T] {
+-    #[inline]
+-    fn as_slice_<'a>(&'a self) -> &'a [T] {
+-        self
+-    }
+-
+-    #[inline]
+-    fn slice_from_<'a>(&'a self, start: &uint) -> &'a [T] {
+-        self.slice_(start, &self.len())
+-    }
+ 
+-    #[inline]
+-    fn slice_to_<'a>(&'a self, end: &uint) -> &'a [T] {
+-        self.slice_(&0, end)
+-    }
+-    #[inline]
+-    fn slice_<'a>(&'a self, start: &uint, end: &uint) -> &'a [T] {
+-        assert!(*start <= *end);
+-        assert!(*end <= self.len());
+-        unsafe {
+-            transmute(RawSlice {
+-                    data: self.as_ptr().offset(*start as int),
+-                    len: (*end - *start)
+-                })
+-        }
+-    }
+-}
+-
+-#[cfg(not(stage0))]
+ impl<T> ops::SliceMut<uint, [T]> for [T] {
+     #[inline]
+     fn as_mut_slice_<'a>(&'a mut self) -> &'a mut [T] {
+@@ -567,35 +537,6 @@
+         assert!(*start <= *end);
+         assert!(*end <= self.len());
+         unsafe {
+-            transmute(RawSlice {
+-                    data: self.as_ptr().offset(*start as int),
+-                    len: (*end - *start)
+-                })
+-        }
+-    }
+-}
+-#[cfg(stage0)]
+-impl<T> ops::SliceMut<uint, [T]> for [T] {
+-    #[inline]
+-    fn as_mut_slice_<'a>(&'a mut self) -> &'a mut [T] {
+-        self
+-    }
+-
+-    #[inline]
+-    fn slice_from_mut_<'a>(&'a mut self, start: &uint) -> &'a mut [T] {
+-        let len = &self.len();
+-        self.slice_mut_(start, len)
+-    }
+-
+-    #[inline]
+-    fn slice_to_mut_<'a>(&'a mut self, end: &uint) -> &'a mut [T] {
+-        self.slice_mut_(&0, end)
+-    }
+-    #[inline]
+-    fn slice_mut_<'a>(&'a mut self, start: &uint, end: &uint) -> &'a mut [T] {
+-        assert!(*start <= *end);
+-        assert!(*end <= self.len());
+-        unsafe {
+             transmute(RawSlice {
+                     data: self.as_ptr().offset(*start as int),
+                     len: (*end - *start)
+diff -u -r rust-0.12.0.orig/src/libcore/str.rs rust-0.12.0/src/libcore/str.rs
+--- rust-0.12.0.orig/src/libcore/str.rs	2014-10-11 14:54:06.313867033 +0200
++++ rust-0.12.0/src/libcore/str.rs	2014-10-11 14:55:53.262745176 +0200
+@@ -1164,29 +1164,6 @@
+         fn equiv(&self, other: &S) -> bool { eq_slice(*self, other.as_slice()) }
+     }
+ 
+-    #[cfg(stage0)]
+-    impl ops::Slice<uint, str> for str {
+-        #[inline]
+-        fn as_slice_<'a>(&'a self) -> &'a str {
+-            self
+-        }
+-
+-        #[inline]
+-        fn slice_from_<'a>(&'a self, from: &uint) -> &'a str {
+-            self.slice_from(*from)
+-        }
+-
+-        #[inline]
+-        fn slice_to_<'a>(&'a self, to: &uint) -> &'a str {
+-            self.slice_to(*to)
+-        }
+-
+-        #[inline]
+-        fn slice_<'a>(&'a self, from: &uint, to: &uint) -> &'a str {
+-            self.slice(*from, *to)
+-        }
+-    }
+-    #[cfg(not(stage0))]
+     impl ops::Slice<uint, str> for str {
+         #[inline]
+         fn as_slice_<'a>(&'a self) -> &'a str {
