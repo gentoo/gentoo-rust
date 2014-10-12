@@ -15,7 +15,9 @@ KEYWORDS="~amd64 ~x86"
 RDEPEND="app-admin/eselect"
 
 pkg_preinst() {
-	eselect rust unset
+	if has_version 'app-admin/eselect-rust' ; then
+		eselect rust unset
+	fi
 }
 
 pkg_postinst() {
