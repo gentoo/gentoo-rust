@@ -16,7 +16,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="git"
 KEYWORDS=""
 
-IUSE="clang debug emacs libcxx vim-syntax zsh-completion"
+IUSE="clang debug emacs libcxx +system-llvm vim-syntax zsh-completion"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -27,6 +27,7 @@ DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
+	system-llvm? ( >=sys-devel/llvm-3.5.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
 	emacs? ( >=app-emacs/rust-mode-${PV} )
@@ -54,6 +55,9 @@ src_prepare() {
 }
 
 src_configure() {
+	local system_llvm
+	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
+
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \
@@ -66,6 +70,7 @@ src_configure() {
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
 		$(use_enable libcxx libcpp) \
+		${system_llvm} \
 		--disable-manage-submodules \
 		--disable-verify-install \
 		--disable-docs \
