@@ -17,7 +17,7 @@ IUSE=""
 
 EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 
-DEPEND=">=dev-lang/rust-999"
+DEPEND=">=virtual/rust-999"
 RDEPEND="${DEPEND}"
 
 src_configure() {
