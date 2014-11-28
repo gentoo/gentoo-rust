@@ -80,7 +80,7 @@ pkg_postinst() {
 	elog "and http://wiki.gentoo.org/wiki/Project:Eselect/User_guide"
 
 	elog "Rust installs a helper script for calling LLDB now,"
-	elog "for your convenience it is installed under /usr/bin/rust-lldb-${PV},"
+	elog "for your convenience it is installed under /usr/bin/rust-lldb-bin-${PV},"
 	elog "but note, that there is no LLDB ebuild in the tree currently,"
 	elog "so you are on your own if you want to use it."
 }
