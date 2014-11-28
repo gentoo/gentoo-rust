@@ -20,7 +20,7 @@ IUSE="clang debug emacs libcxx +system-llvm vim-syntax zsh-completion"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
-	>=app-admin/eselect-rust-0.2_pre20141011
+	>=app-admin/eselect-rust-0.2_pre20141128
 	!dev-lang/rust:0
 "
 DEPEND="${CDEPEND}
@@ -86,6 +86,7 @@ src_install() {
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
+	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/lib/${P}"

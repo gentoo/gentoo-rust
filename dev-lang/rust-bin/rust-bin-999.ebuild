@@ -16,7 +16,7 @@ KEYWORDS=""
 
 IUSE="emacs vim-syntax zsh-completion"
 
-CDEPEND=">=app-admin/eselect-rust-0.2_pre20141011
+CDEPEND=">=app-admin/eselect-rust-0.2_pre20141128
 	!dev-lang/rust:0
 "
 DEPEND="${CDEPEND}
@@ -51,11 +51,15 @@ src_install() {
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
+	local rustlldb=rust-lldb-bin-${PV}
 
 	mv "${D}/opt/${P}/bin/rustc" "${D}/opt/${P}/bin/${rustc}" || die
 	mv "${D}/opt/${P}/bin/rustdoc" "${D}/opt/${P}/bin/${rustdoc}" || die
+	mv "${D}/opt/${P}/bin/rust-lldb" "${D}/opt/${P}/bin/${rustlldb}" || die
+
 	dosym "/opt/${P}/bin/${rustc}" "/usr/bin/${rustc}"
 	dosym "/opt/${P}/bin/${rustdoc}" "/usr/bin/${rustdoc}"
+	dosym "/opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/opt/${P}/lib"
