@@ -20,6 +20,10 @@ EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 DEPEND=">=virtual/rust-999"
 RDEPEND="${DEPEND}"
 
+src_prepare() {
+	epatch "${FILESDIR}/${P}-no-ldconfig.patch"
+}
+
 src_configure() {
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}"/usr \
