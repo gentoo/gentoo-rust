@@ -30,7 +30,7 @@ DEPEND="${CDEPEND}
 	>=dev-lang/perl-5.0
 	net-misc/wget
 	clang? ( sys-devel/clang )
-	system-llvm? ( >=sys-devel/llvm-3.5.0[multitarget(-)] )
+	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
 	emacs? ( >=app-emacs/rust-mode-${PV} )
