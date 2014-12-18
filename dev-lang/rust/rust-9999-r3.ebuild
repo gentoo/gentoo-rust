@@ -48,7 +48,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch"
+	epatch "${FILESDIR}/${PN}-0.13.0-no-ldconfig.patch"
 
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
