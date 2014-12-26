@@ -40,7 +40,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-0.12.0-no-ldconfig.patch"
+	epatch "${FILESDIR}/${PN}-0.13.0-no-ldconfig.patch"
 }
 
 src_install() {
