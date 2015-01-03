@@ -86,7 +86,13 @@ src_install() {
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
-	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
+	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
+
+	# le kludge that fixes https://github.com/Heather/gentoo-rust/issues/41
+	mv "${D}/usr/lib/rust-9999/rust-9999/rustlib"/* "${D}/usr/lib/rust-9999/rustlib/"
+	rmdir "${D}/usr/lib/rust-9999/rust-9999/rustlib"
+	mv "${D}/usr/lib/rust-9999/rust-9999/"/* "${D}/usr/lib/rust-9999/"
+	rmdir "${D}/usr/lib/rust-9999/rust-9999/"
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/lib/${P}"
