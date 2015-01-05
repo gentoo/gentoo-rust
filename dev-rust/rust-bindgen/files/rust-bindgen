@@ -1,0 +1,2 @@
+#!/bin/sh
+LD_PRELOAD="/usr/lib/libclang.so" rust-bindgen-9999 "$@"
