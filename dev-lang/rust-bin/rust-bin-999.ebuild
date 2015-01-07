@@ -39,15 +39,12 @@ src_unpack() {
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
 }
 
-src_prepare() {
-	epatch "${FILESDIR}/${PN}-0.13.0-no-ldconfig.patch"
-}
-
 src_install() {
 	./install.sh \
 		--disable-verify \
 		--prefix="${D}/opt/${P}" \
-		--mandir="${D}/usr/share/${P}/man"
+		--mandir="${D}/usr/share/${P}/man" \
+	        --disable-ldconfig
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
