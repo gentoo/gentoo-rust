@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python{2_6,2_7} )
 
 inherit eutils python-any-r1
 
-MY_P=${PN}-nightly
+MY_P=rustc-nightly
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -42,7 +42,7 @@ S="${WORKDIR}/${MY_P}"
 
 src_unpack() {
 	wget "${MY_SRC_URI}" || die
-	unpack ./"${PN}-nightly-src.tar.gz"
+	unpack ./"${MY_P}-src.tar.gz"
 
 	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
