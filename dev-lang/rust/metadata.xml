@@ -6,7 +6,8 @@
     <name>Jauhien Piatlicki</name>
   </maintainer>
   <maintainer>
-    <email>Heather@Cynede.net</email>
+    <email>cynede@gentoo.org</email>
+    <name>Heather Cynede</name>
   </maintainer>
   <use>
     <flag name="clang">Use <pkg>sys-devel/clang</pkg> for building</flag>
