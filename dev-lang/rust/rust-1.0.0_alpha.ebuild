@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -32,6 +32,7 @@ DEPEND="${CDEPEND}
 	>=dev-lang/perl-5.0
 	net-misc/wget
 	clang? ( sys-devel/clang )
+	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
 	emacs? ( >=app-emacs/rust-mode-${PV} )
@@ -42,9 +43,9 @@ RDEPEND="${CDEPEND}
 S=${WORKDIR}/${MY_PV}
 
 src_unpack() {
-	unpack ${MY_PV}-src.tar.gz || die
-	mkdir ${MY_PV}/dl || die
-	cp ${DISTDIR}/rust-stage0* ${MY_PV}/dl/ || die
+	unpack "${MY_PV}-src.tar.gz" || die
+	mkdir "${MY_PV}/dl" || die
+	cp "${DISTDIR}/rust-stage0"* "${MY_PV}/dl/" || die
 }
 
 src_prepare() {
@@ -59,6 +60,9 @@ src_configure() {
 	use x86 && ARCH_POSTFIX="i686"
 	LOCAL_RUST_PATH="${WORKDIR}/rust-1.0.0-alpha-${ARCH_POSTFIX}-unknown-linux-gnu/bin"
 
+	local system_llvm
+	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
+
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \
@@ -71,6 +75,7 @@ src_configure() {
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
 		$(use_enable libcxx libcpp) \
+		${system_llvm} \
 		--disable-manage-submodules \
 		--disable-verify-install \
 		--disable-docs \
