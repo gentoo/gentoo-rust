@@ -12,7 +12,9 @@ MY_PV="rustc-1.0.0-alpha"
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
-SRC_URI="http://static.rust-lang.org/dist/${MY_PV}-src.tar.gz"
+SRC_URI="http://static.rust-lang.org/dist/${MY_PV}-src.tar.gz
+	x86?   ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-01-07-9e4e524-linux-i386-d8b73fc9aa3ad72ce1408a41e35d78dba10eb4d4.tar.bz2 )
+	amd64? ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-01-07-9e4e524-linux-x86_64-697880d3640e981bbbf23284363e8e9a158b588d.tar.bz2 )"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="1.0"
@@ -39,6 +41,12 @@ RDEPEND="${CDEPEND}
 "
 
 S=${WORKDIR}/${MY_PV}
+
+src_unpack() {
+	unpack ${MY_PV}-src.tar.gz || die
+	mkdir ${MY_PV}/dl || die
+	cp ${DISTDIR}/rust-stage0* ${MY_PV}/dl/ || die
+}
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-0.13.0-no-ldconfig.patch"
