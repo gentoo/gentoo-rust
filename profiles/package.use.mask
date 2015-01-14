@@ -1,0 +1,2 @@
+#due to lack of llvm-3.6 in portage
+=dev-lang/rust-1.0.0_alpha      system-llvm
