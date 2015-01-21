@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer>
+    <email>valahanovich@tut.by</email>
+    <name>Heorhi Valakhanovich</name>
+  </maintainer>
+  <longdescription>
+    Rust Code Completion utility
+  </longdescription>
+  <use>
+    <flag name="emacs"> install emacs script </flag>
+    <flag name="vim"> install vim plugin </flag>
+  </use>
+</pkgmetadata>
