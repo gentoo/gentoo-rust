@@ -18,12 +18,12 @@ IUSE=""
 EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 
 RDEPEND=">=virtual/rust-999"
-DEPEND="${DEPEND} 
+DEPEND="${DEPEND}
 	dev-util/cmake"
 
 src_prepare() {
 	use x86 && export BITS=32
-	CFG_DISABLE_LDCONFIG="true" ./.travis.install.deps.sh || die
+	CFG_DISABLE_LDCONFIG="nonempty" ./.travis.install.deps.sh || die
 }
 
 src_configure() {
