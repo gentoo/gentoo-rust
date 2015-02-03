@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -17,11 +17,13 @@ IUSE=""
 
 EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
 
-DEPEND=">=virtual/rust-999"
-RDEPEND="${DEPEND}"
+RDEPEND=">=virtual/rust-999"
+DEPEND="${DEPEND}
+	dev-util/cmake"
 
 src_prepare() {
-	CFG_DISABLE_LDCONFIG="true" ./.travis.install.deps.sh || die
+	use x86 && export BITS=32
+	CFG_DISABLE_LDCONFIG="nonempty" ./.travis.install.deps.sh || die
 }
 
 src_configure() {
