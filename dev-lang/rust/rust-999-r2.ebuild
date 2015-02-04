@@ -18,7 +18,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS=""
 
-IUSE="clang debug emacs libcxx +system-llvm vim-syntax zsh-completion"
+IUSE="clang debug libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -33,9 +33,6 @@ DEPEND="${CDEPEND}
 	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
-	emacs? ( >=app-emacs/rust-mode-${PV} )
-	vim-syntax? ( >=app-vim/rust-mode-${PV} )
-	zsh-completion? ( >=app-shells/rust-zshcomp-${PV} )
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -124,6 +121,18 @@ pkg_postinst() {
 
 	elog "Rust installs a helper script for calling GDB now,"
 	elog "for your convenience it is installed under /usr/bin/rust-gdb-${PV}."
+
+	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
+		elog "install app-emacs/rust-mode to get emacs support for rust."
+	fi
+
+	if has_version app-editors/gvim || has_version app-editors/vim; then
+		elog "install app-vim/rust-mode to get vim support for rust."
+	fi
+
+	if has_version 'app-shells/zsh'; then
+		elog "install app-shells/rust-zshcomp to get zsh completion for rust."
+	fi
 }
 
 pkg_postrm() {
