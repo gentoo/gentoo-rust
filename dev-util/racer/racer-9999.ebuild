@@ -8,31 +8,29 @@ inherit eutils git-r3 elisp-common
 
 DESCRIPTION="Rust Code Completion utility "
 HOMEPAGE="https://github.com/phildawes/racer"
-IUSE="emacs vim"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
-
 IUSE="emacs vim"
 
 EGIT_REPO_URI="git://github.com/phildawes/racer"
 
-RDEPEND="dev-lang/rust
+COMMON_DEPEND="dev-lang/rust
 	emacs? (
 		app-emacs/company-mode[ropemacs]
 		app-emacs/rust-mode
 		virtual/emacs )
 	vim? ( || ( app-editors/vim app-editors/gvim ) )"
-DEPEND="${RDEPEND}
+DEPEND="${COMMON_DEPEND}
 	dev-rust/cargo"
+RDEPEND="${COMMON_DEPEND}"
 
-src_configure() {
+src_compile() {
 	cargo build --release
 }
 
 src_install() {
-	$
 	dobin target/release/racer
 	if use emacs; then
 		elisp-install ${PN} editors/racer.el
@@ -42,7 +40,6 @@ src_install() {
 		insinto /usr/share/vim/vimfiles/plugin/
 		sed -i 's|\(g:racer_cmd = \).*|\1"/usr/bin/racer"|' plugin/racer.vim
 		doins plugin/racer.vim
-
 	fi
 }
 
@@ -51,11 +48,11 @@ pkg_postinst() {
 	elog "Racer will look for sources in path pointed by RUST_SRC_PATH"
 	elog "environment variable. You can use"
 	elog "% export RUST_SRC_PATH=<path to>/rust/src."
-	elog ""
+	elog
 	if use emacs; then
 		elog "You should use '(setq racer-rust-src-path \"<path-to>/rust/src/\")'"
 		elog "for emacs plugin to be able to find rust sources for racer."
-		elog ""
+		elog
 		elisp-site-regen
 	fi
 	if use vim; then
