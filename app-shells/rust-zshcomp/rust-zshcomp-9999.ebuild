@@ -8,11 +8,10 @@ inherit git-r3
 
 DESCRIPTION="Rust zsh completions"
 HOMEPAGE="http://www.rust-lang.org/"
-EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
+EGIT_REPO_URI="https://github.com/rust-lang/zsh-config"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS=""
 
 DEPEND="app-shells/zsh
 	!!<=app-admin/eselect-rust-0.1_pre20140820
@@ -22,15 +21,7 @@ DEPEND="app-shells/zsh
 "
 RDEPEND="${DEPEND}"
 
-src_configure() {
-	:
-}
-
-src_compile() {
-	:
-}
-
 src_install() {
 	insinto /usr/share/zsh/site-functions
-	doins src/etc/zsh/_rust
+	doins _rust
 }
