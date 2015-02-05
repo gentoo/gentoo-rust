@@ -14,7 +14,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="emacs vim-syntax zsh-completion"
+IUSE=""
 
 CDEPEND=">=app-admin/eselect-rust-0.2_pre20141128
 	!dev-lang/rust:0
@@ -23,9 +23,6 @@ DEPEND="${CDEPEND}
 	net-misc/wget
 "
 RDEPEND="${CDEPEND}
-	emacs? ( >=app-emacs/rust-mode-${PV} )
-	vim-syntax? ( >=app-vim/rust-mode-${PV} )
-	zsh-completion? ( >=app-shells/rust-zshcomp-${PV} )
 "
 
 src_unpack() {
@@ -80,6 +77,18 @@ pkg_postinst() {
 	elog "for your convenience it is installed under /usr/bin/rust-lldb-bin-${PV},"
 	elog "but note, that there is no LLDB ebuild in the tree currently,"
 	elog "so you are on your own if you want to use it."
+
+	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
+		elog "install app-emacs/rust-mode to get emacs support for rust."
+	fi
+
+	if has_version app-editors/gvim || has_version app-editors/vim; then
+		elog "install app-vim/rust-mode to get vim support for rust."
+	fi
+
+	if has_version 'app-shells/zsh'; then
+		elog "install app-shells/rust-zshcomp to get zsh completion for rust."
+	fi
 }
 
 pkg_postrm() {
