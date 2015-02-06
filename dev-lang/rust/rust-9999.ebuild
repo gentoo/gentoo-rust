@@ -6,16 +6,14 @@ EAPI="5"
 
 PYTHON_COMPAT=( python{2_6,2_7} )
 
-inherit eutils python-any-r1
-
-MY_P=${PN}-nightly
+inherit eutils git-r3 python-any-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}.tar.gz"
+EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="nightly"
+SLOT="git"
 KEYWORDS=""
 
 IUSE="clang debug libcxx +system-llvm"
@@ -28,18 +26,14 @@ CDEPEND="libcxx? ( sys-libs/libcxx )
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
-	net-misc/wget
 	clang? ( sys-devel/clang )
 	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
 "
 
-S="${WORKDIR}/${MY_P}"
-
 src_unpack() {
-	wget "${MY_SRC_URI}" || die
-	unpack ./"${PN}-nightly.tar.gz"
+	git-r3_src_unpack
 
 	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
@@ -89,7 +83,13 @@ src_install() {
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
-	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
+	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
+
+	# le kludge that fixes https://github.com/Heather/gentoo-rust/issues/41
+	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"/* "${D}/usr/lib/rust-${PV}/rustlib/"
+	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"
+	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/"
+	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/"
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/lib/${P}"
@@ -109,10 +109,8 @@ pkg_postinst() {
 	elog "For more information see 'eselect rust help'"
 	elog "and http://wiki.gentoo.org/wiki/Project:Eselect/User_guide"
 
-	elog "Rust installs a helper script for calling LLDB now,"
-	elog "for your convenience it is installed under /usr/bin/rust-lldb-${PV},"
-	elog "but note, that there is no LLDB ebuild in the tree currently,"
-	elog "so you are on your own if you want to use it."
+	elog "Rust installs a helper script for calling GDB now,"
+	elog "for your convenience it is installed under /usr/bin/rust-gdb-${PV}."
 
 	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
 		elog "install app-emacs/rust-mode to get emacs support for rust."

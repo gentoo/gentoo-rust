@@ -30,7 +30,6 @@ CDEPEND="libcxx? ( sys-libs/libcxx )
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
-	net-misc/wget
 	clang? ( sys-devel/clang )
 	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
