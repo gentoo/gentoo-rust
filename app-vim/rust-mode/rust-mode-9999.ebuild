@@ -12,9 +12,3 @@ EGIT_REPO_URI="https://github.com/rust-lang/rust.vim"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-
-DEPEND="!!<=app-admin/eselect-rust-0.1_pre20140820
-	!<=dev-lang/rust-0.11.0-r1:0.11
-	!<=dev-lang/rust-999:nightly
-	!<=dev-lang/rust-9999-r2:git
-"
