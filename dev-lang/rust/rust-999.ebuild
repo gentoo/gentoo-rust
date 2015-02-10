@@ -22,7 +22,7 @@ IUSE="clang debug libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
-	>=app-admin/eselect-rust-0.2_pre20141128
+	>=app-admin/eselect-rust-0.2_pre20150206
 	!dev-lang/rust:0
 "
 DEPEND="${CDEPEND}
