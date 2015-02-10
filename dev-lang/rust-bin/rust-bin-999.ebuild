@@ -41,19 +41,19 @@ src_install() {
 		--disable-verify \
 		--prefix="${D}/opt/${P}" \
 		--mandir="${D}/usr/share/${P}/man" \
-	        --disable-ldconfig
+			--disable-ldconfig
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
-	local rustlldb=rust-lldb-bin-${PV}
+	local rustgdb=rust-gdb-bin-${PV}
 
 	mv "${D}/opt/${P}/bin/rustc" "${D}/opt/${P}/bin/${rustc}" || die
 	mv "${D}/opt/${P}/bin/rustdoc" "${D}/opt/${P}/bin/${rustdoc}" || die
-	mv "${D}/opt/${P}/bin/rust-lldb" "${D}/opt/${P}/bin/${rustlldb}" || die
+	mv "${D}/opt/${P}/bin/rust-gdb" "${D}/opt/${P}/bin/${rustgdb}" || die
 
 	dosym "/opt/${P}/bin/${rustc}" "/usr/bin/${rustc}"
 	dosym "/opt/${P}/bin/${rustdoc}" "/usr/bin/${rustdoc}"
-	dosym "/opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
+	dosym "/opt/${P}/bin/${rustgdb}" "/usr/bin/${rustgdb}"
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/opt/${P}/lib"
@@ -73,10 +73,8 @@ pkg_postinst() {
 	elog "For more information see 'eselect rust help'"
 	elog "and http://wiki.gentoo.org/wiki/Project:Eselect/User_guide"
 
-	elog "Rust installs a helper script for calling LLDB now,"
-	elog "for your convenience it is installed under /usr/bin/rust-lldb-bin-${PV},"
-	elog "but note, that there is no LLDB ebuild in the tree currently,"
-	elog "so you are on your own if you want to use it."
+	elog "Rust installs a helper script for calling GDB now,"
+	elog "for your convenience it is installed under /usr/bin/rust-gdb-bin-${PV},"
 
 	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
 		elog "install app-emacs/rust-mode to get emacs support for rust."
