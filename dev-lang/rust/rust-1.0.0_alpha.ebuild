@@ -45,8 +45,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-0.13.0-no-ldconfig.patch"
-
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 }
@@ -55,6 +53,7 @@ src_configure() {
 	use amd64 && ARCH_POSTFIX="x86_64"
 	use x86 && ARCH_POSTFIX="i686"
 	LOCAL_RUST_PATH="${WORKDIR}/rust-1.0.0-alpha-${ARCH_POSTFIX}-unknown-linux-gnu/bin"
+	export CFG_DISABLE_LDCONFIG="yes"
 
 	local system_llvm
 	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
