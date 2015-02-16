@@ -56,14 +56,14 @@ src_prepare() {
 }
 
 src_configure() {
-	local system_llvm
-	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
-
 	export CFG_DISABLE_LDCONFIG="notempty"
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
+		--disable-manage-submodules \
+		--disable-verify-install \
+		--disable-docs \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -72,10 +72,7 @@ src_configure() {
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
 		$(use_enable libcxx libcpp) \
-		${system_llvm} \
-		--disable-manage-submodules \
-		--disable-verify-install \
-		--disable-docs \
+		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
