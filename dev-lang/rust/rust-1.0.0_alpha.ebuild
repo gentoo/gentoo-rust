@@ -50,9 +50,6 @@ src_prepare() {
 }
 
 src_configure() {
-	use amd64 && ARCH_POSTFIX="x86_64"
-	use x86 && ARCH_POSTFIX="i686"
-	LOCAL_RUST_PATH="${WORKDIR}/rust-1.0.0-alpha-${ARCH_POSTFIX}-unknown-linux-gnu/bin"
 	export CFG_DISABLE_LDCONFIG="yes"
 
 	local system_llvm
