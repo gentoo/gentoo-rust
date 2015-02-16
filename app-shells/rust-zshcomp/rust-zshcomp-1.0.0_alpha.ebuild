@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=5
 
 MY_PV="rustc-1.0.0-alpha"
 DESCRIPTION="Rust zsh completions"
