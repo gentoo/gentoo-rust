@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -59,6 +59,7 @@ src_configure() {
 	local system_llvm
 	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
 
+	export CFG_DISABLE_LDCONFIG="notempty"
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \

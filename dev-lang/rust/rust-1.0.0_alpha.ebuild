@@ -50,7 +50,7 @@ src_prepare() {
 }
 
 src_configure() {
-	export CFG_DISABLE_LDCONFIG="yes"
+	export CFG_DISABLE_LDCONFIG="notempty"
 
 	local system_llvm
 	use system-llvm && system_llvm="--llvm-root=${EPREFIX}/usr"
