@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS=""
 IUSE="emacs vim"
 
-EGIT_REPO_URI="git://github.com/phildawes/racer"
+EGIT_REPO_URI="https://github.com/phildawes/racer"
 
 COMMON_DEPEND="dev-lang/rust
 	emacs? (

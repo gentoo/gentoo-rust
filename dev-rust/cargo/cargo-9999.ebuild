@@ -15,7 +15,7 @@ KEYWORDS=""
 
 IUSE=""
 
-EGIT_REPO_URI="git://github.com/rust-lang/cargo.git"
+EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 
 RDEPEND=">=virtual/rust-999"
 DEPEND="${DEPEND}

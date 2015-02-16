@@ -10,7 +10,7 @@ inherit eutils git-r3 python-any-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-EGIT_REPO_URI="git://github.com/rust-lang/rust.git"
+EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="git"
