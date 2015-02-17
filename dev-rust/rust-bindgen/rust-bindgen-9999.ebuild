@@ -15,7 +15,7 @@ KEYWORDS=""
 
 IUSE=""
 
-EGIT_REPO_URI="git://github.com/crabtw/rust-bindgen.git"
+EGIT_REPO_URI="https://github.com/crabtw/rust-bindgen.git"
 
 DEPEND=">=virtual/rust-999
 	dev-rust/cargo
