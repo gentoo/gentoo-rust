@@ -20,7 +20,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="1.0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="clang debug libcxx +system-llvm"
+IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -58,7 +58,6 @@ src_configure() {
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--disable-manage-submodules \
 		--disable-verify-install \
-		--disable-docs \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -66,6 +65,7 @@ src_configure() {
 		$(use_enable !debug optimize-cxx) \
 		$(use_enable !debug optimize-llvm) \
 		$(use_enable !debug optimize-tests) \
+		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
 		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
@@ -91,6 +91,9 @@ src_install() {
 	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"
 	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/"
 	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/"
+
+	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/"
+	rmdir "${D}/usr/share/doc/rust/"
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/lib/${P}"
