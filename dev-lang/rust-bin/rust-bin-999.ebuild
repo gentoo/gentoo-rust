@@ -16,7 +16,7 @@ KEYWORDS=""
 
 IUSE=""
 
-CDEPEND=">=app-admin/eselect-rust-0.2_pre20141128
+CDEPEND=">=app-eselect/eselect-rust-0.2_pre20141128
 	!dev-lang/rust:0
 "
 DEPEND="${CDEPEND}
