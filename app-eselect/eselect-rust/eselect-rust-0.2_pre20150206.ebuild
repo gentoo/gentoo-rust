@@ -12,7 +12,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-RDEPEND="app-eselect/eselect"
+RDEPEND="app-admin/eselect"
 
 pkg_preinst() {
 	if has_version 'app-eselect/eselect-rust' ; then
