@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit eutils git-r3
+inherit eutils bash-completion-r1 git-r3
 
 DESCRIPTION="A Rust's package manager"
 HOMEPAGE="http://crates.io/"
@@ -36,4 +36,6 @@ src_configure() {
 
 src_install() {
 	CFG_DISABLE_LDCONFIG="true" emake DESTDIR="${D}" install || die
+	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
+	rm -rf "${ED}"/usr/etc
 }
