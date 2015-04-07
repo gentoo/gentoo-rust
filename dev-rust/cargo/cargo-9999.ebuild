@@ -21,17 +21,8 @@ RDEPEND=">=virtual/rust-999"
 DEPEND="${DEPEND}
 	dev-util/cmake"
 
-src_prepare() {
-	use x86 && export BITS=32
-	CFG_DISABLE_LDCONFIG="nonempty" ./.travis.install.deps.sh || die
-}
-
 src_configure() {
-	./configure \
-		--local-rust-root="${PWD}/rustc" \
-		--prefix="${EPREFIX}"/usr \
-		--disable-verify-install \
-	|| die
+	./configure --prefix="${EPREFIX}"/usr --disable-verify-install || die
 }
 
 src_install() {
