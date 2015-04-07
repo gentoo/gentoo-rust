@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit eutils git-r3
+inherit eutils bash-completion-r1 git-r3
 
 DESCRIPTION="A Rust's package manager"
 HOMEPAGE="http://crates.io/"
@@ -17,23 +17,18 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 
-RDEPEND=">=virtual/rust-999"
-DEPEND="${DEPEND}
+COMMON_DEPEND=">=virtual/rust-999"
+RDEPEND="${COMMON_DEPEND}
+	net-misc/curl[curl_ssl_openssl]"
+DEPEND="${COMMON_DEPEND}
 	dev-util/cmake"
 
-src_prepare() {
-	use x86 && export BITS=32
-	CFG_DISABLE_LDCONFIG="nonempty" ./.travis.install.deps.sh || die
-}
-
 src_configure() {
-	./configure \
-		--local-rust-root="${PWD}/rustc" \
-		--prefix="${EPREFIX}"/usr \
-		--disable-verify-install \
-	|| die
+	./configure --prefix="${EPREFIX}"/usr --disable-verify-install || die
 }
 
 src_install() {
 	CFG_DISABLE_LDCONFIG="true" emake DESTDIR="${D}" install || die
+	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
+	rm -rf "${ED}"/usr/etc
 }
