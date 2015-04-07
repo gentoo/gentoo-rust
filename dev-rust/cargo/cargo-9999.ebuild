@@ -17,8 +17,10 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 
-RDEPEND=">=virtual/rust-999"
-DEPEND="${DEPEND}
+COMMON_DEPEND=">=virtual/rust-999"
+RDEPEND="${COMMON_DEPEND}
+	net-misc/curl[curl_ssl_openssl]"
+DEPEND="${COMMON_DEPEND}
 	dev-util/cmake"
 
 src_configure() {
