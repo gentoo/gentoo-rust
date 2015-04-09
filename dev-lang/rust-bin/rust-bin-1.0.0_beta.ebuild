@@ -1,39 +1,35 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI="5"
 
 inherit eutils
 
+MY_PV="${PV/_/-}"
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
+SRC_URI="amd64? ( http://static.rust-lang.org/dist/rust-${MY_PV}-x86_64-unknown-linux-gnu.tar.gz )
+	x86? ( http://static.rust-lang.org/dist/rust-${MY_PV}-i686-unknown-linux-gnu.tar.gz )"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 IUSE="doc"
 
-CDEPEND=">=app-eselect/eselect-rust-0.2_pre20141128
+DEPEND=">=app-eselect/eselect-rust-0.2_pre20150206
 	!dev-lang/rust:0
 "
-DEPEND="${CDEPEND}
-	net-misc/wget
-"
-RDEPEND="${CDEPEND}
-"
+RDEPEND="${DEPEND}"
 
 src_unpack() {
+	default
+
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu
 	use x86 && postfix=i686-unknown-linux-gnu
-
-	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
-	unpack ./"rust-nightly-${postfix}.tar.gz"
-
-	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
+	mv "${WORKDIR}/rust-${MY_PV}-${postfix}" "${S}" || die
 }
 
 src_install() {
@@ -44,7 +40,7 @@ src_install() {
 		--disable-verify \
 		--prefix="${D}/opt/${P}" \
 		--mandir="${D}/usr/share/${P}/man" \
-			--disable-ldconfig
+		--disable-ldconfig
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
