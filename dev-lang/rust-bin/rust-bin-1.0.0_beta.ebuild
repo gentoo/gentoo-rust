@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit eutils
+inherit eutils bash-completion-r1
 
 MY_PV="${PV/_/-}"
 DESCRIPTION="Systems programming language from Mozilla"
@@ -16,10 +16,11 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="doc"
+IUSE="cargo-bundled doc"
 
 DEPEND=">=app-eselect/eselect-rust-0.2_pre20150206
 	!dev-lang/rust:0
+	cargo-bundled? ( !dev-rust/cargo )
 "
 RDEPEND="${DEPEND}"
 
@@ -34,6 +35,7 @@ src_unpack() {
 
 src_install() {
 	local components=rustc
+	use cargo-bundled && components="${components},cargo"
 	use doc && components="${components},rust-docs"
 	./install.sh \
 		--components="${components}" \
@@ -62,6 +64,14 @@ src_install() {
 
 	dodir /etc/env.d/rust
 	touch "${D}/etc/env.d/rust/provider-${P}" || die
+	if use cargo-bundled ; then
+		local cargo=cargo-bin-${PV}
+		mv "${D}/opt/${P}/bin/cargo" "${D}/opt/${P}/bin/${cargo}" || die
+		dosym "/opt/${P}/bin/cargo" "/usr/bin/${cargo}"
+		dosym "/opt/${P}/share/zsh/site-functions/_cargo" "/usr/share/zsh/site-functions/_${cargo}"
+		newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" "${cargo}"
+		rm -rf "${D}/opt/${P}/etc"
+	fi
 }
 
 pkg_postinst() {
