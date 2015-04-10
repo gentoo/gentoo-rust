@@ -5,4 +5,8 @@
     <email>jauhien@gentoo.org</email>
     <name>Jauhien Piatlicki</name>
   </maintainer>
+  <use>
+    <flag name="cargo-bundled">Use the bundled cargo
+    instead of <pkg>dev-rust/cargo</pkg></flag>
+  </use>
 </pkgmetadata>
