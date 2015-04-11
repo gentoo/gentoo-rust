@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
 EAPI=5
 
-inherit eutils
+inherit eutils bash-completion-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -14,10 +14,11 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="0"
 KEYWORDS=""
 
-IUSE="doc"
+IUSE="cargo-bundled doc"
 
 CDEPEND=">=app-eselect/eselect-rust-0.2_pre20141128
 	!dev-lang/rust:0
+	cargo-bundled? ( !dev-rust/cargo )
 "
 DEPEND="${CDEPEND}
 	net-misc/wget
@@ -38,13 +39,14 @@ src_unpack() {
 
 src_install() {
 	local components=rustc
+	use cargo-bundled && components="${components},cargo"
 	use doc && components="${components},rust-docs"
 	./install.sh \
 		--components="${components}" \
 		--disable-verify \
 		--prefix="${D}/opt/${P}" \
 		--mandir="${D}/usr/share/${P}/man" \
-			--disable-ldconfig
+		--disable-ldconfig
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
@@ -66,6 +68,12 @@ src_install() {
 
 	dodir /etc/env.d/rust
 	touch "${D}/etc/env.d/rust/provider-${P}" || die
+	if use cargo-bundled ; then
+		dosym "/opt/${P}/bin/cargo" /usr/bin/cargo
+		dosym "/opt/${P}/share/zsh/site-functions/_cargo" /usr/share/zsh/site-functions/_cargo
+		newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" cargo
+		rm -rf "${D}/opt/${P}/etc"
+	fi
 }
 
 pkg_postinst() {
