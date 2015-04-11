@@ -62,7 +62,6 @@ src_configure() {
 		--libdir="${EPREFIX}/usr/lib/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--disable-manage-submodules \
-		--disable-verify-install \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
