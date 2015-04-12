@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="5"
+EAPI=5
 
 inherit eutils bash-completion-r1
 
@@ -65,11 +65,9 @@ src_install() {
 	dodir /etc/env.d/rust
 	touch "${D}/etc/env.d/rust/provider-${P}" || die
 	if use cargo-bundled ; then
-		local cargo=cargo-bin-${PV}
-		mv "${D}/opt/${P}/bin/cargo" "${D}/opt/${P}/bin/${cargo}" || die
-		dosym "/opt/${P}/bin/cargo" "/usr/bin/${cargo}"
-		dosym "/opt/${P}/share/zsh/site-functions/_cargo" "/usr/share/zsh/site-functions/_${cargo}"
-		newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" "${cargo}"
+		dosym "/opt/${P}/bin/cargo" /usr/bin/cargo
+		dosym "/opt/${P}/share/zsh/site-functions/_cargo" /usr/share/zsh/site-functions/_cargo
+		newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" cargo
 		rm -rf "${D}/opt/${P}/etc"
 	fi
 }
