@@ -10,7 +10,7 @@ DESCRIPTION="An IDE for Rust"
 HOMEPAGE="https://sekao.net/solidoak/"
 SRC_URI=""
 
-LICENSE="PD"
+LICENSE="public-domain"
 SLOT="0"
 KEYWORDS=""
 IUSE=""
