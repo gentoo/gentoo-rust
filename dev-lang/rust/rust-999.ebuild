@@ -8,6 +8,8 @@ PYTHON_COMPAT=( python2_7 )
 
 inherit eutils python-any-r1
 
+RUST_CHANNEL="nightly"
+
 MY_P=rustc-nightly
 
 DESCRIPTION="Systems programming language from Mozilla"
@@ -61,6 +63,7 @@ src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
+		--release-channel=${RUST_CHANNEL} \
 		--disable-manage-submodules \
 		$(use_enable clang) \
 		$(use_enable debug) \
