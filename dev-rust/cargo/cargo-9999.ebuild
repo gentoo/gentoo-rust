@@ -19,7 +19,7 @@ EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 
 COMMON_DEPEND=">=virtual/rust-999
 	sys-libs/zlib
-	dev-libs/openssl
+	dev-libs/openssl:*
 	net-libs/libssh2
 	net-libs/http-parser"
 RDEPEND="${COMMON_DEPEND}
