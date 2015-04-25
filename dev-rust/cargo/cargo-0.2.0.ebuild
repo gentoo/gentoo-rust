@@ -27,7 +27,7 @@ IUSE=""
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 EGIT_COMMIT="${PV}"
 
-COMMON_DEPEND=">=virtual/rust-999
+COMMON_DEPEND=">=virtual/rust-1.0
 	sys-libs/zlib
 	dev-libs/openssl:*
 	net-libs/libssh2
