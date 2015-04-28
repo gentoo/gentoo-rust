@@ -16,7 +16,7 @@ KEYWORDS=""
 
 IUSE="cargo-bundled doc"
 
-CDEPEND=">=app-eselect/eselect-rust-0.2_pre20141128
+CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 	cargo-bundled? ( !dev-rust/cargo )
 "
@@ -66,8 +66,14 @@ src_install() {
 	EOF
 	doenvd "${T}"/50${P}
 
+	cat <<-EOF > "${T}/provider-${P}"
+	/usr/bin/rustdoc
+	/usr/bin/rust-gdb
+	EOF
 	dodir /etc/env.d/rust
-	touch "${D}/etc/env.d/rust/provider-${P}" || die
+	insinto /etc/env.d/rust
+	doins "${T}/provider-${P}"
+
 	if use cargo-bundled ; then
 		dosym "/opt/${P}/bin/cargo" /usr/bin/cargo
 		dosym "/opt/${P}/share/zsh/site-functions/_cargo" /usr/share/zsh/site-functions/_cargo
@@ -78,11 +84,6 @@ src_install() {
 
 pkg_postinst() {
 	eselect rust update --if-unset
-
-	elog "Rust uses slots now, use 'eselect rust list'"
-	elog "and 'eselect rust set' to list and set rust version."
-	elog "For more information see 'eselect rust help'"
-	elog "and http://wiki.gentoo.org/wiki/Project:Eselect/User_guide"
 
 	elog "Rust installs a helper script for calling GDB now,"
 	elog "for your convenience it is installed under /usr/bin/rust-gdb-bin-${PV},"
