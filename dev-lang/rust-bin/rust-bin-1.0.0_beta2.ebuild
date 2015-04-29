@@ -42,7 +42,8 @@ src_install() {
 		--disable-verify \
 		--prefix="${D}/opt/${P}" \
 		--mandir="${D}/usr/share/${P}/man" \
-		--disable-ldconfig
+		--disable-ldconfig \
+		|| die
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
