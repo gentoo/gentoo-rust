@@ -31,6 +31,10 @@ src_configure() {
 	./configure --prefix="${EPREFIX}"/usr --disable-verify-install || die
 }
 
+src_compile() {
+	emake VERBOSE=1 PKG_CONFIG_PATH="" || die
+}
+
 src_install() {
 	CFG_DISABLE_LDCONFIG="true" emake DESTDIR="${D}" install || die
 	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
