@@ -1,5 +1,0 @@
-# Ebuild added as a template for next versions.
-# Build fails with both rust-beta (unstable features)
-# and latest nightly/dev (broken build of old crates from Cargo.lock).
-# Will be removed once working version is released.
-=dev-rust/cargo-0.2.0
