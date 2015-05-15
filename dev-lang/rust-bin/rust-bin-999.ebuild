@@ -11,7 +11,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="0"
+SLOT="nightly"
 KEYWORDS=""
 
 IUSE="cargo-bundled doc"
