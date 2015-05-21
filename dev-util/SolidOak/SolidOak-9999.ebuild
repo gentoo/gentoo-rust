@@ -33,4 +33,3 @@ src_compile() {
 src_install() {
 	dobin target/release/solidoak || die
 }
-
