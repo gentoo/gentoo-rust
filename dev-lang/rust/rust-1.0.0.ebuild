@@ -83,6 +83,8 @@ src_compile() {
 }
 
 src_install() {
+	unset SUDO_USER
+
 	default
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
