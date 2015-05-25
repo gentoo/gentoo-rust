@@ -78,7 +78,7 @@ COMMON_DEPEND="sys-libs/zlib
 	net-libs/libssh2
 	net-libs/http-parser"
 RDEPEND="${COMMON_DEPEND}
-	net-misc/curl[curl_ssl_openssl]"
+	net-misc/curl[ssl]"
 DEPEND="${COMMON_DEPEND}
 	dev-util/cmake"
 
