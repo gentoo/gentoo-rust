@@ -91,16 +91,15 @@ src_install() {
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
 
-	rm "${D}/usr/share/doc/rust" -rf
-
 	# le kludge that fixes https://github.com/Heather/gentoo-rust/issues/41
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"/* "${D}/usr/lib/rust-${PV}/rustlib/"
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/"
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/"
+	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"/* "${D}/usr/lib/rust-${PV}/rustlib/" || die
+	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib" || die
+	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/" || die
+	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/" || die
 
-	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/"
-	rmdir "${D}/usr/share/doc/rust/"
+	dodir "/usr/share/doc/rust-${PV}/"
+	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
+	rmdir "${D}/usr/share/doc/rust/" || die
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/lib/${P}"
