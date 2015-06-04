@@ -100,9 +100,15 @@ src_prepare() {
 }
 ```
 
-For `dev-lang/rust-bin` we have no slots currently.
+For `dev-lang/rust-bin` have two slots now:
 
-## eselect-rust
+* `1.0` -- 1.0 release
+* `nightly` -- nightly version
+
+Note, that `cargo` USE is available only for `nightly` `dev-lang/rust-bin`
+and `cargo` binary is not under the eselect control.
+
+## Eselect-rust
 
 Rust compiler packages use [eselect-rust](https://github.com/jauhien/eselect-rust) to managed their symlinks.
 Consult its README for information on how to properly register your package in eselect.
