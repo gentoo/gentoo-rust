@@ -8,14 +8,14 @@ PYTHON_COMPAT=( python2_7 )
 
 inherit eutils python-any-r1
 
-MY_P=rustc-nightly
+MY_P=rustc-beta
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="nightly"
+SLOT="beta"
 KEYWORDS=""
 
 IUSE="clang debug doc libcxx +system-llvm"

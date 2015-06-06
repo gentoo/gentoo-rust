@@ -6,18 +6,15 @@ EAPI=5
 
 inherit eutils bash-completion-r1
 
-BETA_NUM="${PV##*beta}"
-MY_PV="${PV/_/-}"
-# beta => beta BUT beta2 => beta.2
-[ -n "${BETA_NUM}" ] && MY_PV="${MY_PV/beta/beta.}"
-MY_P="rustc-${MY_PV}"
+MY_P="rustc-${PV}"
+
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 SRC_URI="amd64? ( http://static.rust-lang.org/dist/${MY_P}-x86_64-unknown-linux-gnu.tar.gz )
 	x86? ( http://static.rust-lang.org/dist/${MY_P}-i686-unknown-linux-gnu.tar.gz )"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="1.0"
+SLOT="stable"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 

@@ -83,11 +83,10 @@ Exceptions are trivial changes and urgent changes (that fix something completely
 
 Currently we have these slots for `dev-lang/rust`:
 
-* `1.0` -- 1.0 release
+* `stable` -- stable release
+* `beta` -- beta version
 * `nightly` -- nightly version
 * `git` -- upstream git version
-
-This will probably change to some other schema that corresponds to current release channels (a subject to discussion).
 
 Note, that source packages use a custom postfix for Rust libraries.
 This is important, as otherwise simultaneously installed different Rust versions will fail to work.
@@ -100,13 +99,15 @@ src_prepare() {
 }
 ```
 
-For `dev-lang/rust-bin` have two slots now:
+For `dev-lang/rust-bin` slots are:
 
-* `1.0` -- 1.0 release
+* `stable` -- stable release
+* `beta` -- beta version
 * `nightly` -- nightly version
 
-Note, that `cargo` USE is available only for `nightly` `dev-lang/rust-bin`
-and `cargo` binary is not under the eselect control.
+Note, that `cargo-bundled` USE is available only for `nightly` and `beta` `dev-lang/rust-bin`
+and `cargo` binary is not under the eselect control, so `nightly` and `beta` cannot have `cargo-bundled`
+USE enabled at the same time.
 
 ## Eselect-rust
 
@@ -148,4 +149,4 @@ At the moment these packages are:
 * app-shells/rust-zshcomp
 * app-vim/rust-mode
 * dev-lang/rust
-* dev-lang/rust-binary
+* dev-lang/rust-bin

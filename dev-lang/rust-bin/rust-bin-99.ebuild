@@ -8,10 +8,10 @@ inherit eutils bash-completion-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
+MY_SRC_URI="http://static.rust-lang.org/dist/rust-beta"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="nightly"
+SLOT="beta"
 KEYWORDS=""
 
 IUSE="cargo-bundled doc"
@@ -20,7 +20,7 @@ CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 	cargo-bundled? (
 		!dev-rust/cargo
-		!dev-lang/rust-bin:beta[cargo-bundled]
+		!dev-lang/rust-bin:nightly[cargo-bundled]
 	)
 "
 DEPEND="${CDEPEND}
@@ -35,9 +35,9 @@ src_unpack() {
 	use x86 && postfix=i686-unknown-linux-gnu
 
 	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
-	unpack ./"rust-nightly-${postfix}.tar.gz"
+	unpack ./"rust-beta-${postfix}.tar.gz"
 
-	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
+	mv "${WORKDIR}/rust-beta-${postfix}" "${S}" || die
 }
 
 src_install() {
