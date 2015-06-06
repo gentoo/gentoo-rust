@@ -8,13 +8,7 @@ PYTHON_COMPAT=( python2_7 )
 
 inherit eutils python-any-r1
 
-RUST_CHANNEL="stable"
-
-BETA_NUM="${PV##*beta}"
-MY_PV="${PV/_/-}"
-# beta => beta BUT beta2 => beta.2
-[ -n "${BETA_NUM}" ] && MY_PV="${MY_PV/beta/beta.}"
-MY_P="rustc-${MY_PV}"
+MY_P="rustc-${PV}"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -24,7 +18,7 @@ SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz
 	amd64? ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-03-27-5520801-linux-x86_64-ef2154372e97a3cb687897d027fd51c8f2c5f349.tar.bz2 )"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="1.0"
+SLOT="stable"
 KEYWORDS="~amd64 ~x86"
 
 IUSE="clang debug doc libcxx +system-llvm"
@@ -40,8 +34,7 @@ DEPEND="${CDEPEND}
 	clang? ( sys-devel/clang )
 	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
-RDEPEND="${CDEPEND}
-"
+RDEPEND="${CDEPEND}"
 
 S=${WORKDIR}/${MY_P}
 
@@ -63,7 +56,7 @@ src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/lib/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
-		--release-channel=${RUST_CHANNEL} \
+		--release-channel=${SLOT} \
 		--disable-manage-submodules \
 		$(use_enable clang) \
 		$(use_enable debug) \
