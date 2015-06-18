@@ -17,7 +17,7 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/oakes/SolidOak.git"
 
-RDEPEND="dev-lang/rust
+RDEPEND="dev-lang/rust:*
 	dev-util/racer
 	x11-libs/vte
 	app-editors/neovim
