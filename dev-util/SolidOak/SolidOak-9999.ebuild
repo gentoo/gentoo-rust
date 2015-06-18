@@ -17,7 +17,7 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/oakes/SolidOak.git"
 
-RDEPEND="dev-lang/rust
+RDEPEND="dev-lang/rust:*
 	dev-util/racer
 	x11-libs/vte
 	app-editors/neovim
@@ -32,4 +32,6 @@ src_compile() {
 
 src_install() {
 	dobin target/release/solidoak || die
+	doicon "${S}/resources/solidoak.svg"
+	domenu "${S}/resources/SolidOak.desktop"
 }
