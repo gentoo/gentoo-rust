@@ -6,7 +6,7 @@ EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils git-r3 python-any-r1
+inherit eutils git-r3 multilib python-any-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -47,13 +47,14 @@ src_unpack() {
 src_prepare() {
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
+	epatch "${FILESDIR}/${PN}-1.1.0-install.patch"
 }
 
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
-		--libdir="${EPREFIX}/usr/lib/${P}" \
+		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--disable-manage-submodules \
 		$(use_enable clang) \
@@ -80,18 +81,12 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 
-	# le kludge that fixes https://github.com/Heather/gentoo-rust/issues/41
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"/* "${D}/usr/lib/rust-${PV}/rustlib/" || die
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib" || die
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/" || die
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/" || die
-
 	dodir "/usr/share/doc/rust-${PV}/"
 	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
 	rmdir "${D}/usr/share/doc/rust/" || die
 
 	cat <<-EOF > "${T}"/50${P}
-	LDPATH="/usr/lib/${P}"
+	LDPATH="/usr/$(get_libdir)/${P}"
 	MANPATH="/usr/share/${P}/man"
 	EOF
 	doenvd "${T}"/50${P}

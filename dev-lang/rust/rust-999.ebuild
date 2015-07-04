@@ -6,7 +6,7 @@ EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils python-any-r1
+inherit eutils multilib python-any-r1
 
 MY_P=rustc-nightly
 
@@ -53,13 +53,14 @@ src_unpack() {
 src_prepare() {
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
+	epatch "${FILESDIR}/${PN}-1.1.0-install.patch"
 }
 
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
-		--libdir="${EPREFIX}/usr/lib/${P}" \
+		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--release-channel=${SLOT} \
 		--disable-manage-submodules \
@@ -89,18 +90,12 @@ src_install() {
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
 
-	# le kludge that fixes https://github.com/Heather/gentoo-rust/issues/41
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib"/* "${D}/usr/lib/rust-${PV}/rustlib/" || die
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/rustlib" || die
-	mv "${D}/usr/lib/rust-${PV}/rust-${PV}/"/* "${D}/usr/lib/rust-${PV}/" || die
-	rmdir "${D}/usr/lib/rust-${PV}/rust-${PV}/" || die
-
 	dodir "/usr/share/doc/rust-${PV}/"
 	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
 	rmdir "${D}/usr/share/doc/rust/" || die
 
 	cat <<-EOF > "${T}"/50${P}
-	LDPATH="/usr/lib/${P}"
+	LDPATH="/usr/$(get_libdir)/${P}"
 	MANPATH="/usr/share/${P}/man"
 	EOF
 	doenvd "${T}"/50${P}
