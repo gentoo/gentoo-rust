@@ -1,7 +1,7 @@
-diff --git a/cargo-0.2.0/Makefile.in b/cargo-0.2.0/Makefile.in
+diff --git a/cargo-0.3.0/Makefile.in b/cargo-0.3.0/Makefile.in
 index 467df7d..4527b5a 100644
---- a/Makefile.in
-+++ b/Makefile.in
+--- a/cargo-0.3.0/Makefile.in
++++ b/cargo-0.3.0/Makefile.in
 @@ -17,10 +17,14 @@ else
  CFG_RELEASE=$(CFG_RELEASE_NUM)$(CFG_RELEASE_LABEL)
  CFG_PACKAGE_VERS=$(CFG_RELEASE)
@@ -16,5 +16,5 @@ index 467df7d..4527b5a 100644
  CFG_VERSION = $(CFG_RELEASE) ($(CFG_VER_HASH) $(CFG_VER_DATE)) (built $(CFG_BUILD_DATE))
 +endif
  PKG_NAME = cargo-$(CFG_PACKAGE_VERS)
- 
+
  ifdef CFG_DISABLE_VERIFY_INSTALL

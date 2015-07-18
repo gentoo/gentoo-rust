@@ -3,11 +3,11 @@
 # $Header: $
 
 EAPI=5
-
-inherit eutils bash-completion-r1
+AUTOTOOLS_IN_SOURCE_BUILD=1
+inherit bash-completion-r1 autotools-utils
 
 DESCRIPTION="A Rust's package manager"
-HOMEPAGE="http://crates.io/"
+HOMEPAGE="http://crates.io"
 
 CARGO_SNAPSHOT_DATE="2015-04-02"
 RUST_INSTALLER_COMMIT="e54d4823d26cdb3f98e5a1b17e1c257cd329aa61"
@@ -59,16 +59,20 @@ url-0.2.35
 SRC_URI="https://github.com/rust-lang/cargo/archive/${PV}.tar.gz -> ${P}.tar.gz
 	https://github.com/rust-lang/rust-installer/archive/${RUST_INSTALLER_COMMIT}.tar.gz -> rust-installer-${RUST_INSTALLER_COMMIT}.tar.gz
 	$(crate_uris $CRATES)
-	x86?   ( https://static-rust-lang-org.s3.amazonaws.com/cargo-dist/${CARGO_SNAPSHOT_DATE}/cargo-nightly-i686-unknown-linux-gnu.tar.gz ->
-		cargo-nightly-i686-unknown-linux-gnu-${CARGO_SNAPSHOT_DATE}.tar.gz )
-	amd64? ( https://static-rust-lang-org.s3.amazonaws.com/cargo-dist/${CARGO_SNAPSHOT_DATE}/cargo-nightly-x86_64-unknown-linux-gnu.tar.gz ->
-		cargo-nightly-x86_64-unknown-linux-gnu-${CARGO_SNAPSHOT_DATE}.tar.gz )"
+	x86?   (
+		https://static-rust-lang-org.s3.amazonaws.com/cargo-dist/${CARGO_SNAPSHOT_DATE}/cargo-nightly-i686-unknown-linux-gnu.tar.gz ->
+		cargo-nightly-i686-unknown-linux-gnu-${CARGO_SNAPSHOT_DATE}.tar.gz
+	)
+	amd64? (
+		https://static-rust-lang-org.s3.amazonaws.com/cargo-dist/${CARGO_SNAPSHOT_DATE}/cargo-nightly-x86_64-unknown-linux-gnu.tar.gz ->
+		cargo-nightly-x86_64-unknown-linux-gnu-${CARGO_SNAPSHOT_DATE}.tar.gz
+	)"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE=""
+IUSE="doc"
 
 COMMON_DEPEND="sys-libs/zlib
 	dev-libs/openssl:*
@@ -79,6 +83,11 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	|| ( >=dev-lang/rust-1.1.0 >=dev-lang/rust-bin-1.1.0 )
 	dev-util/cmake"
+
+PATCHES=(
+	"${FILESDIR}"/${P}-makefile.patch
+	"${FILESDIR}"/${P}-local-deps.patch
+)
 
 src_unpack() {
 	for archive in ${A}; do
@@ -93,30 +102,59 @@ src_unpack() {
 				;;
 		esac
 	done
-	mv rustc-nightly-*-unknown-linux-gnu "rustc-snapshot"
-	mv cargo-nightly-*-unknown-linux-gnu "cargo-snapshot"
-	mv "rust-installer-${RUST_INSTALLER_COMMIT}"/* "${P}"/src/rust-installer
+
+	mv cargo-nightly-*-unknown-linux-gnu "cargo-snapshot" || die
+	mv "rust-installer-${RUST_INSTALLER_COMMIT}"/* "${P}"/src/rust-installer || die
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${P}-makefile.patch"
-	pushd .. &>/dev/null
-	epatch "${FILESDIR}/${P}-local-deps.patch"
+	pushd "${WORKDIR}" &>/dev/null
+	autotools-utils_src_prepare
 	popd &>/dev/null
+
+	# FIX: doc path
+	sed -i \
+		-e "s:/share/doc/cargo:/share/doc/${PF}:" \
+		Makefile.in || die
 }
 
 src_configure() {
-	./configure --prefix="${EPREFIX}"/usr \
-		--disable-verify-install --disable-debug --enable-optimize \
-		--local-cargo="${WORKDIR}"/cargo-snapshot/cargo/bin/cargo || die
+	# Cargo only supports these GNU triples:
+	# - Linux: <arch>-unknown-linux-gnu
+	# - MacOS: <arch>-apple-darwin
+	# - Windows: <arch>-pc-windows-gnu
+	# where <arch> could be 'x86_64' (amd64) or 'i686' (x86)
+	local CTARGET="-unknown-linux-gnu"
+	use amd64 && CTARGET="x86_64${CTARGET}"
+	use x86 && CTARGET="i686${CTARGET}"
+
+	local myeconfargs=(
+		--build=${CTARGET}
+		--host=${CTARGET}
+		--target=${CTARGET}
+		--enable-optimize
+		--disable-verify-install
+		--disable-debug
+		--disable-cross-tests
+		--local-cargo="${WORKDIR}"/cargo-snapshot/cargo/bin/cargo
+	)
+	autotools-utils_src_configure
 }
 
 src_compile() {
-	emake VERBOSE=1 PKG_CONFIG_PATH="" || die
+	# Building sources
+	autotools-utils_src_compile VERBOSE=1 PKG_CONFIG_PATH=""
+
+	# Building HTML documentation
+	use doc && emake doc
 }
 
 src_install() {
-	CFG_DISABLE_LDCONFIG="true" emake DESTDIR="${D}" install || die
+	autotools-utils_src_install VERBOSE=1 CFG_DISABLE_LDCONFIG="true"
+
+	# Install HTML documentation
+	dohtml -r target/doc/*
+
 	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
-	rm -rf "${ED}"/usr/etc
+	rm -rf "${ED}"/usr/etc || die
 }
