@@ -16,7 +16,7 @@ IUSE="emacs vim"
 
 EGIT_REPO_URI="https://github.com/phildawes/racer"
 
-COMMON_DEPEND="dev-lang/rust
+COMMON_DEPEND="dev-lang/rust:*
 	emacs? (
 		app-emacs/company-mode[ropemacs]
 		app-emacs/rust-mode
