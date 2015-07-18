@@ -28,4 +28,3 @@ src_install() {
 	dobin target/release/rusty-tags || die
 	dodoc README.md
 }
-
