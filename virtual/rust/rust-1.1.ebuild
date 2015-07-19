@@ -3,14 +3,13 @@
 # $Header: $
 
 EAPI=5
-inherit versionator
 
 DESCRIPTION="Virtual for Rust language compiler"
 HOMEPAGE=""
 SRC_URI=""
 
 LICENSE=""
-SLOT="0/$(get_version_component_range 1-2 ${PV})"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 DEPEND=""
