@@ -81,7 +81,7 @@ COMMON_DEPEND="sys-libs/zlib
 RDEPEND="${COMMON_DEPEND}
 	net-misc/curl[ssl]"
 DEPEND="${COMMON_DEPEND}
-	|| ( >=dev-lang/rust-1.1.0 >=dev-lang/rust-bin-1.1.0 )
+	>=virtual/rust-1.1
 	dev-util/cmake"
 
 PATCHES=(
@@ -153,8 +153,8 @@ src_install() {
 	autotools-utils_src_install VERBOSE=1 CFG_DISABLE_LDCONFIG="true"
 
 	# Install HTML documentation
-	dohtml -r target/doc/*
+	use doc && dohtml -r target/doc/*
 
 	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
-	rm -rf "${ED}"/usr/etc || die
+	rm -r "${ED}"/usr/etc || die
 }
