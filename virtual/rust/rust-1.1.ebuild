@@ -15,6 +15,6 @@ KEYWORDS="~amd64 ~x86"
 DEPEND=""
 RDEPEND="
 || (
-	=dev-lang/rust-${PV}*:${SLOT}
-	=dev-lang/rust-bin-${PV}*:${SLOT}
+	=dev-lang/rust-${PV}*
+	=dev-lang/rust-bin-${PV}*
 )"
