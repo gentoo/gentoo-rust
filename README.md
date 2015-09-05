@@ -47,7 +47,7 @@ Useful `USE flags`.
 ### `dev-lang/rust`
 
 * `doc` install documentation
-* `system-llvm` use system LLVM (will dicrease compilation time)
+* `system-llvm` use system LLVM (will decrease compilation time)
 
 ### `dev-lang/rust-bin`
 
