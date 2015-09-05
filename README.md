@@ -1,7 +1,13 @@
 Rust overlay
 ============
 
-[![Build Status](https://travis-ci.org/Heather/gentoo-rust.png?branch=master)](https://travis-ci.org/Heather/gentoo-rust) [![Join the chat at https://gitter.im/gentoo/rust](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gentoo/rust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/gentoo/gentoo-rust.png?branch=master)](https://travis-ci.org/gentoo/gentoo-rust) [![Join the chat at https://gitter.im/gentoo/rust](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/gentoo/rust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+# Update
+
+Overlay has been moved to the new [address](https://github.com/gentoo/gentoo-rust).
+No user interaction is needed, layman will handle this automatically. Please, report any issues
+and make pull requests in the new repo.
 
 # User's guide
 
