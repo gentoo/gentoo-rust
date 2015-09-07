@@ -37,7 +37,8 @@ As user you may be interested in these packages:
 
 * `dev-lang/rust` Rust compiler built from sources
 * `dev-lang/rust-bin` Binary packaged Rust compiler
-* `dev-rust/cargo` Cargo rust package manager and build tool
+* `dev-util/cargo` Cargo rust package manager and build tool
+* `dev-util/cargo-bin` Binary packaged cargo rust package manager and build tool
 
 There are other useful packages in this overlay, use `eix` or whatever else to learn about them.
 

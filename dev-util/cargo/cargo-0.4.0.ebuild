@@ -6,7 +6,7 @@ EAPI=5
 AUTOTOOLS_IN_SOURCE_BUILD=1
 inherit bash-completion-r1 autotools-utils
 
-DESCRIPTION="A Rust's package manager"
+DESCRIPTION="The Rust's package manager"
 HOMEPAGE="http://crates.io"
 
 CARGO_SNAPSHOT_DATE="2015-04-02"

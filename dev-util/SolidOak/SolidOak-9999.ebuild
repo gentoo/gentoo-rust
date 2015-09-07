@@ -24,7 +24,7 @@ RDEPEND="dev-lang/rust:*
 	>=x11-libs/gtk+-3.10
 	"
 DEPEND="${DEPEND}
-	dev-rust/cargo"
+	dev-util/cargo"
 
 src_compile() {
 	cargo build --release -j5 || die

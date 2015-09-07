@@ -6,7 +6,7 @@ EAPI=5
 
 inherit eutils bash-completion-r1
 
-DESCRIPTION="A Rust's package manager"
+DESCRIPTION="The Rust's package manager"
 HOMEPAGE="http://crates.io/"
 
 RUST_SNAPSHOT_DATE="2015-04-04"
