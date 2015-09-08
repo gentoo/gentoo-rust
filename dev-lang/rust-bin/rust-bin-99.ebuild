@@ -14,14 +14,10 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="beta"
 KEYWORDS=""
 
-IUSE="cargo-bundled doc"
+IUSE="doc"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
-	cargo-bundled? (
-		!dev-rust/cargo
-		!dev-lang/rust-bin:nightly[cargo-bundled]
-	)
 "
 DEPEND="${CDEPEND}
 	net-misc/wget
@@ -42,7 +38,6 @@ src_unpack() {
 
 src_install() {
 	local components=rustc
-	use cargo-bundled && components="${components},cargo"
 	use doc && components="${components},rust-docs"
 	./install.sh \
 		--components="${components}" \
@@ -77,13 +72,6 @@ src_install() {
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
-
-	if use cargo-bundled ; then
-		dosym "/opt/${P}/bin/cargo" /usr/bin/cargo
-		dosym "/opt/${P}/share/zsh/site-functions/_cargo" /usr/share/zsh/site-functions/_cargo
-		newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" cargo
-		rm -rf "${D}/opt/${P}/etc"
-	fi
 }
 
 pkg_postinst() {

@@ -23,7 +23,7 @@ COMMON_DEPEND="dev-lang/rust:*
 		virtual/emacs )
 	vim? ( || ( app-editors/vim app-editors/gvim ) )"
 DEPEND="${COMMON_DEPEND}
-	dev-rust/cargo"
+	dev-util/cargo"
 RDEPEND="${COMMON_DEPEND}"
 
 src_compile() {

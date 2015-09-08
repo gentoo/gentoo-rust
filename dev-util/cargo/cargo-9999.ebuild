@@ -6,7 +6,7 @@ EAPI=5
 
 inherit eutils bash-completion-r1 git-r3
 
-DESCRIPTION="A Rust's package manager"
+DESCRIPTION="The Rust's package manager"
 HOMEPAGE="http://crates.io/"
 
 LICENSE="|| ( MIT Apache-2.0 )"
