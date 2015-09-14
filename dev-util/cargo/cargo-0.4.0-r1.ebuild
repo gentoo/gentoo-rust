@@ -124,8 +124,6 @@ src_prepare() {
 	sed -i \
 		-e "s:/share/doc/cargo:/share/doc/${PF}:" \
 		Makefile.in || die
-
-#	exit
 }
 
 src_configure() {
