@@ -75,6 +75,7 @@ COMMON_DEPEND="sys-libs/zlib
 	net-libs/libssh2
 	net-libs/http-parser"
 RDEPEND="${COMMON_DEPEND}
+	!dev-util/cargo-bin
 	net-misc/curl[ssl]"
 DEPEND="${COMMON_DEPEND}
 	|| ( >=dev-lang/rust-1.1.0 >=dev-lang/rust-bin-1.1.0 )

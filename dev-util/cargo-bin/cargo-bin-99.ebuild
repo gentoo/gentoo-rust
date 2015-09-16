@@ -14,7 +14,7 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 
-RDEPEND="
+RDEPEND="!dev-util/cargo
 	dev-libs/openssl:*
 	net-misc/curl[ssl]
 	net-libs/libssh2
