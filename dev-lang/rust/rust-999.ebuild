@@ -18,7 +18,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx +system-llvm"
+IUSE="clang debug doc libcxx"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -30,7 +30,6 @@ DEPEND="${CDEPEND}
 	>=dev-lang/perl-5.0
 	net-misc/wget
 	clang? ( sys-devel/clang )
-	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}
 "
@@ -53,6 +52,8 @@ src_unpack() {
 src_prepare() {
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
+	find mk -name '*.mk' -exec \
+		 sed -i -e "s/-Werror / /g" {} \; || die
 	epatch "${FILESDIR}/${PN}-1.1.0-install.patch"
 }
 
@@ -73,7 +74,6 @@ src_configure() {
 		$(use_enable !debug optimize-tests) \
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
-		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
