@@ -6,41 +6,41 @@ EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils git-r3 multilib python-any-r1
+inherit eutils multilib python-any-r1
+
+MY_P="rustc-${PV}"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
+
+SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz
+	amd64? ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-07-26-a5c12f4-linux-x86_64-e451e3bd6e5fcef71e41ae6f3da9fb1cf0e13a0c.tar.bz2 )
+	x86?   ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-07-26-a5c12f4-linux-i386-3459275cdf3896f678e225843fa56f0d9fdbabe8.tar.bz2 )
+"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="git"
-KEYWORDS=""
+SLOT="stable"
+KEYWORDS="~amd64 ~x86"
 
 IUSE="clang debug doc libcxx"
 REQUIRED_USE="libcxx? ( clang )"
 
-CDEPEND="libcxx? ( sys-libs/libcxx )
-	>=app-eselect/eselect-rust-0.3_pre20150425
-	!dev-lang/rust:0
+CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+	libcxx? ( sys-libs/libcxx )
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
 "
-RDEPEND="${CDEPEND}
-"
+RDEPEND="${CDEPEND}"
+
+S=${WORKDIR}/${MY_P}
 
 src_unpack() {
-	git-r3_src_unpack
-
-	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
-	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
-	export CFG_SRC_DIR="${S}" && \
-		cd ${S} && \
-		mkdir -p "${S}/dl" && \
-		mkdir -p "${S}/${BUILD_TRIPLE}/stage0/bin" && \
-		python2 "${S}/src/etc/get-snapshot.py" ${BUILD_TRIPLE} || die
+	unpack "${MY_P}-src.tar.gz" || die
+	mkdir "${MY_P}/dl" || die
+	cp "${DISTDIR}/rust-stage0"* "${MY_P}/dl/" || die
 }
 
 src_prepare() {
@@ -53,10 +53,12 @@ src_prepare() {
 
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
+
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
+		--release-channel=${SLOT} \
 		--disable-manage-submodules \
 		$(use_enable clang) \
 		$(use_enable debug) \
@@ -75,11 +77,15 @@ src_compile() {
 }
 
 src_install() {
+	unset SUDO_USER
+
 	default
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
+
+	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
 
 	dodir "/usr/share/doc/rust-${PV}/"
 	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
