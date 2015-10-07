@@ -8,8 +8,4 @@
   <longdescription>
     Rust Code Completion utility
   </longdescription>
-  <use>
-    <flag name="emacs"> install emacs script </flag>
-    <flag name="vim"> install vim plugin </flag>
-  </use>
 </pkgmetadata>
