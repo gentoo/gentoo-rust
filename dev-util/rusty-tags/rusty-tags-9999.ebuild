@@ -17,7 +17,7 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/dan-t/rusty-tags.git"
 
-RDEPEND="dev-lang/rust:*"
+RDEPEND="virtual/rust:*"
 DEPEND="${DEPEND}"
 
 src_compile() {
