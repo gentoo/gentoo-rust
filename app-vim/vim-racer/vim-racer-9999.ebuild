@@ -26,4 +26,3 @@ pkg_postinst() {
 	elog "You also can use \"set hidden\" or else your buffer will be"
 	elog "unloaded on every goto-definition"
 }
-

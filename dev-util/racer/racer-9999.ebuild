@@ -16,7 +16,7 @@ IUSE=""
 
 EGIT_REPO_URI="https://github.com/phildawes/racer"
 
-COMMON_DEPEND="dev-lang/rust:*"
+COMMON_DEPEND="virtual/rust:*"
 DEPEND="${COMMON_DEPEND}
 	dev-util/cargo"
 RDEPEND="${COMMON_DEPEND}"
@@ -37,4 +37,3 @@ pkg_postinst() {
 	elog "Use vim-racer or emacs-racer for the editos support"
 	elog
 }
-
