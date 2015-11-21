@@ -37,7 +37,7 @@ src_unpack() {
 }
 
 src_install() {
-	local std=$(./install.sh --list-components | grep 'std' | sed -e 's/^\* //')
+	local std=$(grep 'std' ./components)
 	local components="rustc,${std}"
 	use doc && components="${components},rust-docs"
 	./install.sh \
