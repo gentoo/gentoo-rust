@@ -1,0 +1,22 @@
+--- cargo-0.7.0/Makefile.in
++++ cargo-0.7.0/Makefile.in
+@@ -88,7 +88,9 @@
+ 
+ test-unit-$(1): $$(CARGO)
+ 	@mkdir -p target/$(1)/cit
+-	$$(CARGO) test --target $(1) $$(VERBOSE_FLAG) $$(only)
++	"$$(CFG_RUSTC)" -V
++	"$$(CARGO)" --version
++	$$(CARGO) test --target $(1) $$(OPT_FLAG) $$(VERBOSE_FLAG) $$(only)
+ endef
+ $(foreach target,$(CFG_TARGET),$(eval $(call CARGO_TARGET,$(target))))
+ 
+@@ -99,7 +101,7 @@
+ 
+ # === Tests
+ 
+-test: style no-exes $(foreach target,$(CFG_TARGET),test-unit-$(target))
++test: style $(foreach target,$(CFG_TARGET),test-unit-$(target))
+ 
+ style:
+ 	sh tests/check-style.sh

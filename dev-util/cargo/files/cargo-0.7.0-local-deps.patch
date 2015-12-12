@@ -1,0 +1,791 @@
+diff --git a/aho-corasick-0.3.4/Cargo.toml b/aho-corasick-0.3.4/Cargo.toml
+index e41b190..7c6208b 100644
+--- a/aho-corasick-0.3.4/Cargo.toml
++++ b/aho-corasick-0.3.4/Cargo.toml
+@@ -20,14 +20,7 @@ doc = false
+ bench = false
+ 
+ [dependencies]
+-memchr = "0.1.*"
+-
+-[dev-dependencies]
+-csv = "0.14"
+-docopt = "0.6"
+-quickcheck = "0.2"
+-rand = "0.3"
+-rustc-serialize = "0.3"
++memchr = { version = "0.1.7", path = "../memchr-0.1.7" }
+ 
+ [[bench]]
+ name = "bench"
+diff --git a/cargo-0.7.0/Cargo.toml b/cargo-0.7.0/Cargo.toml
+index 4de7184..b4b1ad7 100644
+--- a/cargo-0.7.0/Cargo.toml
++++ b/cargo-0.7.0/Cargo.toml
+@@ -17,37 +17,34 @@ name = "cargo"
+ path = "src/cargo/lib.rs"
+ 
+ [dependencies]
+-advapi32-sys = "0.1"
+ crates-io = { path = "src/crates-io", version = "0.1" }
+-crossbeam = "0.1"
+-curl = "0.2"
+-docopt = "0.6"
+-env_logger = "0.3"
+-filetime = "0.1"
+-flate2 = "0.2"
+-git2 = "0.3"
+-git2-curl = "0.3"
+-glob = "0.2"
+-kernel32-sys = "0.1"
+-libc = "0.1"
+-libgit2-sys = "0.3"
+-log = "0.3"
+-num_cpus = "0.2"
+-regex = "0.1"
+-rustc-serialize = "0.3"
+-semver = "0.2.0"
+-tar = "0.3"
+-term = "0.2"
+-time = "0.1"
+-toml = "0.1"
+-url = "0.2"
+-winapi = "0.2"
++crossbeam = { version = "0.1.6", path = "../crossbeam-0.1.6" }
++curl = { version = "0.2.14", path = "../curl-0.2.14" }
++docopt = { version = "0.6.76", path = "../docopt-0.6.76" }
++env_logger = { version = "0.3.2", path = "../env_logger-0.3.2" }
++filetime = { version = "0.1.7", path = "../filetime-0.1.7" }
++flate2 = { version = "0.2.11", path = "../flate2-0.2.11" }
++git2 = { version = "0.3.3", path = "../git2-0.3.3" }
++git2-curl = { version = "0.3.0", path = "../git2-curl-0.3.0" }
++glob = { version = "0.2.10", path = "../glob-0.2.10" }
++libc = { version = "0.1.12", path = "../libc-0.1.12" }
++libgit2-sys = { version = "0.3.7", path = "../libgit2-sys-0.3.7" }
++log = { version = "0.3.3", path = "../log-0.3.3" }
++num_cpus = { version = "0.2.7", path = "../num_cpus-0.2.7" }
++regex = { version = "0.1.41", path = "../regex-0.1.41" }
++rustc-serialize = { version = "0.3.16", path = "../rustc-serialize-0.3.16" }
++semver = { version = "0.2.0", path = "../semver-0.2.0" }
++tar = { version = "0.3.2", path = "../tar-0.3.2" }
++term = { version = "0.2.13", path = "../term-0.2.13" }
++time = { version = "0.1.34", path = "../time-0.1.34" }
++toml = { version = "0.1.23", path = "../toml-0.1.23" }
++url = { version = "0.2.38", path = "../url-0.2.38" }
+ 
+ [dev-dependencies]
+-tempdir = "0.3"
+-hamcrest = "0.1"
+-bufstream = "0.1"
+-filetime = "0.1"
++tempdir = { version = "0.3.4", path = "../tempdir-0.3.4" }
++hamcrest = { version = "0.1.0", path = "../hamcrest-0.1.0" }
++bufstream = { version = "0.1.1", path = "../bufstream-0.1.1" }
++filetime = { version = "0.1.7", path = "../filetime-0.1.7" }
+ 
+ [[bin]]
+ name = "cargo"
+diff --git a/cargo-0.7.0/src/crates-io/Cargo.toml b/cargo-0.7.0/src/crates-io/Cargo.toml
+index 70068ec..4598cd6 100644
+--- a/cargo-0.7.0/src/crates-io/Cargo.toml
++++ b/cargo-0.7.0/src/crates-io/Cargo.toml
+@@ -13,5 +13,5 @@ name = "crates_io"
+ path = "lib.rs"
+ 
+ [dependencies]
+-curl = "0.2"
+-rustc-serialize = "0.3"
++curl = { version = "0.2.14", path = "../../../curl-0.2.14" }
++rustc-serialize = { version = "0.3.16", path = "../../../rustc-serialize-0.3.16" }
+diff --git a/cmake-0.1.8/Cargo.toml b/cmake-0.1.8/Cargo.toml
+index 1dd51c6..413f74a 100644
+--- a/cmake-0.1.8/Cargo.toml
++++ b/cmake-0.1.8/Cargo.toml
+@@ -14,4 +14,4 @@ A build dependency for running `cmake` to build a native library
+ """
+ 
+ [dependencies]
+-gcc = "0.3.17"
++gcc = { version = "0.3.19", path = "../gcc-0.3.19" }
+diff --git a/curl-0.2.14/Cargo.toml b/curl-0.2.14/Cargo.toml
+index 74f63c8..a90519e 100644
+--- a/curl-0.2.14/Cargo.toml
++++ b/curl-0.2.14/Cargo.toml
+@@ -8,39 +8,36 @@ repository = "https://github.com/carllerche/curl-rust"
+ description = "Rust bindings to libcurl for making HTTP requests"
+ 
+ [dependencies]
+-url = "0.2.0"
+-log = "0.3.0"
+-libc = "0.2"
+-curl-sys = { path = "curl-sys", version = "0.1.0" }
+-
+-[dev-dependencies]
+-env_logger = "0.3.0"
++url = { version = "0.2.38", path = "../url-0.2.38" }
++log = { version = "0.3.3", path = "../log-0.3.3" }
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++curl-sys = { path = "../curl-sys-0.1.28", version = "0.1.28" }
+ 
+ # Unix platforms use OpenSSL for now to provide SSL functionality
+ [target.i686-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-linux-android.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-musl.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-unknown-linux-gnueabihf.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-linux-androideabi.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.aarch64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-bitrig.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-openbsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-dragonfly.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ 
+ [[test]]
+ 
+diff --git a/curl-sys-0.1.28/Cargo.toml b/curl-sys-0.1.28/Cargo.toml
+index 756503a..1162af0 100644
+--- a/curl-sys-0.1.28/Cargo.toml
++++ b/curl-sys-0.1.28/Cargo.toml
+@@ -9,39 +9,39 @@ repository = "https://github.com/carllerche/curl-rust"
+ description = "Native bindings to the libcurl library"
+ 
+ [build-dependencies]
+-pkg-config = "0.3"
+-gcc = "0.3.10"
++pkg-config = { version = "0.3.6", path = "../pkg-config-0.3.6" }
++gcc = { version = "0.3.19", path = "../gcc-0.3.19" }
+ 
+ [lib]
+ name = "curl_sys"
+ path = "lib.rs"
+ 
+ [dependencies]
+-libz-sys = "0.1.0"
+-libc = "0.2"
++libz-sys = { version = "0.1.9", path = "../libz-sys-0.1.9" }
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+ 
+ # Unix platforms use OpenSSL for now to provide SSL functionality
+ [target.i686-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-linux-android.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-musl.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-unknown-linux-gnueabihf.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-linux-androideabi.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.aarch64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-bitrig.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-openbsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-dragonfly.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+diff --git a/docopt-0.6.76/Cargo.toml b/docopt-0.6.76/Cargo.toml
+index c437945..67f2337 100644
+--- a/docopt-0.6.76/Cargo.toml
++++ b/docopt-0.6.76/Cargo.toml
+@@ -20,6 +20,6 @@ doc = false
+ test = false
+ 
+ [dependencies]
+-regex = "0.1"
+-rustc-serialize = "0.3"
+-strsim = "0.3"
++regex = { version = "0.1.41", path = "../regex-0.1.41" }
++rustc-serialize = { version = "0.3.16", path = "../rustc-serialize-0.3.16" }
++strsim = { version = "0.3.0", path = "../strsim-0.3.0" }
+diff --git a/env_logger-0.3.2/Cargo.toml b/env_logger-0.3.2/Cargo.toml
+index fcea1e1..3693c47 100644
+--- a/env_logger-0.3.2/Cargo.toml
++++ b/env_logger-0.3.2/Cargo.toml
+@@ -12,8 +12,8 @@ variable.
+ """
+ 
+ [dependencies.log]
+-version = "0.3"
+-path = ".."
++version = "0.3.3"
++path = "../log-0.3.3"
+ 
+ [dependencies]
+-regex = "0.1"
++regex = { version = "0.1.41", path = "../regex-0.1.41" }
+diff --git a/filetime-0.1.7/Cargo.toml b/filetime-0.1.7/Cargo.toml
+index c490d23..6039874 100644
+--- a/filetime-0.1.7/Cargo.toml
++++ b/filetime-0.1.7/Cargo.toml
+@@ -13,9 +13,4 @@ Platform-agnostic accessors of timestamps in File metadata
+ """
+ 
+ [dependencies]
+-libc = "0.2"
+-kernel32-sys = "0.1"
+-winapi = "0.2"
+-
+-[dev-dependencies]
+-tempdir = "0.3"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+diff --git a/filetime-0.1.7/src/lib.rs b/filetime-0.1.7/src/lib.rs
+index bfbeab7..7790ba1 100644
+--- a/filetime-0.1.7/src/lib.rs
++++ b/filetime-0.1.7/src/lib.rs
+@@ -35,7 +35,9 @@
+ //! ```
+ 
+ extern crate libc;
++#[cfg(windows)]
+ extern crate winapi;
++#[cfg(windows)]
+ extern crate kernel32;
+ 
+ #[cfg(unix)] use std::os::unix::prelude::*;
+diff --git a/flate2-0.2.11/Cargo.toml b/flate2-0.2.11/Cargo.toml
+index 50d5538..9307b8b 100644
+--- a/flate2-0.2.11/Cargo.toml
++++ b/flate2-0.2.11/Cargo.toml
+@@ -16,8 +16,5 @@ streams.
+ """
+ 
+ [dependencies]
+-libc = "0.2"
+-miniz-sys = { path = "miniz-sys", version = "0.1.7" }
+-
+-[dev-dependencies]
+-rand = "0.3"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++miniz-sys = { path = "../miniz-sys-0.1.7", version = "0.1.7" }
+diff --git a/gcc-0.3.19/Cargo.toml b/gcc-0.3.19/Cargo.toml
+index 0140761..ec52474 100644
+--- a/gcc-0.3.19/Cargo.toml
++++ b/gcc-0.3.19/Cargo.toml
+@@ -12,19 +12,3 @@ C compiler to compile native C code into a static archive to be linked into Rust
+ code.
+ """
+ keywords = ["build-dependencies"]
+-
+-[target.i686-pc-windows-msvc.dependencies]
+-winapi = "0.2.1"
+-advapi32-sys = "0.1.2"
+-[target.x86_64-pc-windows-msvc.dependencies]
+-winapi = "0.2.1"
+-advapi32-sys = "0.1.2"
+-[target.i686-pc-windows-gnu.dependencies]
+-winapi = "0.2.1"
+-advapi32-sys = "0.1.2"
+-[target.x86_64-pc-windows-gnu.dependencies]
+-winapi = "0.2.1"
+-advapi32-sys = "0.1.2"
+-
+-[dev-dependencies]
+-tempdir = "0.3"
+diff --git a/git2-0.3.3/Cargo.toml b/git2-0.3.3/Cargo.toml
+index fa1cdbc..08c470a 100644
+--- a/git2-0.3.3/Cargo.toml
++++ b/git2-0.3.3/Cargo.toml
+@@ -16,16 +16,10 @@ repositories.
+ """
+ 
+ [dependencies]
+-url = "0.2"
+-bitflags = "0.1"
+-libc = "0.2"
+-libgit2-sys = { path = "libgit2-sys", version = "0.3.3" }
+-
+-[dev-dependencies]
+-docopt = "0.6"
+-rustc-serialize = "0.3"
+-time = "0.1"
+-tempdir = "0.3"
++url = { version = "0.2.38", path = "../url-0.2.38" }
++bitflags = { version = "0.1.1", path = "../bitflags-0.1.1" }
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++libgit2-sys = { path = "../libgit2-sys-0.3.7", version = "0.3.7" }
+ 
+ [features]
+ unstable = []
+diff --git a/git2-curl-0.3.0/Cargo.toml b/git2-curl-0.3.0/Cargo.toml
+index c1dd237..69b073a 100644
+--- a/git2-curl-0.3.0/Cargo.toml
++++ b/git2-curl-0.3.0/Cargo.toml
+@@ -14,16 +14,10 @@ Intended to be used with the git2 crate.
+ """
+ 
+ [dependencies]
+-curl = "0.2"
+-url = "0.2"
+-log = "0.3"
+-git2 = { path = "..", version = "0.3" }
+-
+-[dev-dependencies]
+-civet = "0.7"
+-conduit = "0.7"
+-conduit-git-http-backend = "0.7"
+-tempdir = "0.3"
++curl = { version = "0.2.14", path = "../curl-0.2.14" }
++url = { version = "0.2.38", path = "../url-0.2.38" }
++log = { version = "0.3.3", path = "../log-0.3.3" }
++git2 = { path = "../git2-0.3.3", version = "0.3.3" }
+ 
+ [[test]]
+ name = "all"
+diff --git a/hamcrest-0.1.0/Cargo.toml b/hamcrest-0.1.0/Cargo.toml
+index bd5f8da..ad98be3 100644
+--- a/hamcrest-0.1.0/Cargo.toml
++++ b/hamcrest-0.1.0/Cargo.toml
+@@ -5,4 +5,4 @@ version = "0.1.0"
+ authors = ["Carllerche <me@carllerche.com>"]
+ 
+ [dependencies]
+-num = "0.1.25"
++num = { version = "0.1.27", path = "../num-0.1.27" }
+diff --git a/libgit2-sys-0.3.7/Cargo.toml b/libgit2-sys-0.3.7/Cargo.toml
+index 216545d..4acce5f 100644
+--- a/libgit2-sys-0.3.7/Cargo.toml
++++ b/libgit2-sys-0.3.7/Cargo.toml
+@@ -14,34 +14,34 @@ name = "libgit2_sys"
+ path = "lib.rs"
+ 
+ [dependencies]
+-libssh2-sys = { version = "0.1.28", optional = true }
+-libc = "0.2"
+-libz-sys = "0.1.0"
++libssh2-sys = { version = "0.1.28", path = "../libssh2-sys-0.1.33", optional = true }
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++libz-sys = { version = "0.1.9", path = "../libz-sys-0.1.9" }
+ 
+ [build-dependencies]
+-pkg-config = "0.3"
+-cmake = "0.1.2"
++pkg-config = { version = "0.3.6", path = "../pkg-config-0.3.6" }
++cmake = { version = "0.1.8", path = "../cmake-0.1.8" }
+ 
+ [target.i686-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-musl.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.aarch64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-unknown-linux-gnueabihf.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-bitrig.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-openbsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-dragonfly.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ 
+ [features]
+ ssh = ["libssh2-sys"]
+diff --git a/libssh2-sys-0.1.33/Cargo.toml b/libssh2-sys-0.1.33/Cargo.toml
+index 0252899..8805197 100644
+--- a/libssh2-sys-0.1.33/Cargo.toml
++++ b/libssh2-sys-0.1.33/Cargo.toml
+@@ -13,36 +13,34 @@ name = "libssh2_sys"
+ path = "lib.rs"
+ 
+ [dependencies]
+-libz-sys = "0.1.0"
+-libc = "0.2"
+-ws2_32-sys = "0.2"
+-winapi = "0.2"
++libz-sys = { version = "0.1.9", path = "../libz-sys-0.1.9" }
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+ 
+ [target.i686-apple-darwin.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-apple-darwin.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.aarch64-unknown-linux-gnu.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-linux-musl.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.arm-unknown-linux-gnueabihf.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.i686-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-freebsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-dragonfly.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-bitrig.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ [target.x86_64-unknown-openbsd.dependencies]
+-openssl-sys = "0.7.0"
++openssl-sys = { version = "0.7.0", path = "../openssl-sys-0.7.0" }
+ 
+ [build-dependencies]
+-pkg-config = "0.3"
+-cmake = "0.1.2"
++pkg-config = { version = "0.3.6", path = "../pkg-config-0.3.6" }
++cmake = { version = "0.1.8", path = "../cmake-0.1.8" }
+diff --git a/libssh2-sys-0.1.33/lib.rs b/libssh2-sys-0.1.33/lib.rs
+index bb6c46f..0707ee5 100644
+--- a/libssh2-sys-0.1.33/lib.rs
++++ b/libssh2-sys-0.1.33/lib.rs
+@@ -2,7 +2,9 @@
+ #![allow(bad_style)]
+ 
+ extern crate libc;
++#[cfg(windows)]
+ extern crate ws2_32;
++#[cfg(windows)]
+ extern crate winapi;
+ 
+ extern crate libz_sys;
+diff --git a/libz-sys-0.1.9/Cargo.toml b/libz-sys-0.1.9/Cargo.toml
+index 4ebb776..006bc30 100644
+--- a/libz-sys-0.1.9/Cargo.toml
++++ b/libz-sys-0.1.9/Cargo.toml
+@@ -13,8 +13,8 @@ Bindings to the system libz library (also known as zlib).
+ """
+ 
+ [dependencies]
+-libc = "0.1"
++libc = { version = "0.1.12", path = "../libc-0.1.12" }
+ 
+ [build-dependencies]
+-pkg-config = "0.3"
+-gcc = "0.3.10"
++pkg-config = { version = "0.3.6", path = "../pkg-config-0.3.6" }
++gcc = { version = "0.3.19", path = "../gcc-0.3.19" }
+diff --git a/log-0.3.3/Cargo.toml b/log-0.3.3/Cargo.toml
+index 510edc0..7adc571 100644
+--- a/log-0.3.3/Cargo.toml
++++ b/log-0.3.3/Cargo.toml
+@@ -17,7 +17,7 @@ name = "filters"
+ harness = false
+ 
+ [dependencies]
+-libc = "0.1"
++libc = { version = "0.1.12", path = "../libc-0.1.12" }
+ 
+ [features]
+ max_level_off   = []
+diff --git a/memchr-0.1.7/Cargo.toml b/memchr-0.1.7/Cargo.toml
+index 49f5797..ff2d958 100644
+--- a/memchr-0.1.7/Cargo.toml
++++ b/memchr-0.1.7/Cargo.toml
+@@ -14,7 +14,4 @@ license = "Unlicense/MIT"
+ name = "memchr"
+ 
+ [dependencies]
+-libc = "0.2"
+-
+-[dev-dependencies]
+-quickcheck = "0.2"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+diff --git a/miniz-sys-0.1.7/Cargo.toml b/miniz-sys-0.1.7/Cargo.toml
+index 0b21ee7..56089ad 100644
+--- a/miniz-sys-0.1.7/Cargo.toml
++++ b/miniz-sys-0.1.7/Cargo.toml
+@@ -16,7 +16,7 @@ name = "miniz_sys"
+ path = "lib.rs"
+ 
+ [dependencies]
+-libc = "0.2"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+ 
+ [build-dependencies]
+-gcc = "0.3"
++gcc = { version = "0.3.19", path = "../gcc-0.3.19" }
+diff --git a/num-0.1.27/Cargo.toml b/num-0.1.27/Cargo.toml
+index ebe6fca..089e1da 100644
+--- a/num-0.1.27/Cargo.toml
++++ b/num-0.1.27/Cargo.toml
+@@ -14,8 +14,8 @@ rational, and complex types.
+ """
+ 
+ [dependencies]
+-rustc-serialize = { version = "0.3.13", optional = true }
+-rand = { version = "0.3.8", optional = true }
++rustc-serialize = { version = "0.3.13", path = "../rustc-serialize-0.3.16", optional = true }
++rand = { version = "0.3.8", path = "../rand-0.3.12", optional = true }
+ 
+ [features]
+ 
+diff --git a/num_cpus-0.2.7/Cargo.toml b/num_cpus-0.2.7/Cargo.toml
+index d6c9522..a0a8362 100644
+--- a/num_cpus-0.2.7/Cargo.toml
++++ b/num_cpus-0.2.7/Cargo.toml
+@@ -9,4 +9,4 @@ repository = "https://github.com/seanmonstar/num_cpus"
+ 
+ 
+ [dependencies]
+-libc = "0.1.7"
++libc = { version = "0.1.12", path = "../libc-0.1.12" }
+diff --git a/openssl-sys-0.7.0/Cargo.toml b/openssl-sys-0.7.0/Cargo.toml
+index 6d625e7..2b9b917 100644
+--- a/openssl-sys-0.7.0/Cargo.toml
++++ b/openssl-sys-0.7.0/Cargo.toml
+@@ -25,31 +25,8 @@ alpn = []
+ rfc5114 = []
+ 
+ [dependencies]
+-libc = "0.2"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+ 
+ [build-dependencies]
+-pkg-config = "0.3"
+-gcc = "0.3"
+-
+-[target.le32-unknown-nacl.dependencies]
+-libressl-pnacl-sys = "2.1.0"
+-[target.x86_64-unknown-nacl.dependencies]
+-libressl-pnacl-sys = "2.1.0"
+-[target.i686-unknown-nacl.dependencies]
+-libressl-pnacl-sys = "2.1.0"
+-[target.arm-unknown-nacl.dependencies]
+-libressl-pnacl-sys = "2.1.0"
+-
+-# Only here to make sure we link to these in a static build on Windows
+-[target.i686-pc-windows-gnu]
+-user32-sys = "0.1"
+-gdi32-sys = "0.1"
+-[target.x86_64-pc-windows-gnu]
+-user32-sys = "0.1"
+-gdi32-sys = "0.1"
+-[target.i686-pc-windows-msvc]
+-user32-sys = "0.1"
+-gdi32-sys = "0.1"
+-[target.x86_64-pc-windows-msvc]
+-user32-sys = "0.1"
+-gdi32-sys = "0.1"
++pkg-config = { version = "0.3.6", path = "../pkg-config-0.3.6" }
++gcc = { version = "0.3.19", path = "../gcc-0.3.19" }
+diff --git a/rand-0.3.12/Cargo.toml b/rand-0.3.12/Cargo.toml
+index b0d9f31..5456569 100644
+--- a/rand-0.3.12/Cargo.toml
++++ b/rand-0.3.12/Cargo.toml
+@@ -14,9 +14,4 @@ Random number generators and other randomness functionality.
+ keywords = ["random", "rng"]
+ 
+ [dependencies]
+-libc = "0.2"
+-winapi = "0.2"
+-advapi32-sys = "0.1.2"
+-
+-[dev-dependencies]
+-log = "0.3.0"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
+diff --git a/regex-0.1.41/Cargo.toml b/regex-0.1.41/Cargo.toml
+index 96b12f9..b2b4192 100644
+--- a/regex-0.1.41/Cargo.toml
++++ b/regex-0.1.41/Cargo.toml
+@@ -34,12 +34,9 @@ test = false
+ bench = true
+ 
+ [dependencies]
+-aho-corasick = "0.3"
+-memchr = "0.1"
+-regex-syntax = { path = "regex-syntax", version = "0.2" }
+-
+-[dev-dependencies]
+-rand = "0.3"
++aho-corasick = { version = "0.3.4", path = "../aho-corasick-0.3.4" }
++memchr = { version = "0.1.7", path = "../memchr-0.1.7" }
++regex-syntax = { path = "../regex-syntax-0.2.2", version = "0.2.2" }
+ 
+ [features]
+ pattern = []
+diff --git a/regex-syntax-0.2.2/Cargo.toml b/regex-syntax-0.2.2/Cargo.toml
+index 3d6eabb..2d93745 100644
+--- a/regex-syntax-0.2.2/Cargo.toml
++++ b/regex-syntax-0.2.2/Cargo.toml
+@@ -7,7 +7,3 @@ repository = "https://github.com/rust-lang/regex"
+ documentation = "http://doc.rust-lang.org/regex/regex_syntax/index.html"
+ homepage = "https://github.com/rust-lang/regex"
+ description = "A regular expression parser."
+-
+-[dev-dependencies]
+-quickcheck = "0.2"
+-rand = "0.3"
+diff --git a/tar-0.3.2/Cargo.toml b/tar-0.3.2/Cargo.toml
+index 5ff46e3..c565468 100644
+--- a/tar-0.3.2/Cargo.toml
++++ b/tar-0.3.2/Cargo.toml
+@@ -18,9 +18,5 @@ contents are never required to be entirely resident in memory all at once.
+ """
+ 
+ [dependencies]
+-libc = "0.2"
+-filetime = "0.1.5"
+-winapi = "0.2"
+-
+-[dev-dependencies]
+-tempdir = "0.3"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++filetime = { version = "0.1.7", path = "../filetime-0.1.7" }
+diff --git a/tar-0.3.2/src/lib.rs b/tar-0.3.2/src/lib.rs
+index 9cdd067..3f36450 100644
+--- a/tar-0.3.2/src/lib.rs
++++ b/tar-0.3.2/src/lib.rs
+@@ -12,6 +12,7 @@
+ #![cfg_attr(test, deny(warnings))]
+ 
+ extern crate libc;
++#[cfg(windows)]
+ extern crate winapi;
+ extern crate filetime;
+ 
+diff --git a/tempdir-0.3.4/Cargo.toml b/tempdir-0.3.4/Cargo.toml
+index 9c8ca76..daeecbc 100644
+--- a/tempdir-0.3.4/Cargo.toml
++++ b/tempdir-0.3.4/Cargo.toml
+@@ -14,4 +14,4 @@ dropped.
+ """
+ 
+ [dependencies]
+-rand = "0.3"
++rand = { version = "0.3.12", path = "../rand-0.3.12" }
+diff --git a/term-0.2.13/Cargo.toml b/term-0.2.13/Cargo.toml
+index 457ac28..6261b15 100644
+--- a/term-0.2.13/Cargo.toml
++++ b/term-0.2.13/Cargo.toml
+@@ -11,7 +11,3 @@ documentation = "https://stebalien.github.io/doc/term/term/"
+ description = """
+ A terminal formatting library
+ """
+-
+-[dependencies]
+-winapi = "0.2"
+-kernel32-sys = "0.2"
+diff --git a/time-0.1.34/Cargo.toml b/time-0.1.34/Cargo.toml
+index a942f78..35a11fd 100644
+--- a/time-0.1.34/Cargo.toml
++++ b/time-0.1.34/Cargo.toml
+@@ -12,11 +12,5 @@ Utilities for working with time-related functions in Rust.
+ """
+ 
+ [dependencies]
+-libc = "0.2.1"
+-winapi = "0.2.0"
+-kernel32-sys = "0.2.0"
+-rustc-serialize = { version = "0.3", optional = true }
+-
+-[dev-dependencies]
+-log = "0.3"
+-advapi32-sys = "0.1.2"
++libc = { version = "0.2.2", path = "../libc-0.2.2" }
++rustc-serialize = { version = "0.3", path = "../rustc-serialize-0.3.16", optional = true }
+diff --git a/toml-0.1.23/Cargo.toml b/toml-0.1.23/Cargo.toml
+index 9d933e9..79baded 100644
+--- a/toml-0.1.23/Cargo.toml
++++ b/toml-0.1.23/Cargo.toml
+@@ -16,11 +16,8 @@ facilitate deserializing and serializing Rust structures.
+ """
+ 
+ [dependencies]
+-rustc-serialize = { optional = true, version = "0.3.0" }
++rustc-serialize = { optional = true, path = "../rustc-serialize-0.3.16", version = "0.3.0" }
+ serde = { optional = true, version = "0.5" }
+ 
+ [features]
+ default = ["rustc-serialize"]
+-
+-[dev-dependencies]
+-rustc-serialize = "0.3"
+diff --git a/url-0.2.38/Cargo.toml b/url-0.2.38/Cargo.toml
+index 355d513..eaeaa7e 100644
+--- a/url-0.2.38/Cargo.toml
++++ b/url-0.2.38/Cargo.toml
+@@ -33,6 +33,6 @@ version = "0.6.1"
+ optional = true
+ 
+ [dependencies]
+-uuid = "0.1.17"
+-rustc-serialize = "0.3"
+-matches = "0.1"
++uuid = { version = "0.1.18", path = "../uuid-0.1.18" }
++rustc-serialize = { version = "0.3.16", path = "../rustc-serialize-0.3.16" }
++matches = { version = "0.1.2", path = "../matches-0.1.2" }
+diff --git a/uuid-0.1.18/Cargo.toml b/uuid-0.1.18/Cargo.toml
+index 98e59eb..d2f00f7 100644
+--- a/uuid-0.1.18/Cargo.toml
++++ b/uuid-0.1.18/Cargo.toml
+@@ -13,6 +13,6 @@ A library to generate and parse UUIDs.
+ """
+ 
+ [dependencies]
+-rustc-serialize = "0.3"
++rustc-serialize = { version = "0.3.16", path = "../rustc-serialize-0.3.16" }
+ serde = { version = "^0.6.0", optional = true }
+-rand = "0.3"
++rand = { version = "0.3.12", path = "../rand-0.3.12" }
