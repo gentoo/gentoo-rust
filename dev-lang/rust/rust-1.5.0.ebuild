@@ -8,45 +8,39 @@ PYTHON_COMPAT=( python2_7 )
 
 inherit eutils multilib python-any-r1
 
-MY_P=rustc-beta
+MY_P="rustc-${PV}"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
+
+SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz
+	amd64? ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-08-11-1af31d4-linux-x86_64-7df8ba9dec63ec77b857066109d4b6250f3d222f.tar.bz2 )
+	x86?   ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-08-11-1af31d4-linux-i386-e2553bf399cd134a08ef3511a0a6ab0d7a667216.tar.bz2 )
+"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="beta"
-KEYWORDS=""
+SLOT="stable"
+KEYWORDS="~amd64 ~x86"
 
 IUSE="clang debug doc libcxx"
 REQUIRED_USE="libcxx? ( clang )"
 
-CDEPEND="libcxx? ( sys-libs/libcxx )
-	>=app-eselect/eselect-rust-0.3_pre20150425
-	!dev-lang/rust:0
+CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+	libcxx? ( sys-libs/libcxx )
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
-	net-misc/wget
 	clang? ( sys-devel/clang )
 "
-RDEPEND="${CDEPEND}
-"
+RDEPEND="${CDEPEND}"
 
-S="${WORKDIR}/${MY_P}"
+S=${WORKDIR}/${MY_P}
 
 src_unpack() {
-	wget "${MY_SRC_URI}" || die
-	unpack ./"${MY_P}-src.tar.gz"
-
-	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
-	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
-	export CFG_SRC_DIR="${S}" && \
-		cd ${S} && \
-		mkdir -p "${S}/dl" && \
-		mkdir -p "${S}/${BUILD_TRIPLE}/stage0/bin" && \
-		python2 "${S}/src/etc/get-snapshot.py" ${BUILD_TRIPLE} || die
+	unpack "${MY_P}-src.tar.gz" || die
+	mkdir "${MY_P}/dl" || die
+	cp "${DISTDIR}/rust-stage0"* "${MY_P}/dl/" || die
 }
 
 src_prepare() {
@@ -54,10 +48,12 @@ src_prepare() {
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
+	epatch "${FILESDIR}/${PN}-1.1.0-install.patch"
 }
 
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
+
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
@@ -81,6 +77,8 @@ src_compile() {
 }
 
 src_install() {
+	unset SUDO_USER
+
 	default
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
