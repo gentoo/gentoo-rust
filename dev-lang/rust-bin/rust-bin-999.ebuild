@@ -25,6 +25,13 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 "
 
+QA_PREBUILT="
+	opt/${P}/bin/rustc-bin-${PV}
+	opt/${P}/bin/rustdoc-bin-${PV}
+	opt/${P}/lib/*.so
+	opt/${P}/lib/rustlib/*/lib/*.so
+"
+
 src_unpack() {
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu

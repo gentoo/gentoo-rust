@@ -23,6 +23,13 @@ DEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 "
 RDEPEND="${DEPEND}"
 
+QA_PREBUILT="
+	opt/${P}/bin/rustc-bin-${PV}
+	opt/${P}/bin/rustdoc-bin-${PV}
+	opt/${P}/lib/*.so
+	opt/${P}/lib/rustlib/*/lib/*.so
+"
+
 src_unpack() {
 	default
 
