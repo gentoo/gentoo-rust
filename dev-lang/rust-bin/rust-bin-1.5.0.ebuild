@@ -6,24 +6,22 @@ EAPI=5
 
 inherit eutils bash-completion-r1
 
+MY_P="rust-${PV}"
+
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
+SRC_URI="amd64? ( http://static.rust-lang.org/dist/${MY_P}-x86_64-unknown-linux-gnu.tar.gz )
+	x86? ( http://static.rust-lang.org/dist/${MY_P}-i686-unknown-linux-gnu.tar.gz )"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="nightly"
-KEYWORDS=""
-
+SLOT="stable"
+KEYWORDS="~amd64 ~x86"
 IUSE="doc"
 
-CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+DEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 "
-DEPEND="${CDEPEND}
-	net-misc/wget
-"
-RDEPEND="${CDEPEND}
-"
+RDEPEND="${DEPEND}"
 
 QA_PREBUILT="
 	opt/${P}/bin/rustc-bin-${PV}
@@ -33,14 +31,12 @@ QA_PREBUILT="
 "
 
 src_unpack() {
+	default
+
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu
 	use x86 && postfix=i686-unknown-linux-gnu
-
-	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
-	unpack ./"rust-nightly-${postfix}.tar.gz"
-
-	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
+	mv "${WORKDIR}/${MY_P}-${postfix}" "${S}" || die
 }
 
 src_install() {
