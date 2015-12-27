@@ -22,7 +22,7 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="clang debug doc libcxx"
+IUSE="clang debug doc libcxx system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
@@ -32,6 +32,8 @@ DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
+	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget(-)]
+		<sys-devel/llvm-3.7.0[multitarget(-)] )
 "
 RDEPEND="${CDEPEND}"
 
@@ -69,6 +71,7 @@ src_configure() {
 		$(use_enable !debug optimize-tests) \
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
+		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
