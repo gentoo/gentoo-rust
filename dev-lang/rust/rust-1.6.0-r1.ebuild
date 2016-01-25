@@ -50,7 +50,6 @@ src_prepare() {
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
-	epatch "${FILESDIR}/${PN}-1.1.0-install.patch"
 }
 
 src_configure() {
