@@ -44,7 +44,7 @@ There are other useful packages in this overlay, use `eix` or whatever else to l
 
 ## Rust compiler implementations
 
-Different Rust versions can be installed simulatneously on Gentoo.
+Different Rust versions can be installed simultaneously on Gentoo.
 [Slots](https://devmanual.gentoo.org/general-concepts/slotting/) and
 [eselect](https://wiki.gentoo.org/wiki/Project:Eselect) are used for this purpose.
 To learn more, see [eselect-rust](https://github.com/jauhien/eselect-rust).
