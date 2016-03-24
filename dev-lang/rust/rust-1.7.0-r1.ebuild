@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils multilib python-any-r1
+inherit python-any-r1
 
 MY_P="rustc-${PV}"
 
@@ -50,6 +50,8 @@ src_prepare() {
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
+
+	eapply_user
 }
 
 src_configure() {
