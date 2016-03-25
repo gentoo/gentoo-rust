@@ -6,9 +6,10 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit python-any-r1
+inherit python-any-r1 versionator
 
 MY_P="rustc-${PV}"
+ABI_VER="$(get_version_component_range 1-2)"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -19,7 +20,7 @@ SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz
 "
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="stable"
+SLOT="stable/${ABI_VER}"
 KEYWORDS="~amd64 ~x86"
 
 IUSE="clang debug doc libcxx system-llvm"
@@ -46,7 +47,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	local postfix="gentoo-${SLOT}"
+	local postfix="gentoo-${SLOT%%/*}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
@@ -61,7 +62,7 @@ src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
-		--release-channel=${SLOT} \
+		--release-channel=${SLOT%%/*} \
 		--disable-manage-submodules \
 		$(use_enable clang) \
 		$(use_enable debug) \
