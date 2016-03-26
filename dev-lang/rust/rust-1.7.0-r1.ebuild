@@ -35,16 +35,18 @@ KEYWORDS="~amd64 ~x86"
 IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
-RDEPEND="libcxx? ( sys-libs/libcxx )
+COMMON_DEPEND="libcxx? ( sys-libs/libcxx )
 	system-llvm? ( >=sys-devel/llvm-3.6.0:=[multitarget]
 		<sys-devel/llvm-3.7.0:=[multitarget] )
 "
 
-DEPEND="${RDEPEND}
+DEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
 "
+
+RDEPEND="${COMMON_DEPEND}"
 
 PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425"
 
