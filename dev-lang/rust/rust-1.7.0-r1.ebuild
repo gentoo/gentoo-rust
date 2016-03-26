@@ -59,8 +59,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	local postfix="gentoo-${SLOT%%/*}"
-	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
 
