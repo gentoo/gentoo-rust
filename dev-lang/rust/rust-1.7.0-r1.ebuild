@@ -75,6 +75,7 @@ src_configure() {
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--release-channel=${SLOT%%/*} \
 		--disable-manage-submodules \
+		--python=${EPYTHON} \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
