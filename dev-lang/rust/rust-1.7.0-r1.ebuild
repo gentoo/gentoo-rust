@@ -101,7 +101,7 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 
-	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
+	dodoc COPYRIGHT
 
 	dodir "/usr/share/doc/rust-${PV}/"
 	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
