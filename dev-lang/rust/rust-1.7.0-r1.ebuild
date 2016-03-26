@@ -35,15 +35,14 @@ KEYWORDS="~amd64 ~x86"
 IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
-COMMON_DEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.6.0:=[multitarget]
-		<sys-devel/llvm-3.7.0:=[multitarget] )
-"
+COMMON_DEPEND="libcxx? ( sys-libs/libcxx )"
 
 DEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
+	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget]
+		<sys-devel/llvm-3.7.0[multitarget] )
 "
 
 RDEPEND="${COMMON_DEPEND}"
