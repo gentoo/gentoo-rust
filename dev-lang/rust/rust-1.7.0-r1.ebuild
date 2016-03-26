@@ -11,12 +11,21 @@ inherit python-any-r1 versionator
 MY_P="rustc-${PV}"
 ABI_VER="$(get_version_component_range 1-2)"
 
+# from src/snapshots.txt
+RUST_SNAPSHOT_DATE="2015-12-18"
+RUST_SNAPSHOT_SRCHASH="3391630"
+RUST_SNAPSHOT_HASH_amd64="97e2a5eb8904962df8596e95d6e5d9b574d73bf4"
+RUST_SNAPSHOT_HASH_x86="a09c4a4036151d0cb28e265101669731600e01f2"
+RUST_STAGE0="rust-stage0-${RUST_SNAPSHOT_DATE}-${RUST_SNAPSHOT_SRCHASH}"
+RUST_STAGE0_amd64="${RUST_STAGE0}-linux-x86_64-${RUST_SNAPSHOT_HASH_amd64}"
+RUST_STAGE0_x86="${RUST_STAGE0}-linux-i386-${RUST_SNAPSHOT_HASH_x86}"
+
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
 SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz
-	amd64? ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-08-11-1af31d4-linux-x86_64-7df8ba9dec63ec77b857066109d4b6250f3d222f.tar.bz2 )
-	x86?   ( http://static.rust-lang.org/stage0-snapshots/rust-stage0-2015-08-11-1af31d4-linux-i386-e2553bf399cd134a08ef3511a0a6ab0d7a667216.tar.bz2 )
+	amd64? ( http://static.rust-lang.org/stage0-snapshots/${RUST_STAGE0_amd64}.tar.bz2 )
+	x86? ( http://static.rust-lang.org/stage0-snapshots/${RUST_STAGE0_x86}.tar.bz2 )
 "
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
@@ -43,7 +52,9 @@ S=${WORKDIR}/${MY_P}
 src_unpack() {
 	unpack "${MY_P}-src.tar.gz" || die
 	mkdir "${MY_P}/dl" || die
-	cp "${DISTDIR}/rust-stage0"* "${MY_P}/dl/" || die
+	local stagename="RUST_STAGE0_${ARCH}"
+	local stage0="${!stagename}"
+	cp "${DISTDIR}/${stage0}.tar.bz2" "${MY_P}/dl/" || die "cp stage0"
 }
 
 src_prepare() {
