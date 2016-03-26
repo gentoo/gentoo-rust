@@ -36,8 +36,8 @@ IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget]
-		<sys-devel/llvm-3.7.0[multitarget] )
+	system-llvm? ( >=sys-devel/llvm-3.6.0:=[multitarget]
+		<sys-devel/llvm-3.7.0:=[multitarget] )
 "
 
 DEPEND="${RDEPEND}
