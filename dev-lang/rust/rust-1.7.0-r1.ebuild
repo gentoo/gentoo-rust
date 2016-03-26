@@ -48,7 +48,7 @@ RDEPEND="${CDEPEND}"
 
 PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425"
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/${MY_P}"
 
 src_unpack() {
 	unpack "${MY_P}-src.tar.gz" || die
