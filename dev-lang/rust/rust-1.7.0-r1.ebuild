@@ -6,7 +6,7 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit python-any-r1 versionator
+inherit python-any-r1 versionator toolchain-funcs
 
 MY_P="rustc-${PV}"
 ABI_VER="$(get_version_component_range 1-2)"
@@ -75,6 +75,8 @@ src_configure() {
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--release-channel=${SLOT%%/*} \
 		--disable-manage-submodules \
+		--default-linker=$(tc-getBUILD_CC) \
+		--default-ar=$(tc-getBUILD_AR) \
 		--python=${EPYTHON} \
 		$(use_enable clang) \
 		$(use_enable debug) \
