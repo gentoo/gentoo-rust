@@ -52,7 +52,8 @@ DEPEND="${RDEPEND}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
 	system-llvm? ( >=sys-devel/llvm-3.6.0[multitarget]
-		<sys-devel/llvm-3.7.0[multitarget] )
+		!=sys-devel/llvm-3.7.0*
+		<sys-devel/llvm-3.9.0[multitarget] )
 "
 
 PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425"
