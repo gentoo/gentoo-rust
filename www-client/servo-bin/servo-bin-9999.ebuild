@@ -29,6 +29,6 @@ pkg_pretend() {
 src_install() {
 	insinto /opt
 	doins -r servo
-  fperms 755 /opt/servo/servo
-  make_wrapper servo "/opt/servo/servo" || die
+	fperms 755 /opt/servo/servo
+	make_wrapper servo "/opt/servo/servo" || die
 }
