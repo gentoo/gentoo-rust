@@ -11,7 +11,7 @@ HOMEPAGE="https://servo-builds.s3.amazonaws.com/index.html"
 
 SRC_URI="https://servo-builds.s3.amazonaws.com/nightly/linux/servo-latest.tar.gz"
 
-LICENSE="MPL-2"
+LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="-* ~amd64"
 IUSE=""
