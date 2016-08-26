@@ -1,0 +1,27 @@
+--- a/mk/target.mk	2016-08-25 23:40:31.000000000 -0400
++++ b/mk/target.mk	2016-08-26 09:48:19.000000000 -0400
+@@ -73,6 +73,8 @@
+ #      "small" invocation of the previous stage rustc. We use -L to
+ #      RT_OUTPUT_DIR so all the native dependencies are picked up.
+ #      Additionally, we pass in the llvm dir so rustc can link against it.
++#      We explicitly search for crates in the output directory in case the
++#      compiler was built with a non-standard --libdir.
+ #   6. Some cleanup is done (listing what was just built) if verbose is turned
+ #      on.
+ #
+@@ -101,6 +103,7 @@
+ 	    $$(subst @,,$$(STAGE$(1)_T_$(2)_H_$(3))) \
+ 		$$(RUST_LIB_FLAGS_ST$(1)) \
+ 		-L "$$(RT_OUTPUT_DIR_$(2))" \
++		-L $$(@D) \
+ 		$$(LLVM_LIBDIR_RUSTFLAGS_$(2)) \
+ 		$$(LLVM_STDCPP_RUSTFLAGS_$(2)) \
+ 		$$(RUSTFLAGS_$(4)) \
+@@ -144,6 +147,7 @@
+ 	@$$(call E, rustc: $$@)
+ 	$$(STAGE$(1)_T_$(2)_H_$(3)) \
+ 		$$(LLVM_LIBDIR_RUSTFLAGS_$(2)) \
++		-L $$(@D)/../lib \
+ 		-o $$@ $$< --cfg $(4)
+ 
+ endef

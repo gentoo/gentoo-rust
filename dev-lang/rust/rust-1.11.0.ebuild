@@ -64,6 +64,8 @@ src_prepare() {
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
 
+	eapply "${FILESDIR}/${PN}-1.11.0-libdir-bootstrap.patch"
+
 	eapply_user
 }
 
