@@ -77,8 +77,8 @@ src_configure() {
 	local local_rebuild
 	local installed_version="$("${EPREFIX}/usr/bin/rustc" --version)" || die
 	case "${installed_version}" in
-		"rustc ${PV}") local_rebuild=--enable-local-rebuild ;;
-		"rustc ${STAGE0_VERSION}") ;;
+		"rustc ${PV}"*) local_rebuild=--enable-local-rebuild ;;
+		"rustc ${STAGE0_VERSION}"*) ;;
 		*)
 			eerror "Selected rust (${installed_version}) cannot build"
 			eerror "version ${PV}.  Please use version ${STAGE0_VERSION}"
