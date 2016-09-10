@@ -13,13 +13,14 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
 
-IUSE=""
+IUSE="libressl"
 
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
 
 COMMON_DEPEND=">=virtual/rust-999
 	sys-libs/zlib
-	dev-libs/openssl:*
+	!libressl? ( dev-libs/openssl:* )
+	libressl? ( dev-libs/libressl:0 )
 	net-libs/libssh2
 	net-libs/http-parser"
 RDEPEND="${COMMON_DEPEND}
