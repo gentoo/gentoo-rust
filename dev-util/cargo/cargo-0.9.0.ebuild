@@ -88,10 +88,11 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="doc test"
+IUSE="doc test libressl"
 
 COMMON_DEPEND="sys-libs/zlib
-	dev-libs/openssl:*
+	!libressl? ( dev-libs/openssl:* )
+	libressl? ( dev-libs/libressl:0 )
 	net-libs/libssh2
 	net-libs/http-parser"
 RDEPEND="${COMMON_DEPEND}
