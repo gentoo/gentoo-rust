@@ -37,8 +37,7 @@ IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=
-		<sys-devel/llvm-3.9.0:= )
+	system-llvm? ( >=sys-devel/llvm-3.9.0:= )
 "
 
 # We can't depend on virtual/rust for building because portage (as of
