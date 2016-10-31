@@ -33,7 +33,7 @@ SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clang debug doc libcxx +system-llvm"
+IUSE="clang debug doc libcxx +system-llvm source"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
@@ -137,6 +137,11 @@ src_install() {
 	LDPATH="/usr/$(get_libdir)/${P}"
 	MANPATH="/usr/share/${P}/man"
 	EOF
+	if use source; then
+		cat <<-EOF >> "${T}"/50${P}
+		RUST_SRC_PATH="/usr/share/${P}/src"
+		EOF
+	fi
 	doenvd "${T}"/50${P}
 
 	cat <<-EOF > "${T}/provider-${P}"
@@ -146,6 +151,11 @@ src_install() {
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
+
+	if use source; then
+		dodir /usr/share/${P}
+		cp -R ${S}/src ${D}/usr/share/${P}
+	fi
 }
 
 pkg_postinst() {
