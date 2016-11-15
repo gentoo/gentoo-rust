@@ -46,7 +46,7 @@ src_unpack() {
 		cd ${S} && \
 		mkdir -p "${S}/dl" && \
 		mkdir -p "${S}/${BUILD_TRIPLE}/stage0/bin" && \
-		python2 "${S}/src/etc/get-snapshot.py" ${BUILD_TRIPLE} || die
+		python2 "${S}/src/etc/get-stage0.py" ${BUILD_TRIPLE} || die
 }
 
 src_prepare() {
