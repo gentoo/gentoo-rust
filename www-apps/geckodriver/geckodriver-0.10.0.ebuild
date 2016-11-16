@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 CRATES="aho-corasick-0.5.2
 advapi32-sys-0.1.2
