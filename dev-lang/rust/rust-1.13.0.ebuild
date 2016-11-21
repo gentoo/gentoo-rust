@@ -20,7 +20,7 @@ else
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="-* ~amd64 ~x86 ~arm64"
 fi
 
 CARGO_VERSION="0.$(($(get_version_component_range 2) + 1)).0"

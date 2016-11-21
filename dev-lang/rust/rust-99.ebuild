@@ -10,7 +10,7 @@ inherit python-any-r1 versionator toolchain-funcs eutils multilib
 
 MY_P=rustc-beta
 SLOT="beta"
-KEYWORDS=""
+KEYWORDS="-* ~amd64 ~x86 ~arm64"
 
 CARGO_VERSION="0.14.0"
 
