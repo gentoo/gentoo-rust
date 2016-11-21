@@ -23,13 +23,20 @@ else
 	KEYWORDS="~amd64 ~x86"
 fi
 
-STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
-NEXT_VERSION="1.$(($(get_version_component_range 2) + 1)).0"
+CARGO_VERSION="0.$(($(get_version_component_range 2) + 1)).0"
+STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).1"
+RUST_STAGE0_amd64="rustc-${STAGE0_VERSION}-x86_64-unknown-linux-gnu"
+RUST_STAGE0_x86="rustc-${STAGE0_VERSION}-i686-unknown-linux-gnu"
+RUST_STAGE0_arm64="rustc-${STAGE0_VERSION}-aarch64-unknown-linux-gnu"
 
 DESCRIPTION="Systems programming language from Mozilla"
-HOMEPAGE="http://www.rust-lang.org/"
+HOMEPAGE="https://www.rust-lang.org/"
 
-SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz"
+SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
+	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
+	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
+	arm64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_arm64}.tar.gz )
+"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
@@ -37,26 +44,18 @@ IUSE="clang debug doc libcxx +system-llvm source"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=[multitarget]
-		<sys-devel/llvm-3.9.0:=[multitarget] )
+	system-llvm? ( >=sys-devel/llvm-3.8.1-r2
+		<sys-devel/llvm-3.10.0 )
 "
 
-# We can't depend on virtual/rust for building because portage (as of
-# 2.3.0) gets confused by the circular dependency when trying to
-# upgrade.
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	clang? ( sys-devel/clang )
-	|| (
-		( >=dev-lang/rust-bin-${STAGE0_VERSION}:stable
-		  <dev-lang/rust-bin-${NEXT_VERSION}:stable )
-		( >=dev-lang/rust-${STAGE0_VERSION}:stable
-		  <dev-lang/rust-${NEXT_VERSION}:stable )
-	)
 "
 
-PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425"
+PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+	>=dev-util/cargo-${CARGO_VERSION}"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -64,29 +63,14 @@ src_prepare() {
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
 
-	eapply "${FILESDIR}/${PN}-1.11.0-libdir-bootstrap.patch"
-
-	eapply_user
+	default
 }
 
 src_configure() {
-	# In order to compile itself, rustc needs to be passed a special
-	# argument to allow the use of unstable language features.  This
-	# argument varies by version, so we have to tell the build system
-	# whether this is a recompile or an upgrade.
-	local local_rebuild
-	local installed_version="$("${EPREFIX}/usr/bin/rustc" --version)" || die
-	case "${installed_version}" in
-		"rustc ${PV}"*) local_rebuild=--enable-local-rebuild ;;
-		"rustc ${STAGE0_VERSION}"*) ;;
-		*)
-			eerror "Selected rust (${installed_version}) cannot build"
-			eerror "version ${PV}.  Please use version ${STAGE0_VERSION}"
-			eerror "or ${PV}."
-			die "Incompatible rust selected"
-	esac
-
 	export CFG_DISABLE_LDCONFIG="notempty"
+
+	local stagename="RUST_STAGE0_${ARCH}"
+	local stage0="${!stagename}"
 
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
@@ -99,8 +83,7 @@ src_configure() {
 		--python=${EPYTHON} \
 		--disable-rpath \
 		--enable-local-rust \
-		--local-rust-root="${EPREFIX}/usr" \
-		${local_rebuild} \
+		--local-rust-root="${WORKDIR}/${stage0}/rustc" \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -169,7 +152,7 @@ pkg_postinst() {
 	fi
 
 	if has_version app-editors/gvim || has_version app-editors/vim; then
-		elog "install app-vim/rust-mode to get vim support for rust."
+		elog "install app-vim/rust-mode or app-vim/rust-vim to get vim support for rust."
 	fi
 
 	if has_version 'app-shells/zsh'; then

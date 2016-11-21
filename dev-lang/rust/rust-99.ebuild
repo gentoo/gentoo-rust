@@ -1,38 +1,44 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils multilib python-any-r1
+inherit python-any-r1 versionator toolchain-funcs eutils multilib
 
 MY_P=rustc-beta
-
-DESCRIPTION="Systems programming language from Mozilla"
-HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
-
-LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="beta"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source"
+CARGO_VERSION="0.14.0"
+
+DESCRIPTION="Systems programming language from Mozilla"
+HOMEPAGE="https://www.rust-lang.org/"
+
+MY_SRC_URI="https://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
+
+LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
+
+IUSE="clang debug doc libcxx +system-llvm source"
 REQUIRED_USE="libcxx? ( clang )"
 
-CDEPEND="libcxx? ( sys-libs/libcxx )
-	>=app-eselect/eselect-rust-0.3_pre20150425
-	!dev-lang/rust:0
+RDEPEND="libcxx? ( sys-libs/libcxx )
+	system-llvm? ( >=sys-devel/llvm-3.8.1-r2
+		<sys-devel/llvm-3.10.0 )
 "
-DEPEND="${CDEPEND}
+
+DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
 	net-misc/wget
+	>=dev-util/cmake-3.4.3
 	clang? ( sys-devel/clang )
 "
-RDEPEND="${CDEPEND}
-"
+
+PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+	>=dev-util/cargo-${CARGO_VERSION}"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -42,6 +48,8 @@ src_unpack() {
 
 	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
+	use arm64 && BUILD_TRIPLE=aarch64-unknown-linux-gnu
+
 	export CFG_SRC_DIR="${S}" && \
 		cd ${S} && \
 		mkdir -p "${S}/dl" && \
@@ -54,6 +62,8 @@ src_prepare() {
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
 		 sed -i -e "s/-Werror / /g" {} \; || die
+
+	default
 }
 
 src_configure() {
@@ -64,6 +74,10 @@ src_configure() {
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--release-channel=${SLOT} \
 		--disable-manage-submodules \
+		--default-linker=$(tc-getBUILD_CC) \
+		--default-ar=$(tc-getBUILD_AR) \
+		--python=${EPYTHON} \
+		--disable-rpath \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -73,6 +87,7 @@ src_configure() {
 		$(use_enable !debug optimize-tests) \
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
+		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
@@ -81,6 +96,8 @@ src_compile() {
 }
 
 src_install() {
+	unset SUDO_USER
+
 	default
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
@@ -129,7 +146,7 @@ pkg_postinst() {
 	fi
 
 	if has_version app-editors/gvim || has_version app-editors/vim; then
-		elog "install app-vim/rust-mode to get vim support for rust."
+		elog "install app-vim/rust-mode or app-vim/rust-vim to get vim support for rust."
 	fi
 
 	if has_version 'app-shells/zsh'; then
