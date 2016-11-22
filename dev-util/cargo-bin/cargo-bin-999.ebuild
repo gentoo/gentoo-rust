@@ -12,7 +12,7 @@ MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="-*"
 
 RDEPEND="!dev-util/cargo
 	dev-libs/openssl:*
