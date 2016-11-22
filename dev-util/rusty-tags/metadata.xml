@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<maintainer>
+<maintainer type="person">
  <email>o01eg@yandex.ru</email>
  <name>O01eg</name>
 </maintainer>
 <longdescription lang="en">
-  Create ctags/etags for a cargo project and all of its dependencies 
+  Create ctags/etags for a cargo project and all of its dependencies
 </longdescription>
 </pkgmetadata>

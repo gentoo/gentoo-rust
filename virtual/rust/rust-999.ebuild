@@ -10,7 +10,7 @@ SRC_URI=""
 
 LICENSE=""
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="-*"
 
 DEPEND=""
 RDEPEND="|| (

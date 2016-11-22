@@ -131,7 +131,7 @@ src_install() {
 
 	if use source; then
 		dodir /usr/share/${P}
-		cp -R ${S}/src ${D}/usr/share/${P}
+		cp -R "${S}/src" "${D}/usr/share/${P}"
 	fi
 }
 
