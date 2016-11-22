@@ -1,3 +1,5 @@
+notifications:
+  email: false
 #
 # Run repoman via travis
 # See https://github.com/mrueg/repoman-travis
