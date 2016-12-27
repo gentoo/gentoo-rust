@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 inherit eutils git-r3
 
@@ -19,7 +19,7 @@ EGIT_REPO_URI="https://github.com/oakes/SolidOak.git"
 
 RDEPEND="virtual/rust:*
 	dev-util/racer
-	x11-libs/vte:2.90
+	x11-libs/vte:2.91
 	app-editors/neovim
 	>=x11-libs/gtk+-3.10
 	"
