@@ -2,19 +2,20 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 inherit eutils bash-completion-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
+MY_ANALYSIS_SRC_URI="http://static.rust-lang.org/dist/rust-analysis-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS=""
 
-IUSE="doc"
+IUSE="analysis doc"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
@@ -39,8 +40,14 @@ src_unpack() {
 
 	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
 	unpack ./"rust-nightly-${postfix}.tar.gz"
-
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
+
+	if use analysis; then
+		wget "${MY_ANALYSIS_SRC_URI}-${postfix}.tar.gz" || die
+		unpack ./"rust-analysis-nightly-${postfix}.tar.gz"
+		mv "${WORKDIR}/rust-analysis-nightly-${postfix}/rust-analysis-${postfix}/lib/rustlib/${postfix}/analysis" "${WORKDIR}/analysis" || die
+	fi
+
 }
 
 src_install() {
@@ -54,6 +61,10 @@ src_install() {
 		--mandir="${D}/usr/share/${P}/man" \
 		--disable-ldconfig \
 		|| die
+
+	if use analysis; then
+		mv "${WORKDIR}/analysis" "${D}/opt/${P}/lib/save-analysis" || die
+	fi
 
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}

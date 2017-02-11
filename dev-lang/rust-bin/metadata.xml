@@ -5,4 +5,7 @@
     <email>jauhien@gentoo.org</email>
     <name>Jauhien Piatlicki</name>
   </maintainer>
+  <use>
+    <flag name="analysis">Install standard library analysis data used by Rust Language Server</flag>
+  </use>
 </pkgmetadata>
