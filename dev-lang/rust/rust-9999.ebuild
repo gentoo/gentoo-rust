@@ -2,21 +2,32 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
 inherit eutils git-r3 multilib python-any-r1
 
+if [[ ${PV} = 9999 ]]; then
+	SLOT="git"
+	release_channel="dev"
+	MY_P="rust-git"
+	EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
+	EGIT_CHECKOUT_DIR="${MY_P}-src"
+else
+	SLOT="nightly"
+	release_channel="${SLOT}"
+	MY_P="rustc-nightly"
+	MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
+fi
+
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
-SLOT="git"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source"
+IUSE="clang debug doc libcxx source +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -26,37 +37,46 @@ CDEPEND="libcxx? ( sys-libs/libcxx )
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-lang/perl-5.0
+	net-misc/wget
 	clang? ( sys-devel/clang )
 "
 RDEPEND="${CDEPEND}
 "
 
+S="${WORKDIR}/${MY_P}-src"
+
 src_unpack() {
-	git-r3_src_unpack
+	if [[ ${PV} = 9999 ]]; then
+		git-r3_src_unpack
+	else
+		wget "${MY_SRC_URI}" || die
+		unpack ./"${MY_P}-src.tar.gz"
+	fi
 
 	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
-	export CFG_SRC_DIR="${S}" && \
-		cd ${S} && \
-		mkdir -p "${S}/dl" && \
-		mkdir -p "${S}/${BUILD_TRIPLE}/stage0/bin" && \
-		python2 "${S}/src/etc/get-stage0.py" ${BUILD_TRIPLE} || die
-}
-
-src_prepare() {
-	local postfix="gentoo-${SLOT}"
-	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
-	find mk -name '*.mk' -exec \
-		 sed -i -e "s/-Werror / /g" {} \; || die
 }
 
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
+
+	local postfix="gentoo-${SLOT}"
+	local stagename="RUST_STAGE0_${ARCH}"
+	local stage0="${!stagename}"
+
 	"${ECONF_SOURCE:-.}"/configure \
 		--prefix="${EPREFIX}/usr" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
+		--release-channel=${release_channel%%/*} \
+		--extra-filename=${postfix} \
 		--disable-manage-submodules \
+		--disable-rustbuild \
+		--default-linker=$(tc-getBUILD_CC) \
+		--default-ar=$(tc-getBUILD_AR) \
+		--python=${EPYTHON} \
+		--disable-rpath \
+		--build=${BUILD_TRIPLE} \
 		$(use_enable clang) \
 		$(use_enable debug) \
 		$(use_enable debug llvm-assertions) \
@@ -80,6 +100,8 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 
+	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
+
 	dodir "/usr/share/doc/rust-${PV}/"
 	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
 	rmdir "${D}/usr/share/doc/rust/" || die
@@ -98,6 +120,7 @@ src_install() {
 	cat <<-EOF > "${T}/provider-${P}"
 	/usr/bin/rustdoc
 	/usr/bin/rust-gdb
+	/usr/bin/rust-lldb
 	EOF
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
