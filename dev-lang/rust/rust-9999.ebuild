@@ -27,7 +27,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source +system-llvm"
+IUSE="clang debug doc libcxx source +system-llvm sanitize"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -39,6 +39,7 @@ DEPEND="${CDEPEND}
 	>=dev-lang/perl-5.0
 	net-misc/wget
 	clang? ( sys-devel/clang )
+	sanitize? ( >=sys-kernel/linux-headers-3.2 )
 "
 RDEPEND="${CDEPEND}
 "
@@ -71,7 +72,6 @@ src_configure() {
 		--release-channel=${release_channel%%/*} \
 		--extra-filename=${postfix} \
 		--disable-manage-submodules \
-		--disable-rustbuild \
 		--default-linker=$(tc-getBUILD_CC) \
 		--default-ar=$(tc-getBUILD_AR) \
 		--python=${EPYTHON} \
@@ -86,6 +86,7 @@ src_configure() {
 		$(use_enable !debug optimize-tests) \
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
+		$(use_enable sanitize sanitizers) \
 		|| die
 }
 
