@@ -33,6 +33,8 @@ REQUIRED_USE="libcxx? ( clang )"
 CDEPEND="libcxx? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
+	system-llvm? ( >=sys-devel/llvm-3.8.1-r2
+			<sys-devel/llvm-3.10.0 )
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
@@ -87,6 +89,7 @@ src_configure() {
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
 		$(use_enable sanitize sanitizers) \
+                $(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
