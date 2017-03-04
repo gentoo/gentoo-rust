@@ -94,7 +94,7 @@ src_configure() {
 }
 
 src_compile() {
-	emake VERBOSE=1
+	emake dist VERBOSE=1
 }
 
 src_install() {
