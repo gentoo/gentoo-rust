@@ -14,8 +14,11 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="-*"
 
+IUSE="libressl"
+
 RDEPEND="!dev-util/cargo
-	dev-libs/openssl:*
+	!libressl? ( dev-libs/openssl:* )
+	libressl? ( dev-libs/libressl:0 )
 	net-misc/curl[ssl]
 	net-libs/libssh2
 	net-libs/http-parser
