@@ -1,0 +1,26 @@
+diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
+index 67e4dad..46e1b6f 100644
+--- a/src/bootstrap/dist.rs
++++ b/src/bootstrap/dist.rs
+@@ -313,7 +313,7 @@ pub fn rust_src_location(build: &Build) -> PathBuf {
+ pub fn analysis(build: &Build, compiler: &Compiler, target: &str) {
+     println!("Dist analysis");
+ 
+-    if build.config.channel != "nightly" {
++    if build.config.channel != "nightly" && build.config.channel != "dev" {
+         println!("\tskipping - not on nightly channel");
+         return;
+     }
+diff --git a/src/tools/build-manifest/src/main.rs b/src/tools/build-manifest/src/main.rs
+index ceefcc9..39854c9 100644
+--- a/src/tools/build-manifest/src/main.rs
++++ b/src/tools/build-manifest/src/main.rs
+@@ -218,7 +218,7 @@ impl Builder {
+         self.package("rust-docs", &mut manifest.pkg, TARGETS);
+         self.package("rust-src", &mut manifest.pkg, &["*"]);
+ 
+-        if self.channel == "nightly" {
++        if self.channel == "nightly" || self.channel == "dev" {
+             self.package("rust-analysis", &mut manifest.pkg, TARGETS);
+         }
+ 

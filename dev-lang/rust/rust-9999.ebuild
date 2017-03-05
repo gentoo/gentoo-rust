@@ -27,7 +27,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source +system-llvm sanitize"
+IUSE="clang debug doc libcxx source +system-llvm sanitize analysis"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -60,6 +60,14 @@ src_unpack() {
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
 }
 
+src_prepare() {
+	default
+
+	if use analysis; then
+		epatch ${FILESDIR}/rust-9999-enable-analysis-dev.patch
+	fi
+}
+
 src_configure() {
 	export CFG_DISABLE_LDCONFIG="notempty"
 
@@ -89,16 +97,19 @@ src_configure() {
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
 		$(use_enable sanitize sanitizers) \
-                $(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
+		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
 		|| die
 }
 
 src_compile() {
+	if use analysis; then
+		export RUSTC_SAVE_ANALYSIS="api"
+	fi
 	emake dist VERBOSE=1
 }
 
 src_install() {
-	default
+	default VERBOSE=1
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
@@ -134,6 +145,18 @@ src_install() {
 	if use source; then
 		dodir /usr/share/${P}
 		cp -R "${S}/src" "${D}/usr/share/${P}"
+	fi
+
+	if use debug; then
+		TARGET=debug
+	else
+		TARGET=release
+	fi
+
+	if use analysis; then
+		dodir /usr/lib/rustlib/${BUILD_TRIPLE}/analysis
+		insinto /usr/lib/rustlib/${BUILD_TRIPLE}/analysis
+		doins "${S}/build/${BUILD_TRIPLE}/stage1-std/${BUILD_TRIPLE}/${TARGET}/deps/save-analysis"/* || die
 	fi
 }
 
