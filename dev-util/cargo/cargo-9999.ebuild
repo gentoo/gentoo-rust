@@ -16,6 +16,7 @@ KEYWORDS=""
 IUSE="libressl"
 
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
+BIN_CARGO_URI="http://static.rust-lang.org/dist/cargo-nightly"
 
 COMMON_DEPEND=">=virtual/rust-999
 	sys-libs/zlib
@@ -28,8 +29,19 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	dev-util/cmake"
 
+pkg_setup() {
+	local postfix
+	use amd64 && postfix=x86_64-unknown-linux-gnu
+	use x86 && postfix=i686-unknown-linux-gnu
+
+	# Download nightly cargo to bootstrap from it
+
+	wget "${BIN_CARGO_URI}-${postfix}.tar.gz" || die
+	unpack "./cargo-nightly-${postfix}.tar.gz"
+}
+
 src_configure() {
-	./configure --prefix="${EPREFIX}"/usr --disable-verify-install || die
+	./configure --local-rust-root="cargo-nightly-${postfix}/cargo" --prefix="${EPREFIX}"/usr --disable-verify-install || die
 }
 
 src_compile() {
