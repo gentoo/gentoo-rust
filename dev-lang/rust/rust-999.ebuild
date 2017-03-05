@@ -71,7 +71,6 @@ src_configure() {
 		--release-channel=${release_channel%%/*} \
 		--extra-filename=${postfix} \
 		--disable-manage-submodules \
-		--disable-rustbuild \
 		--default-linker=$(tc-getBUILD_CC) \
 		--default-ar=$(tc-getBUILD_AR) \
 		--python=${EPYTHON} \
@@ -90,7 +89,7 @@ src_configure() {
 }
 
 src_compile() {
-	emake VERBOSE=1
+	emake dist VERBOSE=1
 }
 
 src_install() {
