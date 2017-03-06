@@ -69,6 +69,13 @@ src_prepare() {
 }
 
 src_configure() {
+	# We need to ask llvm-config to link to dynamic libraries
+	# because LLVM ebuild does not provide an option
+	# to compile static libraries
+	if use system-llvm; then
+		export LLVM_LINK_SHARED=1
+	fi
+
 	export CFG_DISABLE_LDCONFIG="notempty"
 
 	local postfix="gentoo-${SLOT}"
