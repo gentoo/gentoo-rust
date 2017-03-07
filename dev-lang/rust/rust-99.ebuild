@@ -62,7 +62,7 @@ src_prepare() {
 	local postfix="gentoo-${SLOT}"
 	sed -i -e "s/CFG_FILENAME_EXTRA=.*/CFG_FILENAME_EXTRA=${postfix}/" mk/main.mk || die
 	find mk -name '*.mk' -exec \
-		 sed -i -e "s/-Werror / /g" {} \; || die
+		sed -i -e "s/-Werror / /g" {} \; || die
 
 	default
 }
@@ -74,6 +74,8 @@ src_configure() {
 	if use system-llvm; then
 		export LLVM_LINK_SHARED=1
 	fi
+
+	python_setup
 
 	export CFG_DISABLE_LDCONFIG="notempty"
 	export LLVM_LINK_SHARED=1

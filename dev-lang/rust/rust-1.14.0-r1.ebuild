@@ -73,6 +73,8 @@ src_configure() {
 		export LLVM_LINK_SHARED=1
 	fi
 
+	python_setup
+
 	export CFG_DISABLE_LDCONFIG="notempty"
 
 	local stagename="RUST_STAGE0_${ARCH}"

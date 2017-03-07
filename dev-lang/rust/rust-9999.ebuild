@@ -48,6 +48,12 @@ RDEPEND="${CDEPEND}
 
 S="${WORKDIR}/${MY_P}-src"
 
+pkg_setup() {
+	if use system-llvm; then
+		EGIT_SUBMODULES=( "*" "-src/llvm" )
+	fi
+}
+
 src_unpack() {
 	if [[ ${PV} = 9999 ]]; then
 		git-r3_src_unpack
@@ -75,6 +81,8 @@ src_configure() {
 	if use system-llvm; then
 		export LLVM_LINK_SHARED=1
 	fi
+
+	python_setup
 
 	export CFG_DISABLE_LDCONFIG="notempty"
 
