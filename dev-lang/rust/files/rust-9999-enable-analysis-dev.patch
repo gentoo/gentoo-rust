@@ -1,5 +1,5 @@
 diff --git a/src/bootstrap/dist.rs b/src/bootstrap/dist.rs
-index 67e4dad..46e1b6f 100644
+index 7c463be..eda72ed 100644
 --- a/src/bootstrap/dist.rs
 +++ b/src/bootstrap/dist.rs
 @@ -313,7 +313,7 @@ pub fn rust_src_location(build: &Build) -> PathBuf {
@@ -12,15 +12,24 @@ index 67e4dad..46e1b6f 100644
          return;
      }
 diff --git a/src/tools/build-manifest/src/main.rs b/src/tools/build-manifest/src/main.rs
-index ceefcc9..39854c9 100644
+index c2ec421..9dc665e 100644
 --- a/src/tools/build-manifest/src/main.rs
 +++ b/src/tools/build-manifest/src/main.rs
-@@ -218,7 +218,7 @@ impl Builder {
+@@ -224,7 +224,7 @@ impl Builder {
          self.package("rust-docs", &mut manifest.pkg, TARGETS);
          self.package("rust-src", &mut manifest.pkg, &["*"]);
  
--        if self.channel == "nightly" {
-+        if self.channel == "nightly" || self.channel == "dev" {
+-        if self.rust_release == "nightly" {
++        if self.rust_release == "nightly" || self.rust_release == "dev" {
              self.package("rust-analysis", &mut manifest.pkg, TARGETS);
          }
  
+@@ -277,7 +277,7 @@ impl Builder {
+                         target: target.to_string(),
+                     });
+                 }
+-                if self.rust_release == "nightly" {
++                if self.rust_release == "nightly" || self.rust_release == "dev" {
+                     extensions.push(Component {
+                         pkg: "rust-analysis".to_string(),
+                         target: target.to_string(),
