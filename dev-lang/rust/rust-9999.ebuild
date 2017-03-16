@@ -66,14 +66,6 @@ src_unpack() {
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
 }
 
-src_prepare() {
-	default
-
-	if use analysis; then
-		epatch ${FILESDIR}/rust-9999-enable-analysis-dev.patch
-	fi
-}
-
 src_configure() {
 	# We need to ask llvm-config to link to dynamic libraries
 	# because LLVM ebuild does not provide an option
@@ -113,13 +105,11 @@ src_configure() {
 		$(use_enable libcxx libcpp) \
 		$(use_enable sanitize sanitizers) \
 		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
+		$(use_enable analysis save-analysis) \
 		|| die
 }
 
 src_compile() {
-	if use analysis; then
-		export RUSTC_SAVE_ANALYSIS="api"
-	fi
 	emake dist VERBOSE=1
 }
 
@@ -166,12 +156,6 @@ src_install() {
 		TARGET=debug
 	else
 		TARGET=release
-	fi
-
-	if use analysis; then
-		dodir /usr/lib/rustlib/${BUILD_TRIPLE}/analysis
-		insinto /usr/lib/rustlib/${BUILD_TRIPLE}/analysis
-		doins "${S}/build/${BUILD_TRIPLE}/stage1-std/${BUILD_TRIPLE}/${TARGET}/deps/save-analysis"/* || die
 	fi
 }
 
