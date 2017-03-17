@@ -1,74 +1,75 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-CARGO_SNAPSHOT_DATE="2016-03-21"
-CARGO_INDEX_COMMIT="2aed1d5050840971fd1527e2a2961e05dd392e04"
-CRATES="advapi32-sys-0.2.0
-aho-corasick-0.5.2
+CARGO_SNAPSHOT_DATE="2016-09-01"
+CRATES="
+advapi32-sys-0.2.0
+aho-corasick-0.5.3
 bitflags-0.1.1
 bitflags-0.7.0
+bufstream-0.1.2
+cargotest-0.1.0
 cfg-if-0.1.0
-cmake-0.1.17
+cmake-0.1.19
 crates-io-0.4.0
-crossbeam-0.2.9
-curl-0.3.2
-curl-sys-0.2.1
-docopt-0.6.82
-env_logger-0.3.4
+crossbeam-0.2.10
+curl-0.4.1
+curl-sys-0.3.6
+docopt-0.6.86
+env_logger-0.3.5
 filetime-0.1.10
 flate2-0.2.14
-fs2-0.2.5
-gcc-0.3.32
+fs2-0.3.0
+gcc-0.3.39
 gdi32-sys-0.2.0
-git2-0.4.4
-git2-curl-0.5.0
+git2-0.6.3
+git2-curl-0.7.0
 glob-0.2.11
+hamcrest-0.1.1
 idna-0.1.0
 kernel32-sys-0.2.2
-lazy_static-0.2.1
-libc-0.2.15
-libgit2-sys-0.4.5
-libressl-pnacl-sys-2.1.6
-libssh2-sys-0.1.38
-libz-sys-1.0.5
+lazy_static-0.2.2
+libc-0.2.18
+libgit2-sys-0.6.5
+libssh2-sys-0.2.4
+libz-sys-1.0.10
 log-0.3.6
-matches-0.1.2
+matches-0.1.4
 memchr-0.1.11
 miniz-sys-0.1.7
 miow-0.1.3
 net2-0.2.26
-nom-1.2.4
-num-0.1.34
-num-bigint-0.1.33
-num-complex-0.1.33
+num-0.1.36
+num-bigint-0.1.35
+num-complex-0.1.35
 num-integer-0.1.32
 num-iter-0.1.32
-num-rational-0.1.32
-num-traits-0.1.34
-num_cpus-1.0.0
-openssl-0.7.14
-openssl-sys-0.7.14
-openssl-sys-extras-0.7.14
+num-rational-0.1.35
+num-traits-0.1.36
+num_cpus-1.1.0
+openssl-0.9.1
+openssl-probe-0.1.0
+openssl-sys-0.9.1
 pkg-config-0.3.8
-pnacl-build-helper-1.4.10
+psapi-sys-0.1.0
 rand-0.3.14
-regex-0.1.73
-regex-syntax-0.3.4
-rustc-serialize-0.3.19
-semver-0.2.3
-strsim-0.3.0
-tar-0.4.8
+regex-0.1.80
+regex-syntax-0.3.9
+rustc-serialize-0.3.21
+semver-0.5.1
+semver-parser-0.6.1
+strsim-0.5.1
+tar-0.4.9
 tempdir-0.3.5
 term-0.4.4
 thread-id-2.0.0
-thread_local-0.2.6
-toml-0.2.0
+thread_local-0.2.7
+toml-0.2.1
 unicode-bidi-0.2.3
 unicode-normalization-0.1.2
-url-1.2.0
+url-1.2.3
 user32-sys-0.2.0
 utf8-ranges-0.1.3
 winapi-0.2.8
@@ -81,7 +82,6 @@ inherit cargo bash-completion-r1
 DESCRIPTION="The Rust's package manager"
 HOMEPAGE="http://crates.io"
 SRC_URI="https://github.com/rust-lang/cargo/archive/${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/rust-lang/crates.io-index/archive/${CARGO_INDEX_COMMIT}.tar.gz -> cargo-registry-${CARGO_INDEX_COMMIT}.tar.gz
 	$(cargo_crate_uris ${CRATES})
 	x86?   (
 		https://static.rust-lang.org/cargo-dist/${CARGO_SNAPSHOT_DATE}/cargo-nightly-i686-unknown-linux-gnu.tar.gz ->
@@ -108,7 +108,7 @@ RDEPEND="${COMMON_DEPEND}
 	!dev-util/cargo-bin
 	net-misc/curl[ssl]"
 DEPEND="${COMMON_DEPEND}
-	>=virtual/rust-1.9.0
+	>=dev-lang/rust-1.9.0:stable
 	dev-util/cmake
 	sys-apps/coreutils
 	sys-apps/diffutils
@@ -133,8 +133,9 @@ src_configure() {
 		--host=${CTARGET}
 		--build=${CTARGET}
 		--target=${CTARGET}
+		--cargo="${WORKDIR}"/${P}/target/snapshot/bin/cargo
 		--enable-optimize
-		--disable-nightly
+#		--release-channel stable
 		--disable-verify-install
 		--disable-debug
 		--disable-cross-tests

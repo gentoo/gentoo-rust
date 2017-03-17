@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -20,32 +19,30 @@ else
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.gz"
-	KEYWORDS="-* ~amd64 ~x86 ~arm64"
+	KEYWORDS="~amd64 ~x86"
 fi
 
 CARGO_VERSION="0.$(($(get_version_component_range 2) + 1)).0"
-STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).1"
+STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
 RUST_STAGE0_amd64="rustc-${STAGE0_VERSION}-x86_64-unknown-linux-gnu"
 RUST_STAGE0_x86="rustc-${STAGE0_VERSION}-i686-unknown-linux-gnu"
-RUST_STAGE0_arm64="rustc-${STAGE0_VERSION}-aarch64-unknown-linux-gnu"
 
 DESCRIPTION="Systems programming language from Mozilla"
-HOMEPAGE="https://www.rust-lang.org/"
+HOMEPAGE="http://www.rust-lang.org/"
 
 SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
 	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
 	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
-	arm64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_arm64}.tar.gz )
 "
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clang debug doc libcxx +system-llvm source"
+IUSE="clang debug doc libcxx +system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.8.1-r2
-		<sys-devel/llvm-3.10.0 )
+	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:0
+		<sys-devel/llvm-3.10.0:0 )
 "
 
 DEPEND="${RDEPEND}
@@ -55,9 +52,10 @@ DEPEND="${RDEPEND}
 "
 
 PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-	>=dev-util/cargo-${CARGO_VERSION}"
+	|| ( 	>=dev-util/cargo-${CARGO_VERSION}
+		>=dev-util/cargo-bin-${CARGO_VERSION} )"
 
-S="${WORKDIR}/${MY_P}"
+S="${WORKDIR}/${MY_P}-src"
 
 src_prepare() {
 	find mk -name '*.mk' -exec \
@@ -67,13 +65,6 @@ src_prepare() {
 }
 
 src_configure() {
-	# We need to ask llvm-config to link to dynamic libraries
-	# because LLVM ebuild does not provide an option
-	# to compile static libraries
-	if use system-llvm; then
-		export LLVM_LINK_SHARED=1
-	fi
-
 	export CFG_DISABLE_LDCONFIG="notempty"
 
 	local stagename="RUST_STAGE0_${ARCH}"
@@ -85,6 +76,7 @@ src_configure() {
 		--mandir="${EPREFIX}/usr/share/${P}/man" \
 		--release-channel=${SLOT%%/*} \
 		--disable-manage-submodules \
+		--disable-rustbuild \
 		--default-linker=$(tc-getBUILD_CC) \
 		--default-ar=$(tc-getBUILD_AR) \
 		--python=${EPYTHON} \
@@ -127,11 +119,6 @@ src_install() {
 	LDPATH="/usr/$(get_libdir)/${P}"
 	MANPATH="/usr/share/${P}/man"
 	EOF
-	if use source; then
-		cat <<-EOF >> "${T}"/50${P}
-		RUST_SRC_PATH="/usr/share/${P}/src"
-		EOF
-	fi
 	doenvd "${T}"/50${P}
 
 	cat <<-EOF > "${T}/provider-${P}"
@@ -141,11 +128,6 @@ src_install() {
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
-
-	if use source; then
-		dodir /usr/share/${P}
-		cp -R "${S}/src" "${D}/usr/share/${P}"
-	fi
 }
 
 pkg_postinst() {
@@ -159,7 +141,7 @@ pkg_postinst() {
 	fi
 
 	if has_version app-editors/gvim || has_version app-editors/vim; then
-		elog "install app-vim/rust-mode or app-vim/rust-vim to get vim support for rust."
+		elog "install app-vim/rust-vim to get vim support for rust."
 	fi
 
 	if has_version 'app-shells/zsh'; then
