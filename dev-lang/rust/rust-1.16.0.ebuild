@@ -37,12 +37,11 @@ SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clang debug doc libcxx +system-llvm"
+IUSE="clang debug doc libcxx system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:0
-		<sys-devel/llvm-3.10.0:0 )
+	system-llvm? >=sys-devel/llvm-3.9.1
 "
 
 DEPEND="${RDEPEND}
@@ -62,6 +61,9 @@ src_prepare() {
 		 sed -i -e "s/-Werror / /g" {} \; || die
 
 	default
+	if use system-llvm; then
+		ewarn "Note that system-llvm flag is not tested"
+	fi
 }
 
 src_configure() {
