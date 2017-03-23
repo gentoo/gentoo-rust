@@ -47,6 +47,6 @@ src_install() {
 
 	dosym "/opt/${P}/bin/cargo" /usr/bin/cargo
 	dosym "/opt/${P}/share/zsh/site-functions/_cargo" /usr/share/zsh/site-functions/_cargo
-	newbashcomp "${D}/opt/${P}/etc/bash_completion.d/cargo" cargo
+	newbashcomp "${D}/opt/${P}/etc/bash_completions.d/cargo" cargo
 	rm -rf "${D}/opt/${P}/etc" || die
 }
