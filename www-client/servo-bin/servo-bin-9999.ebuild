@@ -9,7 +9,7 @@ inherit eutils
 DESCRIPTION="The Servo web browser"
 HOMEPAGE="https://servo-builds.s3.amazonaws.com/index.html"
 
-SRC_URI="https://servo-builds.s3.amazonaws.com/nightly/linux/servo-latest.tar.gz"
+MY_SRC_URI="https://servo-builds.s3.amazonaws.com/nightly/linux/servo-latest.tar.gz"
 
 LICENSE="MPL-2.0"
 SLOT="0"
@@ -24,6 +24,11 @@ S=${WORKDIR}
 pkg_pretend() {
 	# Protect against people using autounmask overzealously
 	use amd64 || die "binary servo only works on amd64"
+}
+
+src_unpack() {
+	wget "${MY_SRC_URI}" || die
+	unpack ./"servo-latest.tar.gz"
 }
 
 src_install() {
