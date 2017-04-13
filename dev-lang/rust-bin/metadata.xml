@@ -6,6 +6,6 @@
     <name>Jauhien Piatlicki</name>
   </maintainer>
   <use>
-    <flag name="analysis">Install standard library analysis data used by Rust Language Server</flag>
+    <flag name="tools">Install extended rust tools (RLS, analysis data, ...)</flag>
   </use>
 </pkgmetadata>

@@ -9,13 +9,12 @@ inherit eutils bash-completion-r1
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
-MY_ANALYSIS_SRC_URI="http://static.rust-lang.org/dist/rust-analysis-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS=""
 
-IUSE="analysis doc"
+IUSE="doc tools"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
@@ -40,19 +39,17 @@ src_unpack() {
 
 	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
 	unpack ./"rust-nightly-${postfix}.tar.gz"
+
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
-
-	if use analysis; then
-		wget "${MY_ANALYSIS_SRC_URI}-${postfix}.tar.gz" || die
-		unpack ./"rust-analysis-nightly-${postfix}.tar.gz"
-		mv "${WORKDIR}/rust-analysis-nightly-${postfix}/rust-analysis-${postfix}/lib/rustlib/${postfix}/analysis" "${WORKDIR}/analysis" || die
-	fi
-
 }
 
 src_install() {
 	local std=$(grep 'std' ./components)
 	local components="rustc,${std}"
+	if use tools; then
+		local analysis=$(grep 'analysis' ./components)
+		components="${components},rls,${analysis}"
+	fi
 	use doc && components="${components},rust-docs"
 	./install.sh \
 		--components="${components}" \
@@ -62,21 +59,26 @@ src_install() {
 		--disable-ldconfig \
 		|| die
 
-	if use analysis; then
-		mv "${WORKDIR}/analysis" "${D}/opt/${P}/lib/save-analysis" || die
-	fi
-
 	local rustc=rustc-bin-${PV}
 	local rustdoc=rustdoc-bin-${PV}
 	local rustgdb=rust-gdb-bin-${PV}
+	local rustlldb=rust-lldb-bin-${PV}
 
 	mv "${D}/opt/${P}/bin/rustc" "${D}/opt/${P}/bin/${rustc}" || die
 	mv "${D}/opt/${P}/bin/rustdoc" "${D}/opt/${P}/bin/${rustdoc}" || die
 	mv "${D}/opt/${P}/bin/rust-gdb" "${D}/opt/${P}/bin/${rustgdb}" || die
+	mv "${D}/opt/${P}/bin/rust-lldb" "${D}/opt/${P}/bin/${rustlldb}" || die
 
 	dosym "/opt/${P}/bin/${rustc}" "/usr/bin/${rustc}"
 	dosym "/opt/${P}/bin/${rustdoc}" "/usr/bin/${rustdoc}"
 	dosym "/opt/${P}/bin/${rustgdb}" "/usr/bin/${rustgdb}"
+	dosym "/opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
+
+	if use tools; then
+		local rls=rls-bin-${PV}
+		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
+		dosym "/opt/${P}/bin/${rls}" "/usr/bin/${rls}"
+	fi
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/opt/${P}/lib"
@@ -87,7 +89,13 @@ src_install() {
 	cat <<-EOF > "${T}/provider-${P}"
 	/usr/bin/rustdoc
 	/usr/bin/rust-gdb
+	/usr/bin/rust-lldb
 	EOF
+
+	use tools && cat <<-EOF >> "${T}/provider-${P}"
+	/usr/bin/rls
+	EOF
+
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
