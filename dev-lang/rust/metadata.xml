@@ -17,6 +17,6 @@
     <flag name="system-llvm">Use system <pkg>sys-devel/llvm</pkg> in
     place of the bundled one</flag>
     <flag name="sanitize">Add LeakSanitizer, ThreadSanitizer, AddressSanitizer and MemorySanitizer support</flag>
-    <flag name="analysis">Install standard library analysis data used by Rust Language Server</flag>
+    <flag name="tools">Enable a build of the and extended rust tool (RLS, analysis data, ...)</flag>
   </use>
 </pkgmetadata>
