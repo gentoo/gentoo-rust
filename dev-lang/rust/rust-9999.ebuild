@@ -27,7 +27,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source +system-llvm sanitize analysis"
+IUSE="clang debug doc libcxx source +system-llvm sanitize tools"
 REQUIRED_USE="libcxx? ( clang )"
 
 CDEPEND="libcxx? ( sys-libs/libcxx )
@@ -105,7 +105,7 @@ src_configure() {
 		$(use_enable libcxx libcpp) \
 		$(use_enable sanitize sanitizers) \
 		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
-		$(use_enable analysis save-analysis) \
+		$(use_enable tools extended) \
 		|| die
 }
 
@@ -150,12 +150,6 @@ src_install() {
 	if use source; then
 		dodir /usr/share/${P}
 		cp -R "${S}/src" "${D}/usr/share/${P}"
-	fi
-
-	if use debug; then
-		TARGET=debug
-	else
-		TARGET=release
 	fi
 }
 
