@@ -104,7 +104,7 @@ src_configure() {
 		$(use_enable doc docs) \
 		$(use_enable libcxx libcpp) \
 		$(use_enable sanitize sanitizers) \
-		$(usex system-llvm "--llvm-root=${EPREFIX}/usr" " ") \
+		$(usex system-llvm "--llvm-root=${EPREFIX}$(llvm-config --obj-root)" " ") \
 		$(use_enable tools extended) \
 		|| die
 }
