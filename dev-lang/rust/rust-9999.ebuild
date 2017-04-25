@@ -34,7 +34,7 @@ CDEPEND="libcxx? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 	system-llvm? ( >=sys-devel/llvm-3.8.1-r2
-			<sys-devel/llvm-3.10.0 )
+			<sys-devel/llvm-5.0.0 )
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
