@@ -10,7 +10,9 @@ SRC_URI=""
 
 LICENSE=""
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+
+#broken
+#KEYWORDS="~amd64 ~x86"
 
 DEPEND=""
 RDEPEND="|| (
