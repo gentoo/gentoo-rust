@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 inherit eutils bash-completion-r1 git-r3
 
@@ -29,6 +29,8 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	dev-util/cmake"
 
+DOCS="LICENSE-APACHE LICENSE-MIT LICENSE-THIRD-PARTY README.md"
+
 pkg_setup() {
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu
@@ -40,16 +42,15 @@ pkg_setup() {
 	unpack "./cargo-nightly-${postfix}.tar.gz"
 }
 
-src_configure() {
-	./configure --local-rust-root="cargo-nightly-${postfix}/cargo" --prefix="${EPREFIX}"/usr --disable-verify-install || die
-}
-
 src_compile() {
-	emake VERBOSE=1 PKG_CONFIG_PATH="" || die
+	cargo build --release || die
 }
 
 src_install() {
-	CFG_DISABLE_LDCONFIG="true" emake DESTDIR="${D}" install || die
-	dobashcomp "${ED}"/usr/etc/bash_completion.d/cargo
-	rm -rf "${ED}"/usr/etc
+	default
+	dobin target/release/${PN}
+	doman src/etc/man/${PN}*.1
+	newbashcomp src/etc/cargo.bashcomp.sh cargo
+	insinto /usr/share/zsh/site-functions
+	doins src/etc/_cargo
 }
