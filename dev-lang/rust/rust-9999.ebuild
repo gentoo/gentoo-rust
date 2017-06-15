@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -8,18 +7,11 @@ PYTHON_COMPAT=( python2_7 )
 
 inherit eutils git-r3 multilib python-any-r1
 
-if [[ ${PV} = 9999 ]]; then
-	SLOT="git"
-	release_channel="dev"
-	MY_P="rust-git"
-	EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
-	EGIT_CHECKOUT_DIR="${MY_P}-src"
-else
-	SLOT="nightly"
-	release_channel="${SLOT}"
-	MY_P="rustc-nightly"
-	MY_SRC_URI="http://static.rust-lang.org/dist/${MY_P}-src.tar.gz"
-fi
+SLOT="git"
+release_channel="dev"
+MY_P="rust-git"
+EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
+EGIT_CHECKOUT_DIR="${MY_P}-src"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -55,12 +47,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ ${PV} = 9999 ]]; then
-		git-r3_src_unpack
-	else
-		wget "${MY_SRC_URI}" || die
-		unpack ./"${MY_P}-src.tar.gz"
-	fi
+	git-r3_src_unpack
 
 	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
 	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
