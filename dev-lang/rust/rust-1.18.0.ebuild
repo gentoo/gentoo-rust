@@ -21,8 +21,7 @@ else
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.gz"
-	#broken
-	#KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~x86"
 fi
 
 CHOST_amd64=x86_64-unknown-linux-gnu
@@ -64,11 +63,6 @@ PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	|| ( 	>=dev-util/cargo-${CARGO_DEPEND_VERSION}
 		>=dev-util/cargo-bin-${CARGO_DEPEND_VERSION} )"
 
-PATCHES=(
-	"${FILESDIR}/${P}"-bootstrap-output-name-of-failed-config.patch
-	"${FILESDIR}/${P}"-bootstrap-verbose.patch
-)
-
 S="${WORKDIR}/${MY_P}-src"
 
 toml_usex() {
@@ -81,7 +75,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	local rust_stage0_root="${WORKDIR}"/rust-stage0
+	use amd64 && CTARGET="x86_64-unknown-linux-gnu"
+	use x86 && CTARGET="i686-unknown-linux-gnu"
+	local rust_stage0_root="${S}"/build/"${CTARGET}"/stage0
 
 	local rust_stage0_name="RUST_STAGE0_${ARCH}"
 	local rust_stage0="${!rust_stage0_name}"
@@ -92,7 +88,9 @@ src_prepare() {
 }
 
 src_configure() {
-	local rust_stage0_root="${WORKDIR}"/rust-stage0
+	use amd64 && CTARGET="x86_64-unknown-linux-gnu"
+	use x86 && CTARGET="i686-unknown-linux-gnu"
+	local rust_stage0_root="${S}"/build/"${CTARGET}"/stage0
 
 	local rust_target_name="CHOST_${ARCH}"
 	local rust_target="${!rust_target_name}"
@@ -135,7 +133,7 @@ src_configure() {
 		verbose = 2
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)/${P}"
+		libdir = "$(get_libdir)"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
@@ -176,7 +174,6 @@ src_install() {
 	fi
 
 	cat <<-EOF > "${T}"/50${P}
-		LDPATH="/usr/$(get_libdir)/${P}"
 		MANPATH="/usr/share/${P}/man"
 	EOF
 	doenvd "${T}"/50${P}
