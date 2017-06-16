@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -72,7 +71,7 @@ SRC_URI="https://github.com/mozilla/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 
 LICENSE="MPL-2.0"
 SLOT="0"
-KEYWORDS="-*"
+KEYWORDS=""
 
 DEPEND=""
 RDEPEND="${DEPEND}"

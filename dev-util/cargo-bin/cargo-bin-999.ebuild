@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
@@ -12,7 +11,7 @@ MY_SRC_URI="http://static.rust-lang.org/dist/rust-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS="-*"
+KEYWORDS=""
 
 IUSE="libressl"
 

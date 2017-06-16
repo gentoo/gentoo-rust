@@ -40,9 +40,9 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 IUSE="clang debug doc libcxx system-llvm"
 REQUIRED_USE="libcxx? ( clang )"
 
-#TODO: put supported llvm version here
 RDEPEND="libcxx? ( sys-libs/libcxx )
-	system-llvm? ( sys-devel/llvm )
+	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=
+		<sys-devel/llvm-3.10.0:= )
 "
 
 DEPEND="${RDEPEND}

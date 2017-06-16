@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
@@ -19,7 +18,7 @@ EGIT_REPO_URI="https://github.com/crabtw/rust-bindgen.git"
 
 DEPEND=">=virtual/rust-999
 	dev-util/cargo
-	>=sys-devel/clang-3.4.2-r100
+	>=sys-devel/clang-3.4.2-r100:*
 "
 RDEPEND="${DEPEND}"
 

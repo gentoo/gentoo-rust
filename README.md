@@ -88,8 +88,6 @@ Exceptions are trivial changes and urgent changes (that fix something completely
 Currently we have these slots for `dev-lang/rust`:
 
 * `stable` -- stable release
-* `beta` -- beta version
-* `nightly` -- nightly version
 * `git` -- upstream git version
 
 Note, that source packages use a custom postfix for Rust libraries.
