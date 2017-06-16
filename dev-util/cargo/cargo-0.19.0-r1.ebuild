@@ -5,101 +5,6 @@ EAPI=6
 
 inherit cargo bash-completion-r1
 
-CRATES="
-advapi32-sys-0.2.0
-aho-corasick-0.5.3
-aho-corasick-0.6.3
-bitflags-0.7.0
-bufstream-0.1.2
-cfg-if-0.1.0
-chrono-0.2.25
-cmake-0.1.22
-crossbeam-0.2.10
-curl-0.4.6
-curl-sys-0.3.11
-docopt-0.7.0
-dtoa-0.4.1
-env_logger-0.4.2
-filetime-0.1.10
-flate2-0.2.17
-foreign-types-0.2.0
-fs2-0.4.1
-gcc-0.3.45
-gdi32-sys-0.2.0
-git2-0.6.4
-git2-curl-0.7.0
-glob-0.2.11
-hamcrest-0.1.1
-idna-0.1.0
-itoa-0.3.1
-kernel32-sys-0.2.2
-lazy_static-0.2.5
-libc-0.2.21
-libgit2-sys-0.6.8
-libssh2-sys-0.2.5
-libz-sys-1.0.13
-log-0.3.7
-matches-0.1.4
-memchr-0.1.11
-memchr-1.0.1
-miniz-sys-0.1.9
-miow-0.2.1
-net2-0.2.27
-num-0.1.37
-num-bigint-0.1.37
-num-complex-0.1.36
-num_cpus-1.3.0
-num-integer-0.1.33
-num-iter-0.1.33
-num-rational-0.1.36
-num-traits-0.1.37
-openssl-0.9.10
-openssl-probe-0.1.0
-openssl-sys-0.9.10
-pkg-config-0.3.9
-psapi-sys-0.1.0
-quote-0.3.15
-rand-0.3.15
-redox_syscall-0.1.17
-regex-0.1.80
-regex-0.2.1
-regex-syntax-0.3.9
-regex-syntax-0.4.0
-rustc-serialize-0.3.23
-semver-0.6.0
-semver-parser-0.7.0
-serde-0.9.12
-serde_codegen_internals-0.14.2
-serde_derive-0.9.12
-serde_ignored-0.0.2
-serde_json-0.9.9
-shell-escape-0.1.3
-strsim-0.6.0
-syn-0.11.9
-synom-0.11.3
-tar-0.4.11
-tempdir-0.3.5
-term-0.4.5
-thread-id-2.0.0
-thread-id-3.0.0
-thread_local-0.2.7
-thread_local-0.3.3
-time-0.1.36
-toml-0.3.1
-unicode-bidi-0.2.5
-unicode-normalization-0.1.4
-unicode-xid-0.0.4
-unreachable-0.1.1
-url-1.4.0
-user32-sys-0.2.0
-utf8-ranges-0.1.3
-utf8-ranges-1.0.0
-void-1.0.2
-winapi-0.2.8
-winapi-build-0.1.1
-ws2_32-sys-0.2.1
-"
-
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 
@@ -119,8 +24,7 @@ RESTRICT="mirror"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 
-#broken
-#KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 
 IUSE="doc libressl"
 
@@ -158,6 +62,7 @@ src_configure() {
 	# otherwise you could get compilation issues.
 	# see: github.com/gentoo/gentoo-rust/issues/13
 	local myeconfargs=(
+		--prefix=/usr
 		--host=${CTARGET}
 		--build=${CTARGET}
 		--target=${CTARGET}
