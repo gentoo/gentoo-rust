@@ -14,7 +14,6 @@
     <flag name="jemalloc">Use <pkg>dev-libs/jemalloc</pkg> for allocations</flag>
     <flag name="libcxx">Use <pkg>sys-libs/libcxx</pkg> as standard
     library when building with <pkg>sys-devel/clang</pkg></flag>
-    <flag name="llvm">Build with <pkg>sys-devel/llvm</pkg></flag>
     <flag name="system-llvm">Use system <pkg>sys-devel/llvm</pkg> in
     place of the bundled one</flag>
     <flag name="sanitize">Add LeakSanitizer, ThreadSanitizer, AddressSanitizer and MemorySanitizer support</flag>
