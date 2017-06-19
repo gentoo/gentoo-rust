@@ -43,20 +43,14 @@ SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clang debug doc jemalloc llvm"
-REQUIRED_USE="clang? ( llvm )"
+#TODO: clang and llvm use flags
+IUSE="debug doc jemalloc"
+REQUIRED_USE=""
 
 RDEPEND=""
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
-	clang? (
-		<sys-devel/clang-6_pre:=
-		|| (
-			sys-devel/clang:4
-			>=sys-devel/clang-3:0
-		)
-	)
-	!clang? ( >=sys-devel/gcc-4.7 )
+	>=sys-devel/gcc-4.7
 	dev-util/cmake
 "
 PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
@@ -97,22 +91,10 @@ src_configure() {
 
 	local archiver="$(tc-getAR)"
 	local linker="$(tc-getCC)"
-	if use llvm ; then
-		# Gentoo currently lacks CHOST prefixed binaries for sys-devel/llvm
-		# https://bugs.gentoo.org/show_bug.cgi?id=617776
-		#archiver="${CHOST}"-llvm-ar
-		#linker="${CHOST}"-llvm-link
-		archiver=llvm-ar
-		linker=llvm-link
-	fi
 
 	local llvm_config="$(get_llvm_prefix)/bin/${CBUILD}-llvm-config"
 	local c_compiler="$(tc-getBUILD_CC)"
 	local cxx_compiler="$(tc-getBUILD_CXX)"
-	if use clang ; then
-		c_compiler="${CBUILD}-clang"
-		cxx_compiler="${CBUILD}-clang++"
-	fi
 
 	cat <<- EOF > "${S}"/config.toml
 		[llvm]
