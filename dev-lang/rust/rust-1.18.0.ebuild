@@ -147,12 +147,6 @@ src_install() {
 
 	dodoc COPYRIGHT
 
-	if use doc ; then
-		dodir "/usr/share/doc/rust-${PV}/"
-		mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
-		rmdir "${D}/usr/share/doc/rust/" || die
-	fi
-
 	cat <<-EOF > "${T}"/50${P}
 		MANPATH="/usr/share/${P}/man"
 	EOF
