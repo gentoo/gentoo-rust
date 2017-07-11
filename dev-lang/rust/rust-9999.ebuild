@@ -107,6 +107,15 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
+	if use tools; then
+		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
+		# remove cargo
+		rm -f "${D}/usr/bin/cargo" || die
+		rm -f "${D}/usr/share/zsh/site-functions/_cargo" || die
+		rm -f "${D}/usr/share/rust-9999/man/man1/cargo*" || die
+		rm -f "${D}/etc/bash_completion.d/cargo" || die
+		rm -f "${D}/usr/lib64/rust-9999/rustlib/manifest-cargo" || die
+	fi
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
 
