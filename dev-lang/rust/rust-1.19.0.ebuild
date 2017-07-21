@@ -135,7 +135,7 @@ src_configure() {
 src_compile() {
 	export RUST_BACKTRACE=1
 
-	./x.py build -j"${core}" --verbose --config="${S}"/config.toml || die
+	./x.py build -j"$(nproc)" --verbose --config="${S}"/config.toml || die
 }
 
 src_install() {
