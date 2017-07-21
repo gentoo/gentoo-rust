@@ -135,11 +135,11 @@ src_configure() {
 src_compile() {
 	export RUST_BACKTRACE=1
 
-	./x.py build --verbose --config="${S}"/config.toml || die
+	./x.py build -j"${core}" --verbose --config="${S}"/config.toml || die
 }
 
 src_install() {
-	env DESTDIR="${D}" ./x.py dist --install || die
+	env DESTDIR="${D}" ./x.py install || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
