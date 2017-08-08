@@ -125,7 +125,7 @@ src_configure() {
 		use-jemalloc = true
 		default-linker = "${linker}"
 		default-ar = "${archiver}"
-		rpath = true
+		rpath = false
 		[target.${rust_target}]
 		cc = "${c_compiler}"
 		cxx = "${cxx_compiler}"
