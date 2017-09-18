@@ -115,7 +115,7 @@ src_configure() {
 		extended = $(toml_usex tools)
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)/${P}"
+		libdir = "$(get_libdir)"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
@@ -126,7 +126,6 @@ src_configure() {
 		default-linker = "${linker}"
 		default-ar = "${archiver}"
 		rpath = false
-		ignore-git = false
 		[target.${rust_target}]
 		cc = "${c_compiler}"
 		cxx = "${cxx_compiler}"
