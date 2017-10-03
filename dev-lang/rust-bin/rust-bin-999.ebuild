@@ -47,7 +47,7 @@ src_install() {
 	local components="rustc,${std}"
 	if use tools; then
 		local analysis=$(grep 'analysis' ./components)
-		components="${components},rls,${analysis}"
+		components="${components},rls-preview,${analysis}"
 	fi
 	use doc && components="${components},rust-docs"
 	./install.sh \
