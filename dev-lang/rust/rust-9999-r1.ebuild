@@ -124,11 +124,12 @@ src_configure() {
 		debug-assertions = $(toml_usex debug)
 		use-jemalloc = true
 		default-linker = "${linker}"
-		default-ar = "${archiver}"
 		rpath = false
+		ignore-git = false
 		[target.${rust_target}]
 		cc = "${c_compiler}"
 		cxx = "${cxx_compiler}"
+		ar = "${archiver}"
 	EOF
 
 	if use system-llvm; then
