@@ -29,7 +29,7 @@ RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
 
-CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2) + 1)).0"
+CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
