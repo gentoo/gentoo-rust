@@ -83,6 +83,12 @@ If you have push access to this repo it is a good idea to still create a pull re
 so at least one more person have reviewed your code.
 Exceptions are trivial changes and urgent changes (that fix something completely broken).
 
+## Communication
+
+ - Join #gentoo-rust channel on Freenode
+ - Open issues here https://github.com/gentoo/gentoo-rust
+ - Gentoo Discord: https://discord.gg/KEphgqH
+
 ## Slotting
 
 Currently we have these slots for `dev-lang/rust`:
