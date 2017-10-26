@@ -172,3 +172,9 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${P}/${PN}"
+
+src_install() {
+	export S="${WORKDIR}/${P}"
+	cd ${S}
+	cargo_src_install
+}
