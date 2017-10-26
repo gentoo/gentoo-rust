@@ -172,8 +172,3 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${P}/${PN}"
-
-src_install() {
-	doman ../man/en/man1/${PN}*.1
-	cargo_src_install
-}
