@@ -65,6 +65,16 @@ src_prepare() {
 
     use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
     use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
+
+	if use tools; then
+		RLS_STATE=$(grep "rls *= *" src/tools/toolstate.toml | grep -Po '(?<=").*(?=")')
+		if [ "${RLS_STATE}" = "Broken" ];then
+			eerror "RLS is building but its state is $RLS_STATE. Consider to disable 'tools' USE-flag"
+			die "RLS is broken"
+		else
+			einfo "RLS state is $RLS_STATE."
+		fi
+	fi
 }
 
 src_unpack() {
