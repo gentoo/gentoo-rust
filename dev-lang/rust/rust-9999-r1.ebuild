@@ -163,6 +163,7 @@ src_install() {
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
 	if use tools; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
+		mv "${D}/usr/bin/rustfmt" "${D}/usr/bin/rustfmt-${PV}" || die
 		# remove cargo
 		rm -f "${D}/usr/bin/cargo" || die
 		rm -f "${D}/usr/share/zsh/site-functions/_cargo" || die
@@ -189,6 +190,14 @@ src_install() {
 	/usr/bin/rust-gdb
 	/usr/bin/rust-lldb
 	EOF
+
+	if use tools; then
+	    cat <<-EOF >> "${T}/provider-${P}"
+		/usr/bin/rls
+		/usr/bin/rustfmt
+		EOF
+	fi
+
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
