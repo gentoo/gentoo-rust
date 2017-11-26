@@ -7,7 +7,7 @@ inherit eutils bash-completion-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
-MY_SRC_URI="http://static.rust-lang.org/dist/rust-beta"
+MY_SRC_URI="https://static.rust-lang.org/dist/rust-beta"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="beta"
