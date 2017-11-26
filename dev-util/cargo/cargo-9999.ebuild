@@ -15,7 +15,7 @@ KEYWORDS=""
 IUSE="libressl"
 
 EGIT_REPO_URI="https://github.com/rust-lang/cargo.git"
-BIN_CARGO_URI="http://static.rust-lang.org/dist/cargo-nightly"
+BIN_CARGO_URI="https://static.rust-lang.org/dist/cargo-nightly"
 
 COMMON_DEPEND=">=virtual/rust-999
 	sys-libs/zlib

@@ -7,7 +7,7 @@ inherit bash-completion-r1
 
 DESCRIPTION="The Rust's package manager"
 HOMEPAGE="http://crates.io"
-MY_SRC_URI="http://static.rust-lang.org/dist/rust-beta"
+MY_SRC_URI="https://static.rust-lang.org/dist/rust-beta"
 
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
