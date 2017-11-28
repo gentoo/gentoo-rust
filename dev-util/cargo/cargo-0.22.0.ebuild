@@ -143,8 +143,7 @@ RESTRICT="mirror"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 
-#broken
-#KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 
 IUSE="doc libressl"
 
