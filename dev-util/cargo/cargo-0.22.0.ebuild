@@ -30,7 +30,7 @@ dbghelp-sys-0.2.0
 docopt-0.8.1
 dtoa-0.4.1
 env_logger-0.4.3
-error-chain-0.11.0-rc.2
+error-chain-0.11.0
 filetime-0.1.10
 flate2-0.2.19
 fnv-1.0.5
@@ -173,6 +173,7 @@ DEPEND="${COMMON_DEPEND}
 src_configure() {
 	# Do nothing
 	echo "Configuring cargo..."
+	epatch "${FILESDIR}/0.22.0-fixerror.patch"
 }
 
 src_compile() {
