@@ -5,7 +5,7 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit python-any-r1 versionator toolchain-funcs
+inherit python-any-r1 versionator toolchain-funcs eutils
 
 if [[ ${PV} = *beta* ]]; then
 	betaver=${PV//*beta}
@@ -73,6 +73,8 @@ src_prepare() {
 	local rust_stage0_name="RUST_STAGE0_${ARCH}"
 	local rust_stage0="${!rust_stage0_name}"
 
+	epatch ${FILESDIR}/rust-1.20.0-fix-libdir.patch || die
+
 	"${WORKDIR}/${rust_stage0}"/install.sh --disable-ldconfig --destdir="${rust_stage0_root}" --prefix=/ || die
 
 	default
@@ -111,7 +113,7 @@ src_configure() {
 		verbose = 2
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)"
+		libdir = "$(get_libdir)/${P}"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
@@ -146,6 +148,7 @@ src_install() {
 
 	cat <<-EOF > "${T}"/50${P}
 		MANPATH="/usr/share/${P}/man"
+		LDPATH="/usr/$(get_libdir)/${P}"
 	EOF
 	doenvd "${T}"/50${P}
 
