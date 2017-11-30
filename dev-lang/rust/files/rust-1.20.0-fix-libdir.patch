@@ -1,0 +1,31 @@
+From fec6dcd08316e168d1641a3841a6ac67c42b9474 Mon Sep 17 00:00:00 2001
+From: O01eg <o01eg@yandex.ru>
+Date: Wed, 29 Nov 2017 12:32:03 +0300
+Subject: [PATCH] Fix #45345.
+
+Re-implement
+
+```bash
+CFG_LIBDIR_RELATIVE=`echo ${CFG_LIBDIR} | cut -c$((${#CFG_PREFIX}+${CAT_INC}))-`
+```
+
+from old `configure` script.
+---
+ src/bootstrap/config.rs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/bootstrap/config.rs b/src/bootstrap/config.rs
+index d43cd54ddc..27a9499a6d 100644
+--- a/src/bootstrap/config.rs
++++ b/src/bootstrap/config.rs
+@@ -413,6 +413,7 @@ impl Config {
+             config.docdir = install.docdir.clone().map(PathBuf::from);
+             config.bindir = install.bindir.clone().map(PathBuf::from);
+             config.libdir = install.libdir.clone().map(PathBuf::from);
++            config.libdir_relative = install.libdir.clone().map(PathBuf::from);
+             config.mandir = install.mandir.clone().map(PathBuf::from);
+         }
+ 
+-- 
+2.13.6
+
