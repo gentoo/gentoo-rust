@@ -25,25 +25,23 @@ fi
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 
-RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
+RUST_STAGE0_VERSION="${PV}" #Use current version for stage0s
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
-
-CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
 SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
 	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
-	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
-"
+	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )"
+
+ALL_LLVM_TARGETS=( AArch64 ARM Hexagon JSBackend Mips MSP430 NVPTX PowerPC Sparc SystemZ X86 ) 
+ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-#TODO: clang and llvm use flags
-IUSE="debug doc jemalloc"
-REQUIRED_USE=""
+IUSE="debug doc +jemalloc ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=""
 DEPEND="${RDEPEND}
@@ -51,9 +49,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gcc-4.7
 	dev-util/cmake
 "
-PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-	|| ( 	>=dev-util/cargo-${CARGO_DEPEND_VERSION}
-		>=dev-util/cargo-bin-${CARGO_DEPEND_VERSION} )"
+PDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425"
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -66,9 +62,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	use amd64 && CTARGET="x86_64-unknown-linux-gnu"
-	use x86 && CTARGET="i686-unknown-linux-gnu"
-	local rust_stage0_root="${S}"/build/"${CTARGET}"/stage0
+	eapply "${FILESDIR}/0001-librustc_llvm-build-Force-link-against-libffi.patch"
+
+	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
 	local rust_stage0_name="RUST_STAGE0_${ARCH}"
 	local rust_stage0="${!rust_stage0_name}"
@@ -79,24 +75,17 @@ src_prepare() {
 }
 
 src_configure() {
-	use amd64 && CTARGET="x86_64-unknown-linux-gnu"
-	use x86 && CTARGET="i686-unknown-linux-gnu"
-	local rust_stage0_root="${S}"/build/"${CTARGET}"/stage0
+	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
 	local rust_target_name="CHOST_${ARCH}"
 	local rust_target="${!rust_target_name}"
-
-	local archiver="$(tc-getAR)"
-	local linker="$(tc-getCC)"
-
-	local c_compiler="$(tc-getBUILD_CC)"
-	local cxx_compiler="$(tc-getBUILD_CXX)"
 
 	cat <<- EOF > "${S}"/config.toml
 		[llvm]
 		optimize = $(toml_usex !debug)
 		release-debuginfo = $(toml_usex debug)
 		assertions = $(toml_usex debug)
+		targets = "${LLVM_TARGETS// /;}"
 		[build]
 		build = "${rust_target}"
 		host = ["${rust_target}"]
@@ -108,30 +97,37 @@ src_configure() {
 		python = "${EPYTHON}"
 		locked-deps = true
 		vendor = true
-		verbose = 2
+		extended = true
+		verbose = 0
+		sanitizers = false
+		profiler = false
 		[install]
 		prefix = "${EPREFIX}/usr"
 		libdir = "$(get_libdir)"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
+		debug = $(toml_usex debug)
 		optimize = $(toml_usex !debug)
-		debuginfo = $(toml_usex debug)
+		codegen-units = 0
 		debug-assertions = $(toml_usex debug)
+		debuginfo = $(toml_usex debug)
 		use-jemalloc = $(toml_usex jemalloc)
-		default-linker = "${linker}"
-		default-ar = "${archiver}"
+		backtrace = $(toml_usex debug)
+		default-linker = "$(tc-getCC)"
+		default-ar = "$(tc-getAR)"
+		channel = "stable"
 		rpath = false
+		codegen-tests = $(toml_usex debug)
+		dist-src = $(toml_usex debug)
 		[target.${rust_target}]
-		cc = "${c_compiler}"
-		cxx = "${cxx_compiler}"
+		cc = "$(tc-getBUILD_CC)"
+		cxx = "$(tc-getBUILD_CXX)"
 	EOF
 }
 
 src_compile() {
-	export RUST_BACKTRACE=1
-
-	./x.py build -j"$(nproc)" --verbose --config="${S}"/config.toml || die
+	./x.py build --verbose --config="${S}"/config.toml ${MAKEOPTS} || die
 }
 
 src_install() {
@@ -144,7 +140,14 @@ src_install() {
 
 	dodoc COPYRIGHT
 
+	if use doc ; then
+		dodir "/usr/share/doc/rust-${PV}/"
+		mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
+		rmdir "${D}/usr/share/doc/rust/" || die
+	fi
+
 	cat <<-EOF > "${T}"/50${P}
+		LDPATH="/usr/$(get_libdir)/${P}"
 		MANPATH="/usr/share/${P}/man"
 	EOF
 	doenvd "${T}"/50${P}
@@ -162,8 +165,8 @@ src_install() {
 pkg_postinst() {
 	eselect rust update --if-unset
 
-	elog "Rust installs a helper script for calling GDB now,"
-	elog "for your convenience it is installed under /usr/bin/rust-gdb-${PV}."
+	elog "Rust installs a helper script for calling GDB and LLDB,"
+	elog "for your convenience it is installed under /usr/bin/rust-{gdb,lldb}-${PV}."
 
 	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
 		elog "install app-emacs/rust-mode to get emacs support for rust."
