@@ -45,7 +45,8 @@ IUSE="debug doc +jemalloc ${ALL_LLVM_TARGETS[*]}"
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 
-RDEPEND=""
+# installs own cargo version
+RDEPEND="!dev-util/cargo"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	>=sys-devel/gcc-4.7
