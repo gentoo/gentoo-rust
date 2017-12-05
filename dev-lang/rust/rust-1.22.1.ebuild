@@ -43,6 +43,8 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
 IUSE="debug doc +jemalloc ${ALL_LLVM_TARGETS[*]}"
 
+REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
+
 RDEPEND=""
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
