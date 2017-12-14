@@ -39,10 +39,11 @@ pkg_setup() {
 
 	wget "${BIN_CARGO_URI}-${postfix}.tar.gz" || die
 	unpack "./cargo-nightly-${postfix}.tar.gz"
+	mv "./cargo-nightly-${postfix}" "./cargo"
 }
 
 src_compile() {
-	cargo build --release || die
+	"$HOME/cargo/cargo/bin/cargo" build --release || die
 }
 
 src_install() {
