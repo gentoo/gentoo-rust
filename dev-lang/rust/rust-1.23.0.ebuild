@@ -117,7 +117,6 @@ src_configure() {
 		use-jemalloc = $(toml_usex jemalloc)
 		backtrace = $(toml_usex debug)
 		default-linker = "$(tc-getCC)"
-		default-ar = "$(tc-getAR)"
 		channel = "stable"
 		rpath = false
 		codegen-tests = $(toml_usex debug)
