@@ -151,11 +151,11 @@ src_configure() {
 }
 
 src_compile() {
-	${EPYTHON} x.py build --verbose --config="${S}"/config.toml ${MAKEOPTS} || die
+	${EPYTHON} x.py build --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 }
 
 src_install() {
-	env DESTDIR="${D}" ${EPYTHON} x.py install  --verbose --config="${S}"/config.toml ${MAKEOPTS} || die
+	env DESTDIR="${D}" ${EPYTHON} x.py install  --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
