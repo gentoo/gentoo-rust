@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -73,7 +73,7 @@ src_prepare() {
 	local rust_stage0_name="RUST_STAGE0_${ARCH}"
 	local rust_stage0="${!rust_stage0_name}"
 
-	epatch ${FILESDIR}/rust-1.20.0-fix-libdir.patch || die
+	epatch "${FILESDIR}"/rust-1.20.0-fix-libdir.patch || die
 
 	"${WORKDIR}/${rust_stage0}"/install.sh --disable-ldconfig --destdir="${rust_stage0_root}" --prefix=/ || die
 

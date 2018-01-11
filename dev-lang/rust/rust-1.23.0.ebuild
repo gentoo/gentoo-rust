@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -36,7 +36,7 @@ SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
 	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
 	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )"
 
-ALL_LLVM_TARGETS=( AArch64 ARM Hexagon JSBackend Mips MSP430 NVPTX PowerPC Sparc SystemZ X86 ) 
+ALL_LLVM_TARGETS=( AArch64 ARM Hexagon Mips MSP430 NVPTX PowerPC Sparc SystemZ X86 )
 ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"

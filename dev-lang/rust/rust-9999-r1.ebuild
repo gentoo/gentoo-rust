@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -63,8 +63,8 @@ pkg_setup() {
 src_prepare() {
 	default
 
-    use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
-    use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
+	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
+	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
 
 	if use tools; then
 		RLS_STATE=$(grep "rls *= *" src/tools/toolstate.toml | grep -Po '(?<=").*(?=")')
