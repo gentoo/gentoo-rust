@@ -1,16 +1,18 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils git-r3 multilib python-any-r1
+LLVM_MAX_SLOT=4
+
+inherit git-r3 multilib python-any-r1 llvm eutils
 
 SLOT="git"
-release_channel="dev"
 MY_P="rust-git"
 EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
+
 EGIT_CHECKOUT_DIR="${MY_P}-src"
 
 DESCRIPTION="Systems programming language from Mozilla"
@@ -19,10 +21,9 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc libcxx source +system-llvm sanitize tools"
-REQUIRED_USE="libcxx? ( clang )"
+IUSE="clang debug doc source +system-llvm sanitize tools"
 
-CDEPEND="libcxx? ( sys-libs/libcxx )
+CDEPEND="clang? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=
@@ -30,27 +31,45 @@ CDEPEND="libcxx? ( sys-libs/libcxx )
 "
 DEPEND="${CDEPEND}
 	${PYTHON_DEPS}
-	>=dev-lang/perl-5.0
-	net-misc/wget
-	clang? ( sys-devel/clang )
+	net-misc/curl
+	clang? (
+		<sys-devel/clang-6_pre:=
+		|| (
+			sys-devel/clang:4
+			>=sys-devel/clang-3:0
+		)
+	)
+	!clang? ( >=sys-devel/gcc-4.7 )
+	dev-util/cmake
 	sanitize? ( >=sys-kernel/linux-headers-3.2 )
 "
 RDEPEND="${CDEPEND}
 "
+PDEPEND="dev-util/cargo"
 
 S="${WORKDIR}/${MY_P}-src"
 
+toml_usex() {
+	usex "$1" true false
+}
+
 pkg_setup() {
+	python-any-r1_pkg_setup
 	if use system-llvm; then
 		EGIT_SUBMODULES=( "*" "-src/llvm" )
+		llvm_pkg_setup
 	fi
+}
+
+src_prepare() {
+	default
+
+	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
+	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
 }
 
 src_unpack() {
 	git-r3_src_unpack
-
-	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
-	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
 }
 
 src_configure() {
@@ -59,49 +78,75 @@ src_configure() {
 	# to compile static libraries
 	if use system-llvm; then
 		export LLVM_LINK_SHARED=1
+		local llvm_config="$(get_llvm_prefix)/bin/${CBUILD}-llvm-config"
 	fi
 
 	python_setup
 
+	local rust_target="${BUILD_TRIPLE}"
+
+	local archiver="$(tc-getAR)"
+	local linker="$(tc-getCC)"
+
+	local c_compiler="$(tc-getBUILD_CC)"
+	local cxx_compiler="$(tc-getBUILD_CXX)"
+	if use clang ; then
+		c_compiler="${CBUILD}-clang"
+		cxx_compiler="${CBUILD}-clang++"
+	fi
+
 	export CFG_DISABLE_LDCONFIG="notempty"
 
-	local postfix="gentoo-${SLOT}"
-	local stagename="RUST_STAGE0_${ARCH}"
-	local stage0="${!stagename}"
+	cat <<- EOF > "${S}"/config.toml
+		[llvm]
+		optimize = $(toml_usex !debug)
+		release-debuginfo = $(toml_usex debug)
+		assertions = $(toml_usex debug)
+		[build]
+		build = "${rust_target}"
+		host = ["${rust_target}"]
+		target = ["${rust_target}"]
+		docs = $(toml_usex doc)
+		submodules = false
+		python = "${EPYTHON}"
+		locked-deps = true
+		vendor = false
+		verbose = 2
+		sanitizers = $(toml_usex sanitize)
+		extended = $(toml_usex tools)
+		[install]
+		prefix = "${EPREFIX}/usr"
+		libdir = "$(get_libdir)/${P}"
+		docdir = "share/doc/${P}"
+		mandir = "share/${P}/man"
+		[rust]
+		optimize = $(toml_usex !debug)
+		debuginfo = $(toml_usex debug)
+		debug-assertions = $(toml_usex debug)
+		use-jemalloc = true
+		default-linker = "${linker}"
+		rpath = false
+		ignore-git = false
+		[target.${rust_target}]
+		cc = "${c_compiler}"
+		cxx = "${cxx_compiler}"
+		ar = "${archiver}"
+	EOF
 
-	"${ECONF_SOURCE:-.}"/configure \
-		--prefix="${EPREFIX}/usr" \
-		--libdir="${EPREFIX}/usr/$(get_libdir)/${P}" \
-		--mandir="${EPREFIX}/usr/share/${P}/man" \
-		--release-channel=${release_channel%%/*} \
-		--extra-filename=${postfix} \
-		--disable-manage-submodules \
-		--default-linker=$(tc-getBUILD_CC) \
-		--default-ar=$(tc-getBUILD_AR) \
-		--python=${EPYTHON} \
-		--disable-rpath \
-		--build=${BUILD_TRIPLE} \
-		$(use_enable clang) \
-		$(use_enable debug) \
-		$(use_enable debug llvm-assertions) \
-		$(use_enable !debug optimize) \
-		$(use_enable !debug optimize-cxx) \
-		$(use_enable !debug optimize-llvm) \
-		$(use_enable !debug optimize-tests) \
-		$(use_enable doc docs) \
-		$(use_enable libcxx libcpp) \
-		$(use_enable sanitize sanitizers) \
-		$(usex system-llvm "--llvm-root=${EPREFIX}$(llvm-config --obj-root)" " ") \
-		$(use_enable tools extended) \
-		|| die
+	if use system-llvm; then
+		cat <<- EOF >> "${S}"/config.toml
+			llvm-config = "${llvm_config}"
+		EOF
+	fi
+
 }
 
 src_compile() {
-	emake dist VERBOSE=1
+	${EPYTHON} x.py build --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 }
 
 src_install() {
-	default VERBOSE=1
+	env DESTDIR="${D}" ${EPYTHON} x.py install  --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
@@ -109,19 +154,10 @@ src_install() {
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
 	if use tools; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
-		# remove cargo
-		rm -f "${D}/usr/bin/cargo" || die
-		rm -f "${D}/usr/share/zsh/site-functions/_cargo" || die
-		rm -f "${D}/usr/share/rust-9999/man/man1/cargo*" || die
-		rm -f "${D}/etc/bash_completion.d/cargo" || die
-		rm -f "${D}/usr/lib64/rust-9999/rustlib/manifest-cargo" || die
+		mv "${D}/usr/bin/rustfmt" "${D}/usr/bin/rustfmt-${PV}" # ignore
 	fi
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
-
-	dodir "/usr/share/doc/rust-${PV}/"
-	mv "${D}/usr/share/doc/rust"/* "${D}/usr/share/doc/rust-${PV}/" || die
-	rmdir "${D}/usr/share/doc/rust/" || die
 
 	cat <<-EOF > "${T}"/50${P}
 	LDPATH="/usr/$(get_libdir)/${P}"
@@ -139,10 +175,19 @@ src_install() {
 	/usr/bin/rust-gdb
 	/usr/bin/rust-lldb
 	EOF
+
+	if use tools; then
+	    cat <<-EOF >> "${T}/provider-${P}"
+		/usr/bin/rls
+		/usr/bin/rustfmt
+		EOF
+	fi
+
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
 
+	rm -rf "${D}/usr/lib64/rustlib/src/"
 	if use source; then
 		dodir /usr/share/${P}
 		cp -R "${S}/src" "${D}/usr/share/${P}"
