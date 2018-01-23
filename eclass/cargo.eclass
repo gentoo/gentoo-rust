@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: cargo.eclass
 # @MAINTAINER:
-# rust@gentoo.org
+# slyfox@gentoo.org
 # @AUTHOR:
 # Doug Goldstein <cardoe@gentoo.org>
 # @BLURB: common functions and variables for cargo builds
@@ -18,7 +18,7 @@ esac
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
-IUSE="${IUSE} debug"
+IUSE="${IUSE} debug fetch-crates"
 
 [[ ${CATEGORY}/${PN} != dev-util/cargo ]] && DEPEND="${DEPEND} || ( >=dev-util/cargo-0.13.0
 								>=virtual/rust-1.22.1 )"
@@ -40,7 +40,7 @@ cargo_crate_uris() {
 			version="${name##*-}-${version}"
 			name="${name%-*}"
 		fi
-		url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate"
+		url="!fetch-crates? ( https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate )"
 		echo "${url}"
 	done
 }
@@ -51,8 +51,22 @@ cargo_crate_uris() {
 cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
+	if use fetch-crates; then
+		# Cache crates in persistent store
+		# Do no redownload them at every compilation
+		ECARGO_HOME="${PORTAGE_ACTUAL_DISTDIR-${DISTDIR}}/cargo-src"
+		ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
+
+		addwrite "${ECARGO_HOME}"
+	fi
+
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
+
+	if use fetch-crates; then
+		ewarn "USE=fetch-crates is set. Crates will be fetched from crates.io."
+		return
+	fi
 
 	local archive shasum pkg
 	for archive in ${A}; do
