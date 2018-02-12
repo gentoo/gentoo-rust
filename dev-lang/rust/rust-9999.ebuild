@@ -21,7 +21,7 @@ HOMEPAGE="http://www.rust-lang.org/"
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc source +system-llvm sanitize tools"
+IUSE="clang debug doc source +system-llvm sanitize extended"
 
 CDEPEND="clang? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -47,10 +47,18 @@ RDEPEND="${CDEPEND}
 "
 PDEPEND="dev-util/cargo"
 
+REQUIRED_USE="source? ( extended )"
+
 S="${WORKDIR}/${MY_P}-src"
 
 toml_usex() {
 	usex "$1" true false
+}
+
+toml_tools_list() {
+    if use extended; then
+       echo "tools=[$(usex source "\"src\",") \"rls\", \"analysis\"]"
+    fi
 }
 
 pkg_setup() {
@@ -113,7 +121,8 @@ src_configure() {
 		vendor = false
 		verbose = 2
 		sanitizers = $(toml_usex sanitize)
-		extended = $(toml_usex tools)
+		extended = $(toml_usex extended)
+		$(toml_tools_list)
 		[install]
 		prefix = "${EPREFIX}/usr"
 		libdir = "$(get_libdir)/${P}"
@@ -152,9 +161,8 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
-	if use tools; then
+	if use extended; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
-		mv "${D}/usr/bin/rustfmt" "${D}/usr/bin/rustfmt-${PV}" # ignore
 	fi
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
@@ -176,10 +184,9 @@ src_install() {
 	/usr/bin/rust-lldb
 	EOF
 
-	if use tools; then
+	if use extended; then
 	    cat <<-EOF >> "${T}/provider-${P}"
 		/usr/bin/rls
-		/usr/bin/rustfmt
 		EOF
 	fi
 
