@@ -16,7 +16,7 @@ case ${EAPI} in
 	*) die "EAPI=${EAPI:-0} is not supported" ;;
 esac
 
-EXPORT_FUNCTIONS src_unpack src_compile src_install
+EXPORT_FUNCTIONS src_unpack src_compile src_install src_test
 
 IUSE="${IUSE} debug fetch-crates"
 
@@ -146,6 +146,13 @@ cargo_src_install() {
 	rm -f "${D}/usr/.crates.toml"
 
 	[ -d "${S}/man" ] && doman "${S}/man" || return 0
+}
+
+# @FUNCTION: cargo_src_test
+# @DESCRIPTION:
+# Test package using cargo test
+cargo_src_test() {
+	cargo test || die
 }
 
 fi
