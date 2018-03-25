@@ -6,6 +6,7 @@
     <name>Rust Project</name>
   </maintainer>
   <use>
+    <flag name="extended">Install extended rust tools (RLS, analysis data, ...)</flag>
     <flag name="clang">Use <pkg>sys-devel/clang</pkg> for building</flag>
     <flag name="libcxx">Use <pkg>sys-libs/libcxx</pkg> as standard
     library when building with <pkg>sys-devel/clang</pkg></flag>
