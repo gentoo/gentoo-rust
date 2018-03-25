@@ -6,6 +6,7 @@
     <name>Rust Project</name>
   </maintainer>
   <use>
+    <flag name="extended">Install extended rust tools (RLS, analysis data, ...)</flag>
     <flag name="clang">Use <pkg>sys-devel/clang</pkg> for building</flag>
     <flag name="system-llvm">Use system <pkg>sys-devel/llvm</pkg> in
     place of the bundled one</flag>
