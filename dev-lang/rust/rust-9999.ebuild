@@ -173,7 +173,7 @@ src_install() {
 	EOF
 	if use source; then
 		cat <<-EOF >> "${T}"/50${P}
-		RUST_SRC_PATH="/usr/share/${P}/src"
+		RUST_SRC_PATH="/usr/$(get_libdir)/${P}/rustlib/src/rust/src/"
 		EOF
 	fi
 	doenvd "${T}"/50${P}
@@ -194,11 +194,7 @@ src_install() {
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
 
-	rm -rf "${D}/usr/lib64/rustlib/src/"
-	if use source; then
-		dodir /usr/share/${P}
-		cp -R "${S}/src" "${D}/usr/share/${P}"
-	fi
+	rm -rf "${D}/usr/$(get_libdir)/rustlib/src/"
 }
 
 pkg_postinst() {
