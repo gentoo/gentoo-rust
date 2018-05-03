@@ -3,7 +3,7 @@
 
 # @ECLASS: cargo.eclass
 # @MAINTAINER:
-# slyfox@gentoo.org
+# rust@gentoo.org
 # @AUTHOR:
 # Doug Goldstein <cardoe@gentoo.org>
 # @BLURB: common functions and variables for cargo builds
@@ -16,7 +16,9 @@ case ${EAPI} in
 	*) die "EAPI=${EAPI:-0} is not supported" ;;
 esac
 
-EXPORT_FUNCTIONS src_unpack src_compile src_install src_test
+inherit multiprocessing
+
+EXPORT_FUNCTIONS src_unpack src_compile src_install
 
 IUSE="${IUSE} debug fetch-crates"
 
@@ -131,7 +133,7 @@ cargo_src_compile() {
 
 	export CARGO_HOME="${ECARGO_HOME}"
 
-	cargo build -v $(usex debug "" --release) \
+	cargo build -v -j $(makeopts_jobs) $(usex debug "" --release) \
 		|| die "cargo build failed"
 }
 
@@ -141,18 +143,11 @@ cargo_src_compile() {
 cargo_src_install() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	cargo install --root="${D}/usr" $(usex debug --debug "") \
+	cargo install -j $(makeopts_jobs) --root="${D}/usr" $(usex debug --debug "") \
 		|| die "cargo install failed"
 	rm -f "${D}/usr/.crates.toml"
 
 	[ -d "${S}/man" ] && doman "${S}/man" || return 0
-}
-
-# @FUNCTION: cargo_src_test
-# @DESCRIPTION:
-# Test package using cargo test
-cargo_src_test() {
-	cargo test || die
 }
 
 fi
