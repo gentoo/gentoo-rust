@@ -20,7 +20,7 @@ inherit multiprocessing
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
-IUSE="${IUSE} debug +fetch-crates"
+IUSE="${IUSE} debug fetch-crates"
 
 [[ ${CATEGORY}/${PN} != dev-util/cargo ]] && DEPEND=">=dev-util/cargo-0.13.0"
 
