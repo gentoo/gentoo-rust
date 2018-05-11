@@ -83,7 +83,7 @@ src_configure() {
 		rust_target_name="CHOST_${v##*.}"
 		rust_targets="${rust_targets},\"${!rust_target_name}\""
 	done
-    rust_targets="${rust_targets#,}"
+	rust_targets="${rust_targets#,}"
 
 	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
@@ -127,14 +127,14 @@ src_configure() {
 		arch_cflags="$(get_abi_CFLAGS ${v##*.})"
 
 		cat <<- EOF >> "${S}"/config.toml
- 				[target.${rust_target}]
- 				cc = "$(tc-getBUILD_CC) ${arch_cflags}"
- 				cxx = "$(tc-getBUILD_CXX) ${arch_cflags}"
- 				linker = "$(tc-getCC) ${arch_cflags}"
- 				ar = "$(tc-getAR)"
+				[target.${rust_target}]
+				cc = "$(tc-getBUILD_CC) ${arch_cflags}"
+				cxx = "$(tc-getBUILD_CXX) ${arch_cflags}"
+				linker = "$(tc-getCC) ${arch_cflags}"
+				ar = "$(tc-getAR)"
 		EOF
 
-    done
+	done
 }
 
 src_compile() {
@@ -142,7 +142,7 @@ src_compile() {
 }
 
 src_install() {
-    local rust_target abi_libdir
+	local rust_target abi_libdir
 
 	env DESTDIR="${D}" ./x.py install || die
 
@@ -151,7 +151,7 @@ src_install() {
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
 
-    # Copy shared library versions of standard libraries for all targets
+	# Copy shared library versions of standard libraries for all targets
 	# into the system's abi-dependent lib directories because the rust
 	# installer only does so for the native ABI.
 	for v in $(multilib_get_enabled_abi_pairs); do
@@ -160,10 +160,10 @@ src_install() {
 		fi
 		abi_libdir=$(get_abi_LIBDIR ${v##*.})
 		rust_target=$(get_abi_CHOST ${v##*.})
-		mkdir -p ${D}/usr/${abi_libdir}
-		cp ${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so \
-		   ${D}/usr/${abi_libdir} || die
-    done
+		mkdir -p "${D}/usr/${abi_libdir}"
+		cp "${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so" \
+		   "${D}/usr/${abi_libdir}" || die
+	done
 
 	dodoc COPYRIGHT
 
