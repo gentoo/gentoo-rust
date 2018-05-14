@@ -6,7 +6,7 @@ EAPI=6
 inherit cargo git-r3
 
 DESCRIPTION="GTK UI for Neovim"
-HOMEPAGE=""
+HOMEPAGE="https://github.com/daa84/neovim-gtk"
 SRC_URI=""
 
 LICENSE="GPL3"
