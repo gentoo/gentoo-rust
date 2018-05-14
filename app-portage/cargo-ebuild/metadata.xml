@@ -4,4 +4,7 @@
 	<maintainer type="person">
 	<email>gentoo90@gmail.com</email>
 </maintainer>
+ <use>
+    <flag name="fetch-crates">Crates will be fetched from crates.io.</flag>
+ </use>
 </pkgmetadata>
