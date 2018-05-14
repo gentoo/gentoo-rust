@@ -56,9 +56,9 @@ toml_usex() {
 }
 
 toml_tools_list() {
-    if use extended; then
-       echo "tools=[$(usex source "\"src\", " "")\"rls\", \"analysis\"]"
-    fi
+	if use extended; then
+		echo "tools=[$(usex source "\"src\", " "")\"rls\", \"analysis\"]"
+	fi
 }
 
 pkg_setup() {
