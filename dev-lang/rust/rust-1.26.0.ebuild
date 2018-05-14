@@ -12,13 +12,13 @@ if [[ ${PV} = *beta* ]]; then
 	BETA_SNAPSHOT="${betaver:0:4}-${betaver:4:2}-${betaver:6:2}"
 	MY_P="rustc-beta"
 	SLOT="beta/${PV}"
-	SRC="${BETA_SNAPSHOT}/rustc-beta-src.tar.gz"
+	SRC="${BETA_SNAPSHOT}/rustc-beta-src.tar.xz"
 	KEYWORDS=""
 else
 	ABI_VER="$(get_version_component_range 1-2)"
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
-	SRC="${MY_P}-src.tar.gz"
+	SRC="${MY_P}-src.tar.xz"
 	KEYWORDS="~amd64 ~arm64 ~x86"
 fi
 
@@ -36,10 +36,10 @@ CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
-SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
-	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
-	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
-	arm64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_arm64}.tar.gz )
+SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.xz
+	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.xz )
+	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.xz )
+	arm64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_arm64}.tar.xz )
 "
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
@@ -110,7 +110,7 @@ src_configure() {
 		extended = $(toml_usex extended)
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)"
+		libdir = "$(get_libdir)/${P}"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
