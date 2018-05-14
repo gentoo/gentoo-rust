@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,7 +11,7 @@ MY_SRC_URI="https://static.rust-lang.org/dist/rust-nightly"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 IUSE="doc tools"
 

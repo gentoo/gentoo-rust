@@ -34,7 +34,7 @@ SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~arm"
+KEYWORDS="~amd64 ~arm64"
 IUSE=""
 
 DEPEND=""

@@ -9,7 +9,7 @@ SRC_URI=""
 
 LICENSE=""
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 
 DEPEND=""
 RDEPEND="|| ( =dev-lang/rust-${PV}* =dev-lang/rust-bin-${PV}* )"
