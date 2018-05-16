@@ -110,7 +110,7 @@ src_configure() {
 		extended = $(toml_usex extended)
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)"
+		libdir = "$(get_libdir)/${P}"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
