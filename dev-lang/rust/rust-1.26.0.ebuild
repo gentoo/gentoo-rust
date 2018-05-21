@@ -19,7 +19,7 @@ else
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.xz"
-	#KEYWORDS="~amd64 ~arm64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~x86"
 fi
 
 CHOST_amd64=x86_64-unknown-linux-gnu
@@ -166,8 +166,8 @@ src_install() {
 		abi_libdir=$(get_abi_LIBDIR ${v##*.})
 		rust_target=$(get_abi_CHOST ${v##*.})
 		mkdir -p "${D}/usr/${abi_libdir}"
-		cp "${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so" \
-		   "${D}/usr/${abi_libdir}" || die
+		cp "${D}usr/$(get_libdir)/rustlib/${rust_target}lib/*.so" \
+		"${D}usr/${abi_libdir}" || die
 	done
 
 	dodoc COPYRIGHT
