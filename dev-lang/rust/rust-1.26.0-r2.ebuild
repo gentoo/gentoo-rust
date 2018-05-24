@@ -110,7 +110,7 @@ src_configure() {
 		extended = $(toml_usex extended)
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)"
+		libdir = "$(get_libdir)/${P}"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
@@ -165,7 +165,7 @@ src_install() {
 		abi_libdir=$(get_abi_LIBDIR ${v##*.})
 		rust_target=$(get_abi_CHOST ${v##*.})
 		mkdir -p ${D}/usr/${abi_libdir}
-		cp ${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so \
+		cp ${D}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib/*.so \
 		   ${D}/usr/${abi_libdir} || die
 	done
 
