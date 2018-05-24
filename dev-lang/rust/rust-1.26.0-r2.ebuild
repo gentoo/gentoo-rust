@@ -132,9 +132,9 @@ src_configure() {
 
 		cat <<- EOF >> "${S}"/config.toml
 			[target.${rust_target}]
-			cc = "$(tc-getBUILD_CC) $(arch_cflags}"
-			cxx = "$(tc-getBUILD_CXX) $(arch_cflags}"
-			linker = "$(tc-getCC) $(arch_cflags}"
+			cc = "$(tc-getBUILD_CC)"
+			cxx = "$(tc-getBUILD_CXX)"
+			linker = "$(tc-getCC)"
 			ar = "$(tc-getAR)"
 		EOF
 	done
