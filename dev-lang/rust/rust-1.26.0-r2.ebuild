@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy )
 
 inherit multiprocessing multilib-build python-any-r1 versionator toolchain-funcs
 
@@ -19,19 +19,19 @@ else
 	SLOT="stable/${ABI_VER}"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.xz"
-	#KEYWORDS="~amd64 ~arm64 ~x86"
+	KEYWORDS="~amd64 ~arm64 ~x86"
 fi
 
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 CHOST_arm64=aarch64-unknown-linux-gnu
 
-RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2))).0"
+RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
 RUST_STAGE0_arm64="rust-${RUST_STAGE0_VERSION}-${CHOST_arm64}"
 
-CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
+CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2) + 1)).0"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
@@ -110,7 +110,7 @@ src_configure() {
 		extended = $(toml_usex extended)
 		[install]
 		prefix = "${EPREFIX}/usr"
-		libdir = "$(get_libdir)/${P}"
+		libdir = "$(get_libdir)"
 		docdir = "share/doc/${P}"
 		mandir = "share/${P}/man"
 		[rust]
@@ -127,23 +127,22 @@ src_configure() {
 		arch_cflags="$(get_abi_CFLAGS ${v##*.})"
 
 		cat <<- EOF >> "${S}"/config.env
-				CFLAGS_${rust_target}=${arch_cflags}
+			CFLAGS_${rust_target}=${arch_cflags}
 		EOF
 
 		cat <<- EOF >> "${S}"/config.toml
-				[target.${rust_target}]
-				cc = "$(tc-getBUILD_CC)"
-				cxx = "$(tc-getBUILD_CXX)"
-				linker = "$(tc-getCC)"
-				ar = "$(tc-getAR)"
+			[target.${rust_target}]
+			cc = "$(tc-getBUILD_CC) $(arch_cflags}"
+			cxx = "$(tc-getBUILD_CXX) $(arch_cflags}"
+			linker = "$(tc-getCC) $(arch_cflags}"
+			ar = "$(tc-getAR)"
 		EOF
-
 	done
 }
 
 src_compile() {
 	env $(cat "${S}"/config.env)\
-		 ./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
+		./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
 }
 
 src_install() {
@@ -165,9 +164,9 @@ src_install() {
 		fi
 		abi_libdir=$(get_abi_LIBDIR ${v##*.})
 		rust_target=$(get_abi_CHOST ${v##*.})
-		mkdir -p "${D}/usr/${abi_libdir}"
-		cp "${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so" \
-		   "${D}/usr/${abi_libdir}" || die
+		mkdir -p ${D}/usr/${abi_libdir}
+		cp ${D}/usr/$(get_libdir)/rustlib/${rust_target}/lib/*.so \
+		   ${D}/usr/${abi_libdir} || die
 	done
 
 	dodoc COPYRIGHT
