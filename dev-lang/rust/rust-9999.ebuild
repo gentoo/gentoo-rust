@@ -3,11 +3,11 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_{5,6} pypy )
 
 LLVM_MAX_SLOT=4
 
-inherit git-r3 multilib python-any-r1 llvm eutils
+inherit multiprocessing multilib-build git-r3 python-any-r1 llvm toolchain-funcs
 
 SLOT="git"
 MY_P="rust-git"
@@ -15,13 +15,22 @@ EGIT_REPO_URI="https://github.com/rust-lang/rust.git"
 
 EGIT_CHECKOUT_DIR="${MY_P}-src"
 
+CHOST_amd64=x86_64-unknown-linux-gnu
+CHOST_x86=i686-unknown-linux-gnu
+CHOST_arm64=aarch64-unknown-linux-gnu
+
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
 
-IUSE="clang debug doc source +system-llvm sanitize extended"
+ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
+	NVPTX PowerPC Sparc SystemZ X86 XCore )
+ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
+LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
+
+IUSE="clang debug doc source +system-llvm sanitize extended ${ALL_LLVM_TARGETS[*]}"
 
 CDEPEND="clang? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -36,7 +45,7 @@ DEPEND="${CDEPEND}
 		<sys-devel/clang-6_pre:=
 		|| (
 			sys-devel/clang:4
-			>=sys-devel/clang-3:0
+			>=sys-devel/clang-3.5:0
 		)
 	)
 	!clang? ( >=sys-devel/gcc-4.7 )
@@ -47,7 +56,8 @@ RDEPEND="${CDEPEND}
 "
 PDEPEND="dev-util/cargo"
 
-REQUIRED_USE="source? ( extended )"
+REQUIRED_USE="source? ( extended )
+|| ( ${ALL_LLVM_TARGETS[*]} )"
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -70,10 +80,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	default
+	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
-	use amd64 && BUILD_TRIPLE=x86_64-unknown-linux-gnu
-	use x86 && BUILD_TRIPLE=i686-unknown-linux-gnu
+	default
 }
 
 src_unpack() {
@@ -91,17 +100,17 @@ src_configure() {
 
 	python_setup
 
-	local rust_target="${BUILD_TRIPLE}"
+	local rust_target="" rust_targets="" rust_target_name arch_cflags
 
-	local archiver="$(tc-getAR)"
-	local linker="$(tc-getCC)"
+	# Collect rust target names to compile standard libs for all ABIs.
+	for v in $(multilib_get_enabled_abi_pairs); do
+		rust_target_name="CHOST_${v##*.}"
+		rust_targets="${rust_targets},\"${!rust_target_name}\""
+	done
+	rust_targets="${rust_targets#,}"
 
-	local c_compiler="$(tc-getBUILD_CC)"
-	local cxx_compiler="$(tc-getBUILD_CXX)"
-	if use clang ; then
-		c_compiler="${CBUILD}-clang"
-		cxx_compiler="${CBUILD}-clang++"
-	fi
+	local rust_target_name="CHOST_${ARCH}"
+	local rust_target="${!rust_target_name}"
 
 	export CFG_DISABLE_LDCONFIG="notempty"
 
@@ -110,10 +119,11 @@ src_configure() {
 		optimize = $(toml_usex !debug)
 		release-debuginfo = $(toml_usex debug)
 		assertions = $(toml_usex debug)
+		targets = "${LLVM_TARGETS// /;}"
 		[build]
 		build = "${rust_target}"
 		host = ["${rust_target}"]
-		target = ["${rust_target}"]
+		target = [${rust_targets}]
 		docs = $(toml_usex doc)
 		submodules = false
 		python = "${EPYTHON}"
@@ -133,28 +143,51 @@ src_configure() {
 		debuginfo = $(toml_usex debug)
 		debug-assertions = $(toml_usex debug)
 		use-jemalloc = true
-		default-linker = "${linker}"
+		default-linker = "$(tc-getCC)"
 		rpath = false
 		ignore-git = false
-		[target.${rust_target}]
-		cc = "${c_compiler}"
-		cxx = "${cxx_compiler}"
-		ar = "${archiver}"
 	EOF
 
-	if use system-llvm; then
-		cat <<- EOF >> "${S}"/config.toml
-			llvm-config = "${llvm_config}"
+	for v in $(multilib_get_enabled_abi_pairs); do
+		rust_target=$(get_abi_CHOST ${v##*.})
+		arch_cflags="$(get_abi_CFLAGS ${v##*.})"
+
+		cat <<- EOF >> "${S}"/config.env
+			CFLAGS_${rust_target}=${arch_cflags}
 		EOF
-	fi
+
+		local c_compiler="$(tc-getBUILD_CC)"
+		local cxx_compiler="$(tc-getBUILD_CXX)"
+		if use clang ; then
+			c_compiler="${CBUILD}-clang"
+			cxx_compiler="${CBUILD}-clang++"
+		fi
+
+		cat <<- EOF >> "${S}"/config.toml
+			[target.${rust_target}]
+			cc = "${c_compiler}"
+			cxx = "${cxx_compiler}"
+			linker = "$(tc-getCC)"
+			ar = "$(tc-getAR)"
+		EOF
+
+		if use system-llvm; then
+			cat <<- EOF >> "${S}"/config.toml
+				llvm-config = "${llvm_config}"
+			EOF
+		fi
+	done
 
 }
 
 src_compile() {
-	${EPYTHON} x.py build --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
+	env $(cat "${S}"/config.env)\
+		${EPYTHON} x.py build --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 }
 
 src_install() {
+	local rust_target_abi_libdir
+
 	env DESTDIR="${D}" ${EPYTHON} x.py install  --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
@@ -164,6 +197,20 @@ src_install() {
 	if use extended; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
 	fi
+
+	# Copy shared library versions of standard libraries for all targets
+	# into the system's abi-dependent lib directories because the rust
+	# installer only does so for the native ABI.
+	for v in $(multilib_get_enabled_abi_pairs); do
+		if [ ${v##*.} = ${DEFAULT_ABI} ]; then
+			continue
+		fi
+		abi_libdir=$(get_abi_LIBDIR ${v##*.})
+		rust_target=$(get_abi_CHOST ${v##*.})
+		mkdir -p ${D}/usr/${abi_libdir}
+		cp ${D}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib/*.so \
+		   ${D}/usr/${abi_libdir} || die
+	done
 
 	dodoc COPYRIGHT LICENSE-APACHE LICENSE-MIT
 
@@ -183,13 +230,11 @@ src_install() {
 	/usr/bin/rust-gdb
 	/usr/bin/rust-lldb
 	EOF
-
 	if use extended; then
 	    cat <<-EOF >> "${T}/provider-${P}"
 		/usr/bin/rls
 		EOF
 	fi
-
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
