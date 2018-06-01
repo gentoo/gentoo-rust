@@ -16,5 +16,15 @@ SLOT="0"
 KEYWORDS=""
 IUSE=""
 
-DEPEND=""
+DEPEND=">=virtual/rust-9999"
 RDEPEND="${DEPEND}"
+
+src_install() {
+  debug-print-function ${FUNCNAME} "$@"
+
+  cargo install -j $(makeopts_jobs) --root="${D}/usr" --path .  $(usex debug --debug "") \
+    || die "cargo install failed"
+  rm -f "${D}/usr/.crates.toml"
+
+  [ -d "${S}/man" ] && doman "${S}/man" || return 
+}
