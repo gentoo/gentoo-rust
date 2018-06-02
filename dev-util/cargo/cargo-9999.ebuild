@@ -11,6 +11,7 @@ HOMEPAGE="http://crates.io/"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS=""
+RESTRICT="network-sandbox"
 
 IUSE="libressl"
 
