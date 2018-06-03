@@ -1,0 +1,11 @@
+--- pijul/Cargo.toml.bak	2018-06-02 23:13:26.304860275 +0300
++++ pijul/Cargo.toml	2018-06-02 23:14:05.192863550 +0300
+@@ -83,7 +83,7 @@
+ getch = "0.2"
+ username = "0.2"
+ shell-escape = "0.1"
+-libpijul = "0.10.1"
++libpijul = { path = "../libpijul" , version = "0.10.1" }
+ 
+ tar = "0.4"
+ flate2 = "1.0"
