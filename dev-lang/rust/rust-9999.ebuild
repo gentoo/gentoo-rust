@@ -24,13 +24,14 @@ HOMEPAGE="http://www.rust-lang.org/"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 KEYWORDS=""
+RESTRICT="network-sandbox"
 
 ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
 	NVPTX PowerPC Sparc SystemZ X86 XCore )
 ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
-IUSE="clang debug doc source +system-llvm sanitize extended ${ALL_LLVM_TARGETS[*]}"
+IUSE="clang debug doc source +system-llvm sanitize extended wasm ${ALL_LLVM_TARGETS[*]}"
 
 CDEPEND="clang? ( sys-libs/libcxx )
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -57,6 +58,7 @@ RDEPEND="${CDEPEND}
 PDEPEND="dev-util/cargo"
 
 REQUIRED_USE="source? ( extended )
+wasm? ( !system-llvm )
 || ( ${ALL_LLVM_TARGETS[*]} )"
 
 S="${WORKDIR}/${MY_P}-src"
@@ -107,6 +109,9 @@ src_configure() {
 		rust_target_name="CHOST_${v##*.}"
 		rust_targets="${rust_targets},\"${!rust_target_name}\""
 	done
+	if use wasm; then
+		rust_targets="${rust_targets},\"wasm32-unknown-unknown\""
+	fi
 	rust_targets="${rust_targets#,}"
 
 	local rust_target_name="CHOST_${ARCH}"
@@ -146,6 +151,7 @@ src_configure() {
 		default-linker = "$(tc-getCC)"
 		rpath = false
 		ignore-git = false
+		lld = $(toml_usex wasm)
 	EOF
 
 	for v in $(multilib_get_enabled_abi_pairs); do
@@ -178,6 +184,18 @@ src_configure() {
 		fi
 	done
 
+	if use wasm; then
+		cat <<- EOF >> "${S}"/config.toml
+			[target.wasm32-unknown-unknown]
+			linker = "lld"
+		EOF
+
+		if use system-llvm; then
+			cat <<- EOF >> "${S}"/config.toml
+				llvm-config = "${llvm_config}"
+			EOF
+		fi
+	fi
 }
 
 src_compile() {

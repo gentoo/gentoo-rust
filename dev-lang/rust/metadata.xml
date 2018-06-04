@@ -13,5 +13,6 @@
     <flag name="jemalloc">Use <pkg>sys-libs/jemalloc</pkg> as the
     standard memory allocator</flag>
     <flag name="sanitize">Check for kernel version</flag>
+    <flag name="wasm">Enable WebAssembly support</flag>
   </use>
 </pkgmetadata>
