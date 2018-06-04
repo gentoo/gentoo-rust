@@ -213,7 +213,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND=""
+DEPEND="dev-libs/libsodium"
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${P}/${PN}"
