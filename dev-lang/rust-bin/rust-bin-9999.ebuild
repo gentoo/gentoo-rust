@@ -8,12 +8,18 @@ inherit eutils bash-completion-r1
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 MY_SRC_URI="https://static.rust-lang.org/dist/rust-nightly"
+MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/rust-std-nightly"
+
+ALL_RUSTLIB_TARGETS=(
+	"wasm32-unknown-unknown"
+)
+ALL_RUSTLIB_TARGETS=( "${ALL_RUSTLIB_TARGETS[@]/#/rustlib_targets_}" )
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS="~amd64 ~x86"
 
-IUSE="doc tools"
+IUSE="doc tools ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
@@ -40,10 +46,18 @@ src_unpack() {
 	unpack ./"rust-nightly-${postfix}.tar.gz"
 
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
+
+	for arch in ${RUSTLIB_TARGETS}; do
+		elog "Adding ${arch}..."
+		wget "${MY_STDLIB_SRC_URI}-${arch}.tar.gz" || die
+		unpack ./"rust-std-nightly-${arch}.tar.gz"
+		mv "${WORKDIR}/rust-std-nightly-${arch}/rust-std-${arch}" "${S}/" || die
+		cat "${WORKDIR}/rust-std-nightly-${arch}/components" >> "${S}/components"
+	done
 }
 
 src_install() {
-	local std=$(grep 'std' ./components)
+	local std=$(grep 'std' ./components | paste -s -d',')
 	local components="rustc,${std}"
 	if use tools; then
 		local analysis=$(grep 'analysis' ./components)
