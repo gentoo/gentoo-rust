@@ -16,7 +16,7 @@ case ${EAPI} in
 	*) die "EAPI=${EAPI:-0} is not supported" ;;
 esac
 
-inherit multiprocessing
+inherit multiprocessing rust
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
@@ -129,6 +129,8 @@ cargo_gen_config() {
 # @DESCRIPTION:
 # Build the package using cargo build
 cargo_src_compile() {
+	rust_setup
+
 	debug-print-function ${FUNCNAME} "$@"
 
 	export CARGO_HOME="${ECARGO_HOME}"

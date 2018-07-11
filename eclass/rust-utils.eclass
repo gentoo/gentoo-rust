@@ -1,0 +1,159 @@
+# Copyright 1999-2016 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: rust-utils.eclass
+# @MAINTAINER:
+# rust@gentoo.org
+# @AUTHOR:
+# gibix <gibix@riseup.net>
+# A utility eclass providing functions to query rust implementations.
+#
+# This eclass does not set any metadata variables nor export any phase
+# functions. It can be inherited safely.
+
+case "${EAPI:-0}" in
+	1|1|2|3|4|5|6|7)
+		;;
+	*)
+		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
+		;;
+esac
+
+# @ECLASS-VARIABLE: _RUST_ALL_IMPLS
+# @INTERNAL
+# @DESCRIPTION:
+# All supported Rust implementations, most preferred last.
+_RUST_ALL_IMPLS=(
+	rust1_26
+	rust1_27
+)
+readonly _RUST_ALL_IMPLS
+
+# @FUNCTION: _rust_impl_supported
+# @USAGE: <impl>
+# @INTERNAL
+# @DESCRIPTION:
+# Check whether the implementation <impl> (RUST_COMPAT-form)
+# is still supported.
+#
+# Returns 0 if the implementation is valid and supported. If it is
+# unsupported, returns 1 -- and the caller should ignore the entry.
+# If it is invalid, dies with an appopriate error messages.
+_rust_impl_supported() {
+	local impl=${1}
+
+	case "${impl}" in
+		rust1_26|rust1_27)
+			return 0
+			;;
+	esac
+
+	return 1
+}
+
+# @FUNCTION: rust_export
+# @USAGE: <impl>
+# @INTERNAL
+# @DESCRIPTION:
+# Export cargo config
+# TODO: best match
+rust_export() {
+	local impl
+
+	case "${1}" in
+		rust*)
+			impl=${1/rust/rustc-}
+			impl=${impl/_/.}
+			shift
+			;;
+		*)
+			die "rust export called without a valid rust implementation"
+			;;
+	esac
+
+	export RUSTC="$(ls /usr/bin/${impl}.[0-9])"
+}
+
+rust_package_dep() {
+	case ${1} in
+		rust1_25)
+			echo "=dev-lang/rust-1.25.0"
+			;;
+		rust1_26)
+			echo "=dev-lang/rust-1.26.2"
+			;;
+		rust1_27)
+			echo "=dev-lang/rust-1.27.0"
+			;;
+		*)
+			die "Invalid implementation: ${impl}"
+	esac
+}
+
+# @FUNCTION: _rust_set_impls
+# @INTERNAL
+# @DESCRIPTION:
+# Check RUST_COMPAT for well-formedness and validity, then set
+# two global variables:
+#
+# - _RUST_SUPPORTED_IMPLS containing valid implementations supported
+#   by the ebuild (RUST_COMPAT - dead implementations),
+#
+# - and _RUST_UNSUPPORTED_IMPLS containing valid implementations that
+#   are not supported by the ebuild.
+#
+# Implementations in both variables are ordered using the pre-defined
+# eclass implementation ordering.
+#
+# This function must be called once in global scope by an eclass
+# utilizing RUST_COMPAT.
+_rust_set_impls() {
+	local i
+
+	if ! declare -p RUST_COMPAT &>/dev/null; then
+		die 'RUST_COMPAT not declared.'
+	fi
+	if [[ $(declare -p RUST_COMPAT) != "declare -a"* ]]; then
+		die 'RUST_COMPAT must be an array.'
+	fi
+
+	for i in "${RUST_COMPAT[@]}"; do
+		# trigger validity checks
+		_rust_impl_supported "${i}"
+	done
+
+	local supp=() unsupp=()
+
+
+	for i in "${_RUST_ALL_IMPLS[@]}"; do
+		if has "${i}" "${RUST_COMPAT[@]}"; then
+			supp+=( "${i}" )
+		else
+			unsupp+=( "${i}" )
+		fi
+	done
+
+	if [[ ! ${supp[@]} ]]; then
+		die "No supported implementation in RUST_COMPAT."
+	fi
+
+	if [[ ${_RUST_SUPPORTED_IMPLS[@]} ]]; then
+		# set once already, verify integrity
+		if [[ ${_RUST_SUPPORTED_IMPLS[@]} != ${supp[@]} ]]; then
+			eerror "Supported impls (RUST_COMPAT) changed between inherits!"
+			eerror "Before: ${_RUST_SUPPORTED_IMPLS[*]}"
+			eerror "Now   : ${supp[*]}"
+			die "_RUST_SUPPORTED_IMPLS integrity check failed"
+		fi
+		if [[ ${_RUST_UNSUPPORTED_IMPLS[@]} != ${unsupp[@]} ]]; then
+			eerror "Unsupported impls changed between inherits!"
+			eerror "Before: ${_RUST_UNSUPPORTED_IMPLS[*]}"
+			eerror "Now   : ${unsupp[*]}"
+			die "_RUST_UNSUPPORTED_IMPLS integrity check failed"
+		fi
+	else
+		_RUST_SUPPORTED_IMPLS=( "${supp[@]}" )
+		_RUST_UNSUPPORTED_IMPLS=( "${unsupp[@]}" )
+		readonly _RUST_SUPPORTED_IMPLS _RUST_UNSUPPORTED_IMPLS
+	fi
+}
