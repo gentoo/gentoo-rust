@@ -3,7 +3,7 @@
 
 EAPI=6
 
-RUST_COMPAT=( rust1_27 )
+RUST_COMPAT=( rust1_27 rust1_26 )
 
 CRATES="
 aho-corasick-0.6.4

@@ -10,6 +10,8 @@
 #
 # This eclass does not set any metadata variables nor export any phase
 # functions. It can be inherited safely.
+#
+# CREDITS: has been hardly-inspired by python*.class
 
 case "${EAPI:-0}" in
 	1|1|2|3|4|5|6|7)
@@ -23,7 +25,9 @@ esac
 # @INTERNAL
 # @DESCRIPTION:
 # All supported Rust implementations, most preferred last.
+# Keep in sync with _rust_impl_supported and _rust_package_dep
 _RUST_ALL_IMPLS=(
+	rust1_25
 	rust1_26
 	rust1_27
 )
@@ -43,7 +47,7 @@ _rust_impl_supported() {
 	local impl=${1}
 
 	case "${impl}" in
-		rust1_26|rust1_27)
+		rust1_25|rust1_26|rust1_27)
 			return 0
 			;;
 	esac
@@ -55,7 +59,7 @@ _rust_impl_supported() {
 # @USAGE: <impl>
 # @INTERNAL
 # @DESCRIPTION:
-# Export cargo config
+# Export cargo build config (RUSTC)
 # TODO: best match
 rust_export() {
 	local impl
@@ -72,8 +76,14 @@ rust_export() {
 	esac
 
 	export RUSTC="$(ls /usr/bin/${impl}.[0-9])"
+	export RUST_ROOT="/usr/$(get_libdir)/${impl}"
 }
 
+# @FUNCTION: rust_package_dep
+# @USAGE: <impl>
+# @INTERNAL
+# @DESCRIPTION:
+# Return rust dependency in precise format
 rust_package_dep() {
 	case ${1} in
 		rust1_25)
@@ -83,7 +93,7 @@ rust_package_dep() {
 			echo "=dev-lang/rust-1.26.2"
 			;;
 		rust1_27)
-			echo "=dev-lang/rust-1.27.0"
+			echo "=dev-lang/rust-1.27.1"
 			;;
 		*)
 			die "Invalid implementation: ${impl}"
@@ -93,45 +103,40 @@ rust_package_dep() {
 # @FUNCTION: _rust_set_impls
 # @INTERNAL
 # @DESCRIPTION:
-# Check RUST_COMPAT for well-formedness and validity, then set
-# two global variables:
+# Check RUST_COMPAT for well-formedness and validity, if RUST_COMPAT
+# is not used looks to _RUST_ALL_IMPLS then set two global variables:
 #
 # - _RUST_SUPPORTED_IMPLS containing valid implementations supported
-#   by the ebuild (RUST_COMPAT - dead implementations),
+#   by the ebuild (RUST_COMPAT),
 #
 # - and _RUST_UNSUPPORTED_IMPLS containing valid implementations that
 #   are not supported by the ebuild.
 #
-# Implementations in both variables are ordered using the pre-defined
-# eclass implementation ordering.
-#
-# This function must be called once in global scope by an eclass
-# utilizing RUST_COMPAT.
 _rust_set_impls() {
-	local i
+	local i supp=() unsupp=()
 
 	if ! declare -p RUST_COMPAT &>/dev/null; then
-		die 'RUST_COMPAT not declared.'
-	fi
-	if [[ $(declare -p RUST_COMPAT) != "declare -a"* ]]; then
-		die 'RUST_COMPAT must be an array.'
-	fi
-
-	for i in "${RUST_COMPAT[@]}"; do
-		# trigger validity checks
-		_rust_impl_supported "${i}"
-	done
-
-	local supp=() unsupp=()
-
-
-	for i in "${_RUST_ALL_IMPLS[@]}"; do
-		if has "${i}" "${RUST_COMPAT[@]}"; then
+		for i in "${_RUST_ALL_IMPLS[@]}"; do
 			supp+=( "${i}" )
-		else
-			unsupp+=( "${i}" )
+		done
+	else
+		if [[ $(declare -p RUST_COMPAT) != "declare -a"* ]]; then
+			die 'RUST_COMPAT must be an array.'
 		fi
-	done
+
+		for i in "${RUST_COMPAT[@]}"; do
+			# trigger validity checks
+			_rust_impl_supported "${i}"
+		done
+
+		for i in "${_RUST_ALL_IMPLS[@]}"; do
+			if has "${i}" "${RUST_COMPAT[@]}"; then
+				supp+=( "${i}" )
+			else
+				unsupp+=( "${i}" )
+			fi
+		done
+	fi
 
 	if [[ ! ${supp[@]} ]]; then
 		die "No supported implementation in RUST_COMPAT."

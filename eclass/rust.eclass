@@ -9,6 +9,8 @@
 # A common eclass providing helper functions to build and install
 # packages supporting being installed for multiple rust
 # implementations.
+#
+# CREDITS: has been hardly-inspired by python*.class
 
 case "${EAPI:-0}" in
 	1|1|2|3|4|5|6|7)
@@ -20,10 +22,31 @@ esac
 
 inherit multibuild rust-utils
 
-export pkg_setup
+# This is the core funcion for exported variables in the ebuild.
+_rust_set_globals() {
+	local deps
+
+	_rust_set_impls
+
+	local requse="|| ( ${flags[*]} )"
+
+	for i in "${_RUST_SUPPORTED_IMPLS[@]}"; do
+		deps+="rust_targets_${i}? ( $(rust_package_dep ${i}) ) "
+	done
+
+	local flags=( "${_RUST_SUPPORTED_IMPLS[@]/#/rust_targets_}" )
+	export RUST_DEPS=${deps}
+
+	RDEPEND=${deps}
+	REQUIRED_USE=${requse}
+	IUSE=${flags[*]}
+	# TODO
+	# RUST_USEDEP =
+}
+_rust_set_globals
+unset -f _rust_set_globals
 
 # @ECLASS-VARIABLE: RUST_COMPAT
-# @REQUIRED
 # @DESCRIPTION:
 # This variable contains a list of Rust implementations the package
 # supports. It must be set before the `inherit' call. It has to be
@@ -31,7 +54,7 @@ export pkg_setup
 #
 # Example:
 # @CODE
-# RUST_COMPAT=( rust1_{25, 26, 27} )
+# RUST_COMPAT=( rust1_26, rust1_27 )
 # @CODE
 #
 
@@ -41,32 +64,38 @@ export pkg_setup
 rust_setup() {
 	local rustcompat=( "${RUST_COMPAT[@]}" )
 
-	_rust_set_impls
-
 	# (reverse iteration -- newest impl first)
 	local found
 	for (( i = ${#_RUST_SUPPORTED_IMPLS[@]} - 1; i >= 0; i-- )); do
 		local impl=${_RUST_SUPPORTED_IMPLS[i]}
 
-		# check RUST_COMPAT[_OVERRIDE]
+		# check RUST_COMPAT
 		has "${impl}" "${rustcompat[@]}" || continue
 
-		# check patterns
-		# _rust_impl_matches "${impl}" "${@-*}" || continue
-
-		elog "${impl}"
-		rust_export "${impl}"
 
 		found=1
 		break
 	done
+}
 
-	if [[ ! ${found} ]]; then
-		eerror "${FUNCNAME}: none of the enabled implementation matched the patterns."
-		eerror "  patterns: ${@-'(*)'}"
-		eerror "Likely a REQUIRED_USE constraint (possibly USE-conditional) is missing."
-		eerror "  suggested: || ( \$(rust_gen_useflags ${@}) )"
-		eerror "(remember to quote all the patterns with '')"
-		die "${FUNCNAME}: no enabled implementation satisfy requirements"
-	fi
+rust_foreach_variant() {
+	_rust_obtain_impls
+
+	multibuild_foreach_variant _rust_multibuild_wrapper "${@}"
+}
+
+_rust_obtain_impls() {
+	MULTIBUILD_VARIANTS=()
+
+	local impl
+	for impl in "${_RUST_SUPPORTED_IMPLS[@]}"; do
+		has "${impl}" "${RUST_COMPAT[@]}" && \
+		use "rust_targets_${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
+	done
+}
+
+_rust_multibuild_wrapper() {
+	rust_export ${MULTIBUILD_VARIANT}
+
+	"${@}"
 }

@@ -3,8 +3,6 @@
 
 EAPI=6
 
-RUST_COMPAT=( rust1_27 rust1_26 )
-
 inherit cargo git-r3
 
 DESCRIPTION="High-level interactions between wasm modules and JS"
