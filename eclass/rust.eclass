@@ -60,7 +60,7 @@ unset -f _rust_set_globals
 
 # @FUNCTION: rust_setup
 # @DESCRIPTION:
-# does tut cos
+# Checks for conflicts between RUST_COMPAT and RUST_SUPPORTED_IMPLS
 rust_setup() {
 	local rustcompat=( "${RUST_COMPAT[@]}" )
 
@@ -71,7 +71,6 @@ rust_setup() {
 
 		# check RUST_COMPAT
 		has "${impl}" "${rustcompat[@]}" || continue
-
 
 		found=1
 		break
