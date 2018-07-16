@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: rust-utils.eclass
@@ -14,7 +14,7 @@
 # CREDITS: has been hardly-inspired by python*.class
 
 case "${EAPI:-0}" in
-	1|1|2|3|4|5|6|7)
+	6|7)
 		;;
 	*)
 		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
@@ -47,7 +47,7 @@ _rust_impl_supported() {
 	local impl=${1}
 
 	case "${impl}" in
-		rust1_25|rust1_26|rust1_27)
+		"${_RUST_ALL_IMPLS[@]}")
 			return 0
 			;;
 	esac
