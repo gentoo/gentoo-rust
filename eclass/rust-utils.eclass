@@ -87,13 +87,13 @@ rust_export() {
 rust_package_dep() {
 	case ${1} in
 		rust1_25)
-			echo "=dev-lang/rust-1.25.0"
+			echo "=virtual/rust-1.25*"
 			;;
 		rust1_26)
-			echo "=dev-lang/rust-1.26.2"
+			echo "=virtual/rust-1.26*"
 			;;
 		rust1_27)
-			echo "=dev-lang/rust-1.27.1"
+			echo "=virtual/rust-1.27*"
 			;;
 		*)
 			die "Invalid implementation: ${impl}"

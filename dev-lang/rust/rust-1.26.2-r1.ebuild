@@ -11,12 +11,12 @@ if [[ ${PV} = *beta* ]]; then
 	betaver=${PV//*beta}
 	BETA_SNAPSHOT="${betaver:0:4}-${betaver:4:2}-${betaver:6:2}"
 	MY_P="rustc-beta"
-	SLOT="beta/${PV}"
+	SLOT="${PV}/beta"
 	SRC="${BETA_SNAPSHOT}/rustc-beta-src.tar.xz"
 	KEYWORDS=""
 else
 	ABI_VER="$(get_version_component_range 1-2)"
-	SLOT="${ABI_VER}"
+	SLOT="${ABI_VER}/stable"
 	MY_P="rustc-${PV}"
 	SRC="${MY_P}-src.tar.xz"
 	KEYWORDS="~amd64 ~arm64 ~x86"
