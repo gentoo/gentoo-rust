@@ -76,7 +76,13 @@ rust_export() {
 	esac
 
 	export RUSTC="$(ls /usr/bin/${impl}.[0-9])"
-	export RUST_ROOT="/usr/$(get_libdir)/${impl}"
+
+	if [ ${#MULTIBUILD_VARIANTS[*]} -gt 1 ]; then
+		export RUST_ROOT="/usr/$(get_libdir)/$(ls /usr/$(get_libdir) | grep ${impl/rustc/rust})"
+	else
+		export RUST_ROOT="/usr"
+	fi
+
 }
 
 # @FUNCTION: rust_package_dep

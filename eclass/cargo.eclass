@@ -160,21 +160,20 @@ cargo_src_install() {
 }
 
 cargo_install() {
+	elog "LOG ${RUST_ROOT}"
+
 	cargo install -j $(makeopts_jobs) --root="${D}${RUST_ROOT}" $(usex debug --debug "") \
 		|| die "cargo install failed"
-	rm -f "${D}/usr/.crates.toml"
+	rm -f "${D}${RUST_ROOT}.crates.toml"
 
 	[ -d "${S}/man" ] && doman "${S}/man" || return 0
 }
 
 _cargo_run_foreach_impl() {
-	if [[ ${#RUST_TARGETS[@]} -gt 1 ]]; then
-		rust_multibuild_foreach_variant "${@}"
-	else
 
-		export RUST_ROOT="/usr"
-		"${@}"
-	fi
+	MULTIBUILD_VARIANTS=${RUST_TARGETS[@]}
+
+	rust_build_foreach_variant "${@}"
 }
 
 fi

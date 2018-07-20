@@ -77,7 +77,7 @@ rust_setup() {
 	done
 }
 
-rust_foreach_variant() {
+rust_build_foreach_variant() {
 	_rust_obtain_impls
 
 	multibuild_foreach_variant _rust_multibuild_wrapper "${@}"
@@ -88,7 +88,6 @@ _rust_obtain_impls() {
 
 	local impl
 	for impl in "${_RUST_SUPPORTED_IMPLS[@]}"; do
-		has "${impl}" "${RUST_COMPAT[@]}" && \
 		use "rust_targets_${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }
