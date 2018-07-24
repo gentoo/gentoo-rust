@@ -160,11 +160,21 @@ cargo_src_install() {
 }
 
 cargo_install() {
-	elog "LOG ${RUST_ROOT}"
-
 	cargo install -j $(makeopts_jobs) --root="${D}${RUST_ROOT}" $(usex debug --debug "") \
 		|| die "cargo install failed"
 	rm -f "${D}${RUST_ROOT}.crates.toml"
+
+	if [ ${#MULTIBUILD_VARIANTS[*]} -gt 1 ]; then
+		env_file="${PN}-binaries-$(basename ${RUST_ROOT})"
+
+		for binary in ${D}${RUST_ROOT}/bin/*; do
+			echo /usr/bin/$(basename $binary) >> "${T}/${env_file}"
+		done
+
+		dodir /etc/env.d/rust
+		insinto /etc/env.d/rust
+		doins "${T}/${env_file}"
+	fi
 
 	[ -d "${S}/man" ] && doman "${S}/man" || return 0
 }
