@@ -3,6 +3,8 @@
 
 EAPI=6
 
+RUST_COMPAT=( rust1_27 rust1_26 )
+
 CRATES="
 aho-corasick-0.6.4
 bitflags-0.9.1
@@ -66,6 +68,4 @@ LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-
-DEPEND="dev-lang/rust"
 RDEPEND=""
