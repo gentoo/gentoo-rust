@@ -20,12 +20,25 @@ inherit multiprocessing rust
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
-IUSE="${IUSE} debug fetch-crates"
+# @ECLASS-VARIABLE: CARGO_FEATURES
+# @DESCRIPTION:
+# This variable contains a list of cargo features
+
+IUSE="${IUSE} ${CARGO_FEATURES} debug fetch-crates"
 
 [[ ${CATEGORY}/${PN} != dev-util/cargo ]] && DEPEND=">=dev-util/cargo-0.13.0"
 
 ECARGO_HOME="${WORKDIR}/cargo_home"
 ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
+
+_enabled_cargo_features() {
+    features=()
+    for feat in ${CARGO_FEATURES[@]}; do
+        use ${feat} && _ENABLED_CARGO_FEATURES+=${feat}
+    done
+
+    echo ${features[@]}
+}
 
 # @FUNCTION: cargo_crate_uris
 # @DESCRIPTION:
@@ -148,6 +161,7 @@ cargo_compile() {
 	export CARGO_HOME="${ECARGO_HOME}"
 
 	cargo build -v -j $(makeopts_jobs) $(usex debug "" --release) \
+        --features $(_enabled_cargo_features)\
 		|| die "cargo build failed"
 }
 # @FUNCTION: cargo_src_install
@@ -160,7 +174,8 @@ cargo_src_install() {
 }
 
 cargo_install() {
-	cargo install -j $(makeopts_jobs) --root="${D}${RUST_ROOT}" $(usex debug --debug "") \
+	cargo install -j $(makeopts_jobs) --root="${D}${RUST_ROOT}" \
+        $(usex debug --debug "") --features $(_enabled_cargo_features) \
 		|| die "cargo install failed"
 	rm -f "${D}${RUST_ROOT}.crates.toml"
 
