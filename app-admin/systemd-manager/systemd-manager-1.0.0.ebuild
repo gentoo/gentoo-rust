@@ -34,7 +34,7 @@ pango-0.1.2
 pango-sys-0.3.3
 pkg-config-0.3.9
 quickersort-2.2.0
-systemd-manager-1.0.2
+systemd-manager-1.0.0
 toml-0.2.1
 unreachable-0.1.1
 void-1.0.2
@@ -45,6 +45,9 @@ inherit cargo
 
 DESCRIPTION="A GTK3 GUI for managing systemd services on Linux"
 HOMEPAGE="https://github.com/mmstick/systemd-manager"
+#SRC_URI="https://github.com/mmstick/systemd-manager/releases/${P}.tar.gz
+#$(cargo_crate_uris ${CRATES})"
+
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="MIT" # Update to proper Gentoo format
