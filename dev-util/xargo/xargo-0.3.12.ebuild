@@ -42,7 +42,7 @@ xargo-0.3.12
 
 inherit cargo
 
-DESCRIPTION="The sysroot manager that lets you build and customize `std`"
+DESCRIPTION="The sysroot manager that lets you build and customize std"
 HOMEPAGE="https://github.com/japaric/xargo"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
