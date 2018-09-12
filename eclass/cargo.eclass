@@ -11,9 +11,11 @@
 if [[ -z ${_CARGO_ECLASS} ]]; then
 _CARGO_ECLASS=1
 
-case ${EAPI} in
-	6) : ;;
-	*) die "EAPI=${EAPI:-0} is not supported" ;;
+: ${CARGO_IGNORE_FETCH_CRATES:=yes}
+
+case ${EAPI:-0} in
+	5|6|7) ;;
+	*) die "${ECLASS}: EAPI ${EAPI} not supported" ;;
 esac
 
 inherit multiprocessing
@@ -41,7 +43,11 @@ cargo_crate_uris() {
 			version="${name##*-}-${version}"
 			name="${name%-*}"
 		fi
-		url="!fetch-crates? ( https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate )"
+		if [[ "${CARGO_IGNORE_FETCH_CRATES}" == "yes" ]]; then
+			url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate"
+		else
+			url="!fetch-crates? ( https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate )"
+		fi
 		echo "${url}"
 	done
 }
@@ -52,7 +58,7 @@ cargo_crate_uris() {
 cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	if use fetch-crates; then
+	if use fetch-crates && [[ "${CARGO_IGNORE_FETCH_CRATES}" == "not" ]]; then
 		# Cache crates in persistent store
 		# Do no redownload them at every compilation
 		ECARGO_HOME="${PORTAGE_ACTUAL_DISTDIR-${DISTDIR}}/cargo-src"
@@ -64,7 +70,7 @@ cargo_src_unpack() {
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
 
-	if use fetch-crates; then
+	if use fetch-crates && [[ "${CARGO_IGNORE_FETCH_CRATES}" == "not" ]]; then
 		ewarn "USE=fetch-crates is set. Crates will be fetched from crates.io."
 		return
 	fi

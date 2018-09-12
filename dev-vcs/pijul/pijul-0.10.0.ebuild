@@ -201,6 +201,8 @@ xattr-0.2.1
 yasna-0.1.3
 "
 
+CARGO_IGNORE_FETCH_CRATES=yes
+
 inherit cargo
 
 DESCRIPTION="Distributed VCS based on a sound theory of patches."

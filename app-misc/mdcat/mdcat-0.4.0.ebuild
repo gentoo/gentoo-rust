@@ -3,6 +3,8 @@
 
 EAPI=6
 
+CARGO_IGNORE_FETCH_CRATES=not
+
 inherit cargo
 
 DESCRIPTION="md cat"
