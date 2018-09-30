@@ -6,16 +6,21 @@
 # rust@gentoo.org
 # @AUTHOR:
 # Doug Goldstein <cardoe@gentoo.org>
+# @SUPPORTED_EAPIS: 5 6 7
 # @BLURB: common functions and variables for cargo builds
 
 if [[ -z ${_CARGO_ECLASS} ]]; then
 _CARGO_ECLASS=1
 
+CARGO_DEPEND=""
+[[ ${CATEGORY}/${PN} != dev-util/cargo ]] && CARGO_DEPEND="virtual/cargo"
+
 : ${CARGO_IGNORE_FETCH_CRATES:=yes}
 
-case ${EAPI:-0} in
-	5|6|7) ;;
-	*) die "${ECLASS}: EAPI ${EAPI} not supported" ;;
+case ${EAPI} in
+	5|6) : DEPEND="${DEPEND} ${CARGO_DEPEND}";;
+	7) : BDEPEND="${BDEPEND} ${CARGO_DEPEND}";;
+	*) die "${ECLASS}: EAPI=${EAPI:-0} is not supported" ;;
 esac
 
 inherit multiprocessing
@@ -23,8 +28,6 @@ inherit multiprocessing
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
 IUSE="${IUSE} debug fetch-crates"
-
-[[ ${CATEGORY}/${PN} != dev-util/cargo ]] && DEPEND=">=dev-util/cargo-0.13.0"
 
 ECARGO_HOME="${WORKDIR}/cargo_home"
 ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
