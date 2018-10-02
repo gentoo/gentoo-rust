@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>gentoo90@gmail.com</email>
+	</maintainer>
+	<longdescription>A modern editor with a backend written in Rust</longdescription>
+	<use>
+		<flag name="syntect">Enable syntax highlighting plugin</flag>
+	</use>
+</pkgmetadata>
