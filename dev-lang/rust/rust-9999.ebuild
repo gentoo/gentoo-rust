@@ -46,7 +46,7 @@ DEPEND="${RDEPEND}
 	)
 	net-misc/curl
 	cargo? ( !dev-util/cargo )
-    rustfmt? ( !dev-util/rustfmt )
+	rustfmt? ( !dev-util/rustfmt )
 	dev-util/cmake
 	sanitize? ( >=sys-kernel/linux-headers-3.2 )
 	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=
@@ -55,9 +55,12 @@ DEPEND="${RDEPEND}
 PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
 
 REQUIRED_USE=" || ( ${ALL_LLVM_TARGETS[*]} )
-wasm? ( !system-llvm ) " 
+wasm? ( !system-llvm )
+rls? ( source )"
 
 S="${WORKDIR}/${MY_P}-src"
+
+PATCHES="${FILESDIR}/${P}-fix-clippy-sysroot.patch"
 
 toml_usex() {
 	usex "$1" true false
@@ -109,7 +112,7 @@ src_configure() {
 	fi
 	if use rls; then
 		extended="true"
-		tools="\"rls\",$tools"
+		tools="\"rls\",\"analysis\",$tools"
 	fi
 	if use rustfmt; then
 		extended="true"
@@ -205,14 +208,14 @@ src_configure() {
 
 src_compile() {
 	env $(cat "${S}"/config.env)\
-		${EPYTHON} x.py build --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') \
+		"${EPYTHON}" ./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) \
 		--exclude src/tools/miri || die # https://github.com/rust-lang/rust/issues/52305
 }
 
 src_install() {
 	local rust_target abi_libdir
 
-	env DESTDIR="${D}" ${EPYTHON} x.py install  --verbose --config="${S}"/config.toml $(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+') || die
+	env DESTDIR="${D}" "${EPYTHON}" ./x.py install  --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
