@@ -1,12 +1,12 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit eutils bash-completion-r1
 
 DESCRIPTION="Systems programming language from Mozilla"
-HOMEPAGE="http://www.rust-lang.org/"
+HOMEPAGE="https://www.rust-lang.org/"
 MY_SRC_URI="https://static.rust-lang.org/dist/rust-nightly"
 MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/rust-std-nightly"
 
@@ -18,23 +18,34 @@ ALL_RUSTLIB_TARGETS=( "${ALL_RUSTLIB_TARGETS[@]/#/rustlib_targets_}" )
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS="~amd64 ~x86"
+IUSE="cargo clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
-IUSE="doc tools ${ALL_RUSTLIB_TARGETS[*]}"
+CARGO_DEPEND_VERSION="0.$(($(ver_cut 2) + 1)).0"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
+	cargo? ( !dev-util/cargo )
+	rustfmt? ( !dev-util/rustfmt )
 "
 DEPEND="${CDEPEND}
 	net-misc/wget
 "
 RDEPEND="${CDEPEND}
-"
+	cargo? (
+		sys-libs/zlib
+		!libressl? ( dev-libs/openssl:0= )
+		libressl? ( dev-libs/libressl:0= )
+		net-libs/libssh2
+		net-misc/curl[ssl]
+	)"
+PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
+REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 QA_PREBUILT="
-	opt/${P}/bin/rustc-bin-${PV}
-	opt/${P}/bin/rustdoc-bin-${PV}
+	opt/${P}/bin/*-${PV}
 	opt/${P}/lib/*.so
 	opt/${P}/lib/rustlib/*/lib/*.so
+	opt/${P}/lib/rustlib/*/lib/*.rlib*
 "
 
 src_unpack() {
@@ -42,15 +53,15 @@ src_unpack() {
 	use amd64 && postfix=x86_64-unknown-linux-gnu
 	use x86 && postfix=i686-unknown-linux-gnu
 
-	wget "${MY_SRC_URI}-${postfix}.tar.gz" || die
-	unpack ./"rust-nightly-${postfix}.tar.gz"
+	wget "${MY_SRC_URI}-${postfix}.tar.xz" || die
+	unpack ./"rust-nightly-${postfix}.tar.xz"
 
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
 
 	for arch in ${RUSTLIB_TARGETS}; do
 		elog "Adding ${arch}..."
-		wget "${MY_STDLIB_SRC_URI}-${arch}.tar.gz" || die
-		unpack ./"rust-std-nightly-${arch}.tar.gz"
+		wget "${MY_STDLIB_SRC_URI}-${arch}.tar.xz" || die
+		unpack ./"rust-std-nightly-${arch}.tar.xz"
 		mv "${WORKDIR}/rust-std-nightly-${arch}/rust-std-${arch}" "${S}/" || die
 		cat "${WORKDIR}/rust-std-nightly-${arch}/components" >> "${S}/components"
 	done
@@ -59,11 +70,14 @@ src_unpack() {
 src_install() {
 	local std=$(grep 'std' ./components | paste -s -d',')
 	local components="rustc,${std}"
-	if use tools; then
+	use doc && components="${components},rust-docs"
+	use cargo && components="${components},cargo"
+	use clippy && components="${components},clippy-preview"
+	if use rls; then
 		local analysis=$(grep 'analysis' ./components)
 		components="${components},rls-preview,${analysis}"
 	fi
-	use doc && components="${components},rust-docs"
+	use rustfmt && components="${components},rustfmt-preview"
 	./install.sh \
 		--components="${components}" \
 		--disable-verify \
@@ -82,15 +96,36 @@ src_install() {
 	mv "${D}/opt/${P}/bin/rust-gdb" "${D}/opt/${P}/bin/${rustgdb}" || die
 	mv "${D}/opt/${P}/bin/rust-lldb" "${D}/opt/${P}/bin/${rustlldb}" || die
 
-	dosym "/opt/${P}/bin/${rustc}" "/usr/bin/${rustc}"
-	dosym "/opt/${P}/bin/${rustdoc}" "/usr/bin/${rustdoc}"
-	dosym "/opt/${P}/bin/${rustgdb}" "/usr/bin/${rustgdb}"
-	dosym "/opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
+	dosym "../../opt/${P}/bin/${rustc}" "/usr/bin/${rustc}"
+	dosym "../../opt/${P}/bin/${rustdoc}" "/usr/bin/${rustdoc}"
+	dosym "../../opt/${P}/bin/${rustgdb}" "/usr/bin/${rustgdb}"
+	dosym "../../opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
 
-	if use tools; then
+	if use cargo; then
+		local cargo=cargo-bin-${PV}
+		mv "${D}/opt/${P}/bin/cargo" "${D}/opt/${P}/bin/${cargo}" || die
+		dosym "../../opt/${P}/bin/${cargo}" "/usr/bin/${cargo}"
+	fi
+	if use clippy; then
+		local clippy_driver=clippy-driver-bin-${PV}
+		local cargo_clippy=cargo-clippy-bin-${PV}
+		mv "${D}/opt/${P}/bin/clippy-driver" "${D}/opt/${P}/bin/${clippy_driver}" || die
+		mv "${D}/opt/${P}/bin/cargo-clippy" "${D}/opt/${P}/bin/${cargo_clippy}" || die
+		dosym "../../opt/${P}/bin/${clippy_driver}" "/usr/bin/${clippy_driver}"
+		dosym "../../opt/${P}/bin/${cargo_clippy}" "/usr/bin/${cargo_clippy}"
+	fi
+	if use rls; then
 		local rls=rls-bin-${PV}
 		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
-		dosym "/opt/${P}/bin/${rls}" "/usr/bin/${rls}"
+		dosym "../../opt/${P}/bin/${rls}" "/usr/bin/${rls}"
+	fi
+	if use rustfmt; then
+		local rustfmt=rustfmt-bin-${PV}
+		local cargo_fmt=cargo-fmt-bin-${PV}
+		mv "${D}/opt/${P}/bin/rustfmt" "${D}/opt/${P}/bin/${rustfmt}" || die
+		mv "${D}/opt/${P}/bin/cargo-fmt" "${D}/opt/${P}/bin/${cargo_fmt}" || die
+		dosym "../../opt/${P}/bin/${rustfmt}" "/usr/bin/${rustfmt}"
+		dosym "../../opt/${P}/bin/${cargo_fmt}" "/usr/bin/${cargo_fmt}"
 	fi
 
 	cat <<-EOF > "${T}"/50${P}
@@ -104,11 +139,20 @@ src_install() {
 	/usr/bin/rust-gdb
 	/usr/bin/rust-lldb
 	EOF
-
-	use tools && cat <<-EOF >> "${T}/provider-${P}"
-	/usr/bin/rls
-	EOF
-
+	if use cargo; then
+		echo /usr/bin/cargo >> "${T}/provider-${P}"
+	fi
+	if use clippy; then
+		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
+	fi
+	if use rls; then
+		echo /usr/bin/rls >> "${T}/provider-${P}"
+	fi
+	if use rustfmt; then
+		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
+	fi
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
@@ -125,7 +169,7 @@ pkg_postinst() {
 	fi
 
 	if has_version app-editors/gvim || has_version app-editors/vim; then
-		elog "install app-vim/rust-mode to get vim support for rust."
+		elog "install app-vim/rust-vim to get vim support for rust."
 	fi
 
 	if has_version 'app-shells/zsh'; then
