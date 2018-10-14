@@ -6,6 +6,9 @@
     <name>Jauhien Piatlicki</name>
   </maintainer>
   <use>
-    <flag name="tools">Install extended rust tools (RLS, analysis data, ...)</flag>
+    <flag name="cargo">Install cargo component</flag>
+    <flag name="clippy">Install clippy component</flag>
+    <flag name="rustfmt">Install rustfmt component</flag>
+    <flag name="rls">Install RLS and analysis data for libstd</flag>
   </use>
 </pkgmetadata>
