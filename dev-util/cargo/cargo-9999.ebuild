@@ -35,6 +35,7 @@ pkg_setup() {
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu
 	use x86 && postfix=i686-unknown-linux-gnu
+	use ppc64 && postfix=powerpc64-unknown-linux-gnu
 
 	# Download nightly cargo to bootstrap from it
 
