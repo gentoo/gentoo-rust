@@ -11,13 +11,14 @@ HOMEPAGE="https://github.com/phildawes/racer"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS=""
+RESTRICT="network-sandbox"
 IUSE=""
 
 EGIT_REPO_URI="https://github.com/phildawes/racer"
 
 COMMON_DEPEND="virtual/rust:*"
 DEPEND="${COMMON_DEPEND}
-	dev-util/cargo"
+	virtual/cargo"
 RDEPEND="${COMMON_DEPEND}"
 
 src_compile() {
