@@ -161,7 +161,7 @@ src_configure() {
 		optimize = $(toml_usex !debug)
 		debuginfo = $(toml_usex debug)
 		debug-assertions = $(toml_usex debug)
-		use-jemalloc = $(toml_usex jemalloc)
+		jemalloc = $(toml_usex jemalloc)
 		default-linker = "$(tc-getCC)"
 		rpath = false
 		ignore-git = false
