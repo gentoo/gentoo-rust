@@ -14,7 +14,7 @@ backtrace-sys-0.1.16
 bitflags-0.7.0
 bitflags-0.9.1
 cargo-0.24.0
-cargo-bitbake-0.3.11-pre
+cargo-bitbake-0.3.10
 cc-1.0.3
 cfg-if-0.1.2
 cmake-0.1.25
