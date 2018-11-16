@@ -16,7 +16,7 @@ HOMEPAGE="http://crates.io"
 SRC_URI="https://github.com/rust-lang/cargo/archive/${PV}.tar.gz -> ${P}.tar.gz
 	$(rust_all_arch_uris cargo-${BOOTSTRAP_VERSION})"
 
-RESTRICT="mirror"
+RESTRICT="mirror network-sandbox"
 LICENSE="|| ( MIT Apache-2.0 )"
 SLOT="0"
 KEYWORDS="amd64 ~arm64 x86"
