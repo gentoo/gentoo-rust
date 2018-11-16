@@ -5,9 +5,6 @@
     <email>rust@gentoo.org</email>
     <name>Rust Project</name>
   </maintainer>
- <use>
-    <flag name="fetch-crates">Crates will be fetched from crates.io.</flag>
- </use>
   <upstream>
     <remote-id type="github">rust-lang-nursery/rustfmt</remote-id>
   </upstream>

@@ -1,9 +1,11 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 inherit cargo git-r3
+
+CARGO_FETCH_CRATES=yes
 
 EGIT_REPO_URI="https://github.com/rust-lang-nursery/rust-clippy.git"
 
@@ -26,5 +28,5 @@ src_install() {
     || die "cargo install failed"
   rm -f "${D}/usr/.crates.toml"
 
-  [ -d "${S}/man" ] && doman "${S}/man" || return 
+  [ -d "${S}/man" ] && doman "${S}/man" || return
 }

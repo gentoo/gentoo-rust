@@ -3,9 +3,9 @@
 
 EAPI=6
 
-CARGO_IGNORE_FETCH_CRATES=not
-
 inherit cargo
+
+CARGO_FETCH_CRATES=yes
 
 DESCRIPTION="md cat"
 HOMEPAGE="https://github.com/lunaryorn/mdcat"
@@ -14,12 +14,7 @@ RESTRICT="mirror"
 LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+fetch-crates"
 DEPEND=""
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${PN}-${P}"
-
-src_unpack() {
-	default
-}

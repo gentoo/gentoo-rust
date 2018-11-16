@@ -5,6 +5,8 @@ EAPI=6
 
 inherit cargo git-r3
 
+CARGO_FETCH_CRATES=yes
+
 DESCRIPTION="High-level interactions between wasm modules and JS"
 HOMEPAGE="https://github.com/rustwasm/wasm-bindgen"
 

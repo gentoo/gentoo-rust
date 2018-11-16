@@ -5,6 +5,8 @@ EAPI=7
 
 inherit cargo git-r3
 
+CARGO_FETCH_CRATES=yes
+
 DESCRIPTION="A modern editor with a backend written in Rust"
 HOMEPAGE="https://xi-editor.github.io/xi-editor/"
 

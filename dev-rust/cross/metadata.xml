@@ -5,9 +5,6 @@
  <email>o01eg@yandex.ru</email>
  <name>O01eg</name>
 </maintainer>
- <use>
-    <flag name="fetch-crates">Crates will be fetched from crates.io.</flag>
- </use>
 <longdescription lang="en">
   Generator of Rust-Qt crates.
 </longdescription>

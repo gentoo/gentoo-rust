@@ -5,6 +5,8 @@ EAPI=6
 
 inherit cargo git-r3
 
+CARGO_FETCH_CRATES=yes
+
 EGIT_REPO_URI="https://github.com/rust-qt/cpp_to_rust.git"
 
 DESCRIPTION="Generator of Rust-Qt crates."

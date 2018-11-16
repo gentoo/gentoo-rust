@@ -15,7 +15,7 @@ _CARGO_ECLASS=1
 CARGO_DEPEND=""
 [[ ${CATEGORY}/${PN} != dev-util/cargo ]] && CARGO_DEPEND="virtual/cargo"
 
-: ${CARGO_IGNORE_FETCH_CRATES:=yes}
+: ${CARGO_FETCH_CRATES:=not}
 
 case ${EAPI} in
 	5|6) : DEPEND="${DEPEND} ${CARGO_DEPEND}";;
@@ -27,7 +27,7 @@ inherit multiprocessing
 
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
-IUSE="${IUSE} debug fetch-crates"
+IUSE="${IUSE} debug"
 
 ECARGO_HOME="${WORKDIR}/cargo_home"
 ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
@@ -46,10 +46,10 @@ cargo_crate_uris() {
 			version="${name##*-}-${version}"
 			name="${name%-*}"
 		fi
-		if [[ "${CARGO_IGNORE_FETCH_CRATES}" == "yes" ]]; then
+		if [[ "${CARGO_FETCH_CRATES}" == "not" ]]; then
 			url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate"
 		else
-			url="!fetch-crates? ( https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate )"
+			url=""
 		fi
 		echo "${url}"
 	done
@@ -61,7 +61,7 @@ cargo_crate_uris() {
 cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	if use fetch-crates && [[ "${CARGO_IGNORE_FETCH_CRATES}" == "not" ]]; then
+	if [[ "${CARGO_FETCH_CRATES}" == "yes" ]]; then
 		# Cache crates in persistent store
 		# Do no redownload them at every compilation
 		ECARGO_HOME="${PORTAGE_ACTUAL_DISTDIR-${DISTDIR}}/cargo-src"
@@ -73,8 +73,9 @@ cargo_src_unpack() {
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
 
-	if use fetch-crates && [[ "${CARGO_IGNORE_FETCH_CRATES}" == "not" ]]; then
-		ewarn "USE=fetch-crates is set. Crates will be fetched from crates.io."
+	if [[ "${CARGO_FETCH_CRATES}" == "yes" ]]; then
+		default
+		ewarn "Crates will be fetched from crates.io."
 		return
 	fi
 
