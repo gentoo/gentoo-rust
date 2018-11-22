@@ -226,7 +226,7 @@ HOMEPAGE="https://pijul.org/"
 SRC_URI="https://pijul.org/releases/${P}.tar.gz
 	$(cargo_crate_uris $CRATES)"
 RESTRICT="mirror"
-LICENSE="GPL-2.0+" # Update to proper Gentoo format
+LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
