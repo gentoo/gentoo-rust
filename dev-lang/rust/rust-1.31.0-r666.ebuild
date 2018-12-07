@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -41,31 +41,32 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="cargo debug doc +jemalloc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy debug doc +jemalloc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 		jemalloc? ( dev-libs/jemalloc )
-		cargo? (
-			sys-libs/zlib
-			!libressl? ( dev-libs/openssl:0= )
-			libressl? ( dev-libs/libressl:0= )
-			net-libs/libssh2
-			net-libs/http-parser
-			net-misc/curl[ssl]
-		)"
+		sys-libs/zlib
+		!libressl? ( dev-libs/openssl:0= )
+		libressl? ( dev-libs/libressl:0= )
+		net-libs/libssh2
+		net-libs/http-parser
+		net-misc/curl[ssl]
+		"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	|| (
 		>=sys-devel/gcc-4.7
 		>=sys-devel/clang-3.5
 	)
-	cargo? ( !dev-util/cargo )
+	!dev-util/cargo
 	rustfmt? ( !dev-util/rustfmt )
 	dev-util/cmake
 "
-PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
+PDEPEND=""
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
+
+PATCHES=( "${FILESDIR}"/${PV}-clippy-sysroot.patch )
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -97,17 +98,14 @@ src_configure() {
 	fi
 	rust_targets="${rust_targets#,}"
 
-	local extended="false" tools=""
-	if use cargo; then
-		extended="true"
-		tools="\"cargo\","
+	local extended="true" tools="\"cargo\","
+	if use clippy; then
+		tools="\"clippy\",$tools"
 	fi
 	if use rls; then
-		extended="true"
-		tools="\"rls\",$tools"
+		tools="\"rls\",\"analysis\",\"src\",$tools"
 	fi
 	if use rustfmt; then
-		extended="true"
 		tools="\"rustfmt\",$tools"
 	fi
 
@@ -190,8 +188,10 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
-	if use cargo; then
-		mv "${D}/usr/bin/cargo" "${D}/usr/bin/cargo-${PV}" || die
+	mv "${D}/usr/bin/cargo" "${D}/usr/bin/cargo-${PV}" || die
+	if use clippy; then
+		mv "${D}/usr/bin/clippy-driver" "${D}/usr/bin/clippy-driver-${PV}" || die
+		mv "${D}/usr/bin/cargo-clippy" "${D}/usr/bin/cargo-clippy-${PV}" || die
 	fi
 	if use rls; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
@@ -230,15 +230,17 @@ src_install() {
 		/usr/bin/rust-gdb
 		/usr/bin/rust-lldb
 	EOF
-	if use cargo; then
-	    echo /usr/bin/cargo >> "${T}/provider-${P}"
+	echo /usr/bin/cargo >> "${T}/provider-${P}"
+	if use clippy; then
+		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
 	fi
 	if use rls; then
-	    echo /usr/bin/rls >> "${T}/provider-${P}"
+		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
-	    echo /usr/bin/rustfmt >> "${T}/provider-${P}"
-	    echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
+		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
 	fi
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
@@ -250,6 +252,10 @@ pkg_postinst() {
 
 	elog "Rust installs a helper script for calling GDB and LLDB,"
 	elog "for your convenience it is installed under /usr/bin/rust-{gdb,lldb}-${PV}."
+
+	ewarn "cargo is now installed from dev-lang/rust{,-bin} instead of dev-util/cargo."
+	ewarn "This might have resulted in a dangling symlink for /usr/bin/cargo on some"
+	ewarn "systems. This can be resolved by calling 'sudo eselect rust set ${P}'."
 
 	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
 		elog "install app-emacs/rust-mode to get emacs support for rust."
