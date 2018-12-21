@@ -2,6 +2,6 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 <longdescription lang="en">
-  Create ctags/etags for a cargo project and all of its dependencies
+  Proxy for using WebDriver clients to interact with Gecko-based browsers
 </longdescription>
 </pkgmetadata>
