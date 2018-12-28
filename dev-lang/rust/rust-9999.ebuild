@@ -60,7 +60,9 @@ rls? ( source )"
 
 S="${WORKDIR}/${MY_P}-src"
 
-PATCHES="${FILESDIR}/${P}-fix-clippy-sysroot.patch"
+PATCHES="${FILESDIR}/${P}-fix-codegen-path.patch
+${FILESDIR}/${P}-fix-clippy-sysroot.patch
+"
 
 toml_usex() {
 	usex "$1" true false
