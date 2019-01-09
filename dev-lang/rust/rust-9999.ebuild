@@ -34,7 +34,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="cargo debug doc system-llvm +jemalloc sanitize rls rustfmt source clippy wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="cargo debug doc system-llvm +jemalloc sanitize rls rustfmt source clippy miri wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 		jemalloc? ( dev-libs/jemalloc )"
@@ -128,6 +128,10 @@ src_configure() {
 		extended="true"
 		tools="\"clippy\",$tools"
 	fi
+	if use miri; then
+		extended="true"
+		tools="\"miri\",$tools"
+	fi
 
 
 	rust_target_name="CHOST_${ARCH}"
@@ -210,8 +214,7 @@ src_configure() {
 
 src_compile() {
 	env $(cat "${S}"/config.env)\
-		"${EPYTHON}" ./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) \
-		--exclude src/tools/miri || die # https://github.com/rust-lang/rust/issues/52305
+		"${EPYTHON}" ./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
 }
 
 src_install() {
@@ -236,6 +239,10 @@ src_install() {
     if use clippy; then
 		mv "${D}/usr/bin/clippy-driver" "${D}/usr/bin/clippy-driver-${PV}" || die
 		mv "${D}/usr/bin/cargo-clippy" "${D}/usr/bin/cargo-clippy-${PV}" || die
+	fi
+	if use miri; then
+		mv "${D}/usr/bin/miri" "${D}/usr/bin/miri-${PV}" || die
+		mv "${D}/usr/bin/cargo-miri" "${D}/usr/bin/cargo-miri-${PV}" || die
 	fi
 
 	# Copy shared library versions of standard libraries for all targets
@@ -286,6 +293,10 @@ src_install() {
 		/usr/bin/cargo-clippy
 		/usr/bin/clippy-driver
 		EOF
+	fi
+	if use miri; then
+		echo /usr/bin/miri >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-miri >> "${T}/provider-${P}"
 	fi
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
