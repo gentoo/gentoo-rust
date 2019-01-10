@@ -17,7 +17,7 @@ IUSE=""
 EGIT_REPO_URI="https://github.com/servo/rust-bindgen.git"
 
 DEPEND=">=virtual/rust-999
-	dev-util/cargo
+	virtual/cargo
 	>=sys-devel/clang-3.4.2-r100:*
 "
 RDEPEND="${DEPEND}"

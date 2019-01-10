@@ -1,13 +1,11 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{5,6} pypy )
 
-LLVM_MAX_SLOT=4
-
-inherit multiprocessing multilib-build git-r3 python-any-r1 llvm toolchain-funcs
+inherit check-reqs eapi7-ver estack flag-o-matic llvm multiprocessing multilib-build git-r3 rust-toolchain python-any-r1 toolchain-funcs
 
 SLOT="git"
 MY_P="rust-git"
@@ -34,29 +32,29 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="cargo debug doc system-llvm +jemalloc sanitize rls rustfmt source clippy miri wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc +jemalloc libressl rls rustfmt system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
 
-RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-		jemalloc? ( dev-libs/jemalloc )"
-DEPEND="${RDEPEND}
+COMMON_DEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
+		jemalloc? ( dev-libs/jemalloc )
+		sys-libs/zlib
+		!libressl? ( dev-libs/openssl:0= )
+		libressl? ( dev-libs/libressl:0= )
+		net-libs/libssh2
+		net-libs/http-parser:=
+		net-misc/curl[ssl]
+		system-llvm? ( >=sys-devel/llvm-6:= )"
+DEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
 	|| (
 		>=sys-devel/gcc-4.7
 		>=sys-devel/clang-3.5
 	)
-	net-misc/curl
-	cargo? ( !dev-util/cargo )
-	rustfmt? ( !dev-util/rustfmt )
-	dev-util/cmake
-	sanitize? ( >=sys-kernel/linux-headers-3.2 )
-	system-llvm? ( >=sys-devel/llvm-3.8.1-r2:=
-			<sys-devel/llvm-5.0.0:= )
-"
-PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
-
-REQUIRED_USE=" || ( ${ALL_LLVM_TARGETS[*]} )
-wasm? ( !system-llvm )
-rls? ( source )"
+	dev-util/cmake"
+RDEPEND="${COMMON_DEPEND}
+	!dev-util/cargo
+	rustfmt? ( !dev-util/rustfmt )"
+REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
+				x86? ( cpu_flags_x86_sse2 )"
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -68,7 +66,24 @@ toml_usex() {
 	usex "$1" true false
 }
 
+pre_build_checks() {
+	CHECKREQS_DISK_BUILD="7G"
+	CHECKREQS_MEMORY="4G"
+	eshopts_push -s extglob
+	if is-flagq '-g?(gdb)?([1-9])'; then
+		CHECKREQS_DISK_BUILD="10G"
+		CHECKREQS_MEMORY="16G"
+	fi
+	eshopts_pop
+	check-reqs_pkg_setup
+}
+
+pkg_pretend() {
+	pre_build_checks
+}
+
 pkg_setup() {
+	pre_build_checks
 	python-any-r1_pkg_setup
 	if use system-llvm; then
 		EGIT_SUBMODULES=( "*" "-src/llvm" )
@@ -87,57 +102,34 @@ src_unpack() {
 }
 
 src_configure() {
-	# We need to ask llvm-config to link to dynamic libraries
-	# because LLVM ebuild does not provide an option
-	# to compile static libraries
-	if use system-llvm; then
-		export LLVM_LINK_SHARED=1
-		local llvm_config="$(get_llvm_prefix)/bin/${CBUILD}-llvm-config"
-	fi
-
-	local rust_target="" rust_targets="" rust_target_name arch_cflags
+	local rust_target="" rust_targets="" arch_cflags
 
 	# Collect rust target names to compile standard libs for all ABIs.
 	for v in $(multilib_get_enabled_abi_pairs); do
-		rust_target_name="CHOST_${v##*.}"
-		rust_targets="${rust_targets},\"${!rust_target_name}\""
+		rust_targets="${rust_targets},\"$(rust_abi $(get_abi_CHOST ${v##*.}))\""
 	done
 	if use wasm; then
 		rust_targets="${rust_targets},\"wasm32-unknown-unknown\""
 	fi
 	rust_targets="${rust_targets#,}"
 
-	local extended="false" tools=""
-	if use cargo; then
-		extended="true"
-		tools="\"cargo\","
-	fi
-	if use rls; then
-		extended="true"
-		tools="\"rls\",\"analysis\",$tools"
-	fi
-	if use rustfmt; then
-		extended="true"
-		tools="\"rustfmt\",$tools"
-	fi
-	if use source; then
-	    extended="true"
-		tools="\"src\",$tools"
-	fi
+	local extended="true" tools="\"cargo\","
 	if use clippy; then
-		extended="true"
 		tools="\"clippy\",$tools"
 	fi
+	if use rls; then
+		tools="\"rls\",\"analysis\",\"src\",$tools"
+	fi
+	if use rustfmt; then
+		tools="\"rustfmt\",$tools"
+	fi
 	if use miri; then
-		extended="true"
 		tools="\"miri\",$tools"
 	fi
 
+	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
-	rust_target_name="CHOST_${ARCH}"
-	rust_target="${!rust_target_name}"
-
-	#export CFG_DISABLE_LDCONFIG="notempty"
+	rust_target="$(rust_abi)"
 
 	cat <<- EOF > "${S}"/config.toml
 		[llvm]
@@ -145,6 +137,7 @@ src_configure() {
 		release-debuginfo = $(toml_usex debug)
 		assertions = $(toml_usex debug)
 		targets = "${LLVM_TARGETS// /;}"
+		link-shared = $(toml_usex system-llvm)
 		[build]
 		build = "${rust_target}"
 		host = ["${rust_target}"]
@@ -176,7 +169,7 @@ src_configure() {
 	EOF
 
 	for v in $(multilib_get_enabled_abi_pairs); do
-		rust_target=$(get_abi_CHOST ${v##*.})
+		rust_target=$(rust_abi $(get_abi_CHOST ${v##*.}))
 		arch_cflags="$(get_abi_CFLAGS ${v##*.})"
 
 		cat <<- EOF >> "${S}"/config.env
@@ -190,10 +183,9 @@ src_configure() {
 			linker = "$(tc-getCC)"
 			ar = "$(tc-getAR)"
 		EOF
-
 		if use system-llvm; then
 			cat <<- EOF >> "${S}"/config.toml
-				llvm-config = "${llvm_config}"
+				llvm-config = "$(get_llvm_prefix)/bin/llvm-config"
 			EOF
 		fi
 	done
@@ -203,12 +195,6 @@ src_configure() {
 			[target.wasm32-unknown-unknown]
 			linker = "rust-lld"
 		EOF
-
-		if use system-llvm; then
-			cat <<- EOF >> "${S}"/config.toml
-				llvm-config = "${llvm_config}"
-			EOF
-		fi
 	fi
 }
 
@@ -226,8 +212,10 @@ src_install() {
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
 	mv "${D}/usr/bin/rust-gdb" "${D}/usr/bin/rust-gdb-${PV}" || die
 	mv "${D}/usr/bin/rust-lldb" "${D}/usr/bin/rust-lldb-${PV}" || die
-	if use cargo; then
-		mv "${D}/usr/bin/cargo" "${D}/usr/bin/cargo-${PV}" || die
+	mv "${D}/usr/bin/cargo" "${D}/usr/bin/cargo-${PV}" || die
+	if use clippy; then
+		mv "${D}/usr/bin/clippy-driver" "${D}/usr/bin/clippy-driver-${PV}" || die
+		mv "${D}/usr/bin/cargo-clippy" "${D}/usr/bin/cargo-clippy-${PV}" || die
 	fi
 	if use rls; then
 		mv "${D}/usr/bin/rls" "${D}/usr/bin/rls-${PV}" || die
@@ -236,13 +224,12 @@ src_install() {
 		mv "${D}/usr/bin/rustfmt" "${D}/usr/bin/rustfmt-${PV}" || die
 		mv "${D}/usr/bin/cargo-fmt" "${D}/usr/bin/cargo-fmt-${PV}" || die
 	fi
-    if use clippy; then
-		mv "${D}/usr/bin/clippy-driver" "${D}/usr/bin/clippy-driver-${PV}" || die
-		mv "${D}/usr/bin/cargo-clippy" "${D}/usr/bin/cargo-clippy-${PV}" || die
-	fi
 	if use miri; then
 		mv "${D}/usr/bin/miri" "${D}/usr/bin/miri-${PV}" || die
 		mv "${D}/usr/bin/cargo-miri" "${D}/usr/bin/cargo-miri-${PV}" || die
+	fi
+	if ! use zsh-completion; then
+		rm "${D}/usr/share/zsh/site-functions/_cargo" # fix https://bugs.gentoo.org/675026
 	fi
 
 	# Copy shared library versions of standard libraries for all targets
@@ -253,10 +240,10 @@ src_install() {
 			continue
 		fi
 		abi_libdir=$(get_abi_LIBDIR ${v##*.})
-		rust_target=$(get_abi_CHOST ${v##*.})
-		mkdir -p ${D}/usr/${abi_libdir}
-		cp ${D}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib/*.so \
-		   ${D}/usr/${abi_libdir} || die
+		rust_target=$(rust_abi $(get_abi_CHOST ${v##*.}))
+		mkdir -p "${D}/usr/${abi_libdir}"
+		cp "${D}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib"/*.so \
+			"${D}/usr/${abi_libdir}" || die
 	done
 
 	dodoc COPYRIGHT
@@ -265,7 +252,7 @@ src_install() {
 		LDPATH="/usr/$(get_libdir)/${P}"
 		MANPATH="/usr/share/${P}/man"
 	EOF
-	if use source; then
+	if use rls; then
 		cat <<-EOF >> "${T}"/50${P}
 		RUST_SRC_PATH="/usr/$(get_libdir)/${P}/rustlib/src/rust/src/"
 		EOF
@@ -277,22 +264,17 @@ src_install() {
 		/usr/bin/rust-gdb
 		/usr/bin/rust-lldb
 	EOF
-	if use cargo; then
-	    echo /usr/bin/cargo >> "${T}/provider-${P}"
+	echo /usr/bin/cargo >> "${T}/provider-${P}"
+	if use clippy; then
+		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
 	fi
 	if use rls; then
-	    echo /usr/bin/rls >> "${T}/provider-${P}"
+		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
 	    echo /usr/bin/rustfmt >> "${T}/provider-${P}"
 	    echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
-	fi
-
-	if use clippy; then
-	    cat <<-EOF >> "${T}/provider-${P}"
-		/usr/bin/cargo-clippy
-		/usr/bin/clippy-driver
-		EOF
 	fi
 	if use miri; then
 		echo /usr/bin/miri >> "${T}/provider-${P}"
@@ -301,8 +283,6 @@ src_install() {
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
-
-	rm -rf "${D}/usr/$(get_libdir)/rustlib/src/"
 }
 
 pkg_postinst() {
@@ -310,6 +290,10 @@ pkg_postinst() {
 
 	elog "Rust installs a helper script for calling GDB and LLDB,"
 	elog "for your convenience it is installed under /usr/bin/rust-{gdb,lldb}-${PV}."
+
+	ewarn "cargo is now installed from dev-lang/rust{,-bin} instead of dev-util/cargo."
+	ewarn "This might have resulted in a dangling symlink for /usr/bin/cargo on some"
+	ewarn "systems. This can be resolved by calling 'sudo eselect rust set ${P}'."
 
 	if has_version app-editors/emacs || has_version app-editors/emacs-vcs; then
 		elog "install app-emacs/rust-mode to get emacs support for rust."
