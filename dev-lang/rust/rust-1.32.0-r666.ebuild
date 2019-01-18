@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -17,12 +17,12 @@ CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 CHOST_arm64=aarch64-unknown-linux-gnu
 
-RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
+RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).1"
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
 RUST_STAGE0_arm64="rust-${RUST_STAGE0_VERSION}-${CHOST_arm64}"
 
-CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
+CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).1"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
@@ -40,10 +40,9 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy debug doc +jemalloc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy debug doc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-		jemalloc? ( dev-libs/jemalloc )
 		sys-libs/zlib
 		!libressl? ( dev-libs/openssl:0= )
 		libressl? ( dev-libs/libressl:0= )
@@ -65,7 +64,7 @@ PDEPEND=""
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 
-PATCHES=( "${FILESDIR}"/${PV}-clippy-sysroot.patch )
+PATCHES=( "${FILESDIR}"/1.31.1-clippy-sysroot.patch )
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -141,7 +140,6 @@ src_configure() {
 		optimize = $(toml_usex !debug)
 		debuginfo = $(toml_usex debug)
 		debug-assertions = $(toml_usex debug)
-		use-jemalloc = $(toml_usex jemalloc)
 		default-linker = "$(tc-getCC)"
 		rpath = false
 		lld = $(toml_usex wasm)
