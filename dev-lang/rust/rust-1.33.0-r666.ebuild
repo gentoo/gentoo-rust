@@ -64,8 +64,6 @@ PDEPEND=""
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 
-PATCHES=( "${FILESDIR}"/1.31.1-clippy-sysroot.patch )
-
 S="${WORKDIR}/${MY_P}-src"
 
 toml_usex() {
