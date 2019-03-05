@@ -59,8 +59,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 S="${WORKDIR}/${MY_P}-src"
 
 PATCHES="${FILESDIR}/${P}-fix-codegen-path.patch
-${FILESDIR}/${P}-fix-clippy-sysroot.patch
-"
+${FILESDIR}/${P}-fix-rustdoc.patch"
 
 toml_usex() {
 	usex "$1" true false
