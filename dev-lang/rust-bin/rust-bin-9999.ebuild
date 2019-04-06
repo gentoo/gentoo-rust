@@ -58,12 +58,13 @@ src_unpack() {
 
 	mv "${WORKDIR}/rust-nightly-${postfix}" "${S}" || die
 
-	for arch in ${RUSTLIB_TARGETS}; do
-		elog "Adding ${arch}..."
-		wget "${MY_STDLIB_SRC_URI}-${arch}.tar.xz" || die
-		unpack ./"rust-std-nightly-${arch}.tar.xz"
-		mv "${WORKDIR}/rust-std-nightly-${arch}/rust-std-${arch}" "${S}/" || die
-		cat "${WORKDIR}/rust-std-nightly-${arch}/components" >> "${S}/components"
+	for arch in ${ALL_RUSTLIB_TARGETS}; do
+		use ${arch} && target=${arch#"rustlib_targets_"}
+		elog "Adding ${target}..."
+		wget "${MY_STDLIB_SRC_URI}-${target}.tar.xz" || die
+		unpack ./"rust-std-nightly-${target}.tar.xz"
+		mv "${WORKDIR}/rust-std-nightly-${target}/rust-std-${target}" "${S}/" || die
+		cat "${WORKDIR}/rust-std-nightly-${target}/components" >> "${S}/components"
 	done
 }
 
