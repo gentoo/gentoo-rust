@@ -1,11 +1,11 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{5,6} pypy )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy )
 
-inherit check-reqs eapi7-ver estack flag-o-matic llvm multiprocessing multilib-build git-r3 rust-toolchain python-any-r1 toolchain-funcs
+inherit check-reqs eapi7-ver estack flag-o-matic llvm multiprocessing multilib-build python-any-r1 rust-toolchain toolchain-funcs git-r3
 
 SLOT="git"
 MY_P="rust-git"
@@ -17,8 +17,6 @@ KEYWORDS=""
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 CHOST_arm64=aarch64-unknown-linux-gnu
-
-CARGO_DEPEND_VERSION="9999"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
@@ -32,17 +30,37 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc +jemalloc libressl rls rustfmt system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc libressl rls rustfmt system-llvm wasm sanitize miri zsh-completion ${ALL_LLVM_TARGETS[*]}"
 
-COMMON_DEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
-		jemalloc? ( dev-libs/jemalloc )
-		sys-libs/zlib
-		!libressl? ( dev-libs/openssl:0= )
-		libressl? ( dev-libs/libressl:0= )
-		net-libs/libssh2
-		net-libs/http-parser:=
-		net-misc/curl[ssl]
-		system-llvm? ( >=sys-devel/llvm-6:= )"
+# Please keep the LLVM dependency block separate. Since LLVM is slotted,
+# we need to *really* make sure we're not pulling one than more slot
+# simultaneously.
+
+# How to use it:
+# 1. List all the working slots (with min versions) in ||, newest first.
+# 2. Update the := to specify *max* version, e.g. < 8.
+# 3. Specify LLVM_MAX_SLOT, e.g. 7.
+LLVM_DEPEND="
+	|| (
+		sys-devel/llvm:7
+	)
+	<sys-devel/llvm-8:=
+"
+LLVM_MAX_SLOT=7
+
+COMMON_DEPEND="
+	sys-libs/zlib
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
+	net-libs/libssh2
+	net-libs/http-parser:=
+	net-misc/curl[ssl]
+	app-eselect/eselect-rust
+	system-llvm? ( 
+		${LLVM_DEPEND}
+	)
+"
+
 DEPEND="${COMMON_DEPEND}
 	${PYTHON_DEPS}
 	|| (
@@ -58,8 +76,9 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 
 S="${WORKDIR}/${MY_P}-src"
 
-PATCHES="${FILESDIR}/${P}-fix-codegen-path.patch
-${FILESDIR}/${P}-fix-rustdoc.patch"
+PATCHES=(
+	"${FILESDIR}/${P}-fix-codegen-path.patch"
+)
 
 toml_usex() {
 	usex "$1" true false
@@ -136,6 +155,7 @@ src_configure() {
 		release-debuginfo = $(toml_usex debug)
 		assertions = $(toml_usex debug)
 		targets = "${LLVM_TARGETS// /;}"
+		experimental-targets = "$(usex wasm WebAssembly '')"
 		link-shared = $(toml_usex system-llvm)
 		[build]
 		build = "${rust_target}"
@@ -159,7 +179,6 @@ src_configure() {
 		optimize = $(toml_usex !debug)
 		debuginfo = $(toml_usex debug)
 		debug-assertions = $(toml_usex debug)
-		jemalloc = $(toml_usex jemalloc)
 		default-linker = "$(tc-getCC)"
 		rpath = false
 		ignore-git = false
@@ -184,7 +203,7 @@ src_configure() {
 		EOF
 		if use system-llvm; then
 			cat <<- EOF >> "${S}"/config.toml
-				llvm-config = "$(get_llvm_prefix)/bin/llvm-config"
+				llvm-config = "$(get_llvm_prefix "${LLVM_MAX_SLOT}")/bin/llvm-config"
 			EOF
 		fi
 	done
@@ -199,13 +218,13 @@ src_configure() {
 
 src_compile() {
 	env $(cat "${S}"/config.env)\
-		"${EPYTHON}" ./x.py build --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
+		"${EPYTHON}" ./x.py build -v --config="${S}"/config.toml -j$(makeopts_jobs) || die
 }
 
 src_install() {
 	local rust_target abi_libdir
 
-	env DESTDIR="${D}" "${EPYTHON}" ./x.py install  --verbose --config="${S}"/config.toml -j$(makeopts_jobs) || die
+	env DESTDIR="${D}" "${EPYTHON}" ./x.py install -v -j$(makeopts_jobs) || die
 
 	mv "${D}/usr/bin/rustc" "${D}/usr/bin/rustc-${PV}" || die
 	mv "${D}/usr/bin/rustdoc" "${D}/usr/bin/rustdoc-${PV}" || die
@@ -242,7 +261,7 @@ src_install() {
 		rust_target=$(rust_abi $(get_abi_CHOST ${v##*.}))
 		mkdir -p "${D}/usr/${abi_libdir}"
 		cp "${D}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib"/*.so \
-			"${D}/usr/${abi_libdir}" || die
+		   "${D}/usr/${abi_libdir}" || die
 	done
 
 	dodoc COPYRIGHT
@@ -272,8 +291,8 @@ src_install() {
 		echo /usr/bin/rls >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
-	    echo /usr/bin/rustfmt >> "${T}/provider-${P}"
-	    echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
+		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-fmt >> "${T}/provider-${P}"
 	fi
 	if use miri; then
 		echo /usr/bin/miri >> "${T}/provider-${P}"
