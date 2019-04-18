@@ -20,7 +20,7 @@ diff --git a/src/librustc_interface/util.rs b/src/librustc_interface/util.rs
 index 6f92c30446..50fc59f204 100644
 --- a/src/librustc_interface/util.rs
 +++ b/src/librustc_interface/util.rs
-@@ -138,37 +138,35 @@ pub fn get_codegen_sysroot(backend_name: &str) -> fn() -> Box<dyn CodegenBackend
+@@ -138,37 +138,34 @@ pub fn get_codegen_sysroot(backend_name: &str) -> fn() -> Box<dyn CodegenBackend
              "cannot load the default codegen backend twice");
  
      let target = session::config::host_triple();
@@ -70,12 +70,11 @@ index 6f92c30446..50fc59f204 100644
 -            sysroot.join(libdir).with_file_name(
 +    let sysroot = libdir_candidates.iter()
 +        .map(|libdir| {
-+            debug!("Trying target libdir: {}", libdir.display());
 +            libdir.with_file_name(
                  option_env!("CFG_CODEGEN_BACKENDS_DIR").unwrap_or("codegen-backends"))
          })
          .filter(|f| {
-@@ -177,12 +175,12 @@ pub fn get_codegen_sysroot(backend_name: &str) -> fn() -> Box<dyn CodegenBackend
+@@ -177,12 +174,12 @@ pub fn get_codegen_sysroot(backend_name: &str) -> fn() -> Box<dyn CodegenBackend
          })
          .next();
      let sysroot = sysroot.unwrap_or_else(|| {
