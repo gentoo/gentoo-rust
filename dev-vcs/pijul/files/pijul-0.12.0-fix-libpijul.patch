@@ -1,0 +1,20 @@
+--- pijul-0.12.0/pijul/Cargo.toml	2019-04-24 08:46:41.101819772 +0300
++++ pijul-0.12.0/pijul/Cargo.toml	2019-04-24 08:51:35.901810213 +0300
+@@ -81,7 +81,7 @@
+ getch = "0.2"
+ username = "0.2"
+ shell-escape = "0.1"
+-libpijul = "0.12.0"
++libpijul = { path = "../libpijul", version = "0.12.0" }
+ 
+ tar = "0.4"
+ flate2 = "1.0"
+@@ -94,7 +94,7 @@
+ base64 = "0.10"
+ cryptovec = "0.4"
+ 
+-line = "0.1.15"
++line = { path = "../line", version = "0.1.15" }
+ rpassword = "2.0"
+ serde_json = "1.0"
+ 
