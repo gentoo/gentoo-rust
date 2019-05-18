@@ -43,7 +43,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy debug doc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy debug doc libressl rls rustfmt thumbv7neon wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 		sys-libs/zlib
@@ -95,6 +95,10 @@ src_configure() {
 	if use wasm; then
 		rust_targets="${rust_targets},\"wasm32-unknown-unknown\""
 	fi
+	if use arm && use thumbv7neon; then
+		rust_targets="${rust_targets},\"thumbv7neon-unknown-linux-gnueabihf\""
+	fi
+
 	rust_targets="${rust_targets#,}"
 
 	local extended="true" tools="\"cargo\","
@@ -167,6 +171,16 @@ src_configure() {
 		cat <<- EOF >> "${S}"/config.toml
 			[target.wasm32-unknown-unknown]
 			linker = "lld"
+		EOF
+	fi
+
+	if use arm && use thumbv7neon; then
+		cat <<- EOF >> "${S}"/config.toml
+			[target.thumbv7neon-unknown-linux-gnueabihf]
+			cc = "$(tc-getBUILD_CC)"
+			cxx = "$(tc-getBUILD_CXX)"
+			linker = "$(tc-getCC)"
+			ar = "$(tc-getAR)"
 		EOF
 	fi
 }
