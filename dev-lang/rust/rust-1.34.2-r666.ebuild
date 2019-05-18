@@ -11,16 +11,18 @@ ABI_VER="$(get_version_component_range 1-2)"
 SLOT="dev/${ABI_VER}"
 MY_P="rustc-${PV}"
 SRC="${MY_P}-src.tar.xz"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
 CHOST_arm64=aarch64-unknown-linux-gnu
+CHOST_arm=armv7-unknown-linux-gnueabihf
 
 RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2))).1"
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
 RUST_STAGE0_arm64="rust-${RUST_STAGE0_VERSION}-${CHOST_arm64}"
+RUST_STAGE0_armv7="rust-${RUST_STAGE0_VERSION}-${CHOST_arm}"
 
 CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
 
@@ -31,6 +33,7 @@ SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.xz
 	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.xz )
 	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.xz )
 	arm64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_arm64}.tar.xz )
+	arm? ( https://static.rust-lang.org/dist/${RUST_STAGE0_armv7}.tar.xz )
 "
 
 ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
@@ -40,7 +43,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy debug doc libressl rls rustfmt wasm ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy debug doc libressl rls rustfmt thumbv7neon wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 		sys-libs/zlib
@@ -92,6 +95,10 @@ src_configure() {
 	if use wasm; then
 		rust_targets="${rust_targets},\"wasm32-unknown-unknown\""
 	fi
+	if use arm && use thumbv7neon; then
+		rust_targets="${rust_targets},\"thumbv7neon-unknown-linux-gnueabihf\""
+	fi
+
 	rust_targets="${rust_targets#,}"
 
 	local extended="true" tools="\"cargo\","
@@ -164,6 +171,16 @@ src_configure() {
 		cat <<- EOF >> "${S}"/config.toml
 			[target.wasm32-unknown-unknown]
 			linker = "lld"
+		EOF
+	fi
+
+	if use arm && use thumbv7neon; then
+		cat <<- EOF >> "${S}"/config.toml
+			[target.thumbv7neon-unknown-linux-gnueabihf]
+			cc = "$(tc-getBUILD_CC)"
+			cxx = "$(tc-getBUILD_CXX)"
+			linker = "$(tc-getCC)"
+			ar = "$(tc-getAR)"
 		EOF
 	fi
 }
