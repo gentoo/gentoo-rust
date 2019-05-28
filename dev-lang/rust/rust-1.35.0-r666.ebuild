@@ -47,8 +47,8 @@ IUSE="clippy debug doc libressl rls rustfmt thumbv7neon wasm ${ALL_LLVM_TARGETS[
 
 RDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 		sys-libs/zlib
-		!libressl? ( dev-libs/openssl:0= )
-		libressl? ( dev-libs/libressl:0= )
+		!libressl? ( <=dev-libs/openssl-1.1.1:= >=dev-libs/openssl-1.0.1:= )
+		libressl? ( <=dev-libs/libressl-2.9.0:= >=dev-libs/libressl-2.5:= )
 		net-libs/libssh2
 		net-libs/http-parser
 		net-misc/curl[ssl]
