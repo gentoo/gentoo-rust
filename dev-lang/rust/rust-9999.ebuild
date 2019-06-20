@@ -101,6 +101,8 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	unset SUDO_USER
+
 	pre_build_checks
 	python-any-r1_pkg_setup
 	if use system-llvm; then
