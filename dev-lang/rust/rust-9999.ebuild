@@ -56,7 +56,7 @@ COMMON_DEPEND="
 	net-libs/http-parser:=
 	net-misc/curl[ssl]
 	app-eselect/eselect-rust
-	system-llvm? ( 
+	system-llvm? (
 		${LLVM_DEPEND}
 	)
 "
@@ -177,7 +177,7 @@ src_configure() {
 		mandir = "share/${P}/man"
 		[rust]
 		optimize = $(toml_usex !debug)
-		debuginfo = $(toml_usex debug)
+		debuginfo-level = $(usex debug 2 0)
 		debug-assertions = $(toml_usex debug)
 		default-linker = "$(tc-getCC)"
 		rpath = false
