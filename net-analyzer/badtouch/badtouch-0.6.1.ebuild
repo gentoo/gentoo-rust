@@ -241,19 +241,19 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="doc libressl"
 
 RDEPEND="!libressl? ( dev-libs/openssl:0= )
-         libressl? ( dev-libs/libressl:0= )
+	libressl? ( dev-libs/libressl:0= )
 "
 DEPEND="${RDEPEND}
-        >=virtual/rust-1.28.0"
+	>=virtual/rust-1.28.0"
 
 src_test() {
-    cargo test || die "tests failed"
+	cargo test || die "tests failed"
 }
 
 src_install() {
-    cargo_src_install
+	cargo_src_install
 
-    doman docs/badtouch.1
-    dodoc README.md
-    dodoc scripts/*
+	doman docs/badtouch.1
+	dodoc README.md
+	dodoc scripts/*
 }

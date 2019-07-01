@@ -223,11 +223,11 @@ PATCHES=( "${FILESDIR}/pijul-fix-libpijul.patch" )
 src_install() {
 	export S="${WORKDIR}/${P}"
 	cd "${S}"
-    debug-print-function ${FUNCNAME} "$@"
+	debug-print-function ${FUNCNAME} "$@"
 
 	cargo install -j $(makeopts_jobs) --root="${D}/usr" $(usex debug --debug "") --path pijul \
 		|| die "cargo install failed"
-    rm -f "${D}/usr/.crates.toml"
+	rm -f "${D}/usr/.crates.toml"
 
-    [ -d "${S}/man" ] && doman "${S}/man" || return 0
+	[ -d "${S}/man" ] && doman "${S}/man" || return 0
 }
