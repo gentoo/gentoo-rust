@@ -20,7 +20,7 @@ DEPEND="$(vala_depend)
 	>=x11-libs/gtk+-3.20.0
 	dev-libs/json-glib"
 RDEPEND="${DEPEND}
-	=app-editors/xi-core-9999"
+	~app-editors/xi-core-9999"
 
 PATCHES=(
 	"${FILESDIR}/xi-gtk-9999-datasubdir.patch"
