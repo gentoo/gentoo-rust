@@ -6,9 +6,14 @@
     <name>Rust Project</name>
   </maintainer>
   <use>
+    <flag name="miri">Install miri component</flag>
     <flag name="system-llvm">Use system <pkg>sys-devel/llvm</pkg> in
     place of the bundled one</flag>
+    <flag name="rls">Install rls component</flag>
+    <flag name="rustfmt">Install rustfmt component</flag>
     <flag name="sanitize">Check for kernel version</flag>
+    <flag name="thumbv7neon">Build support for thumbv7neon target 
+    on arm</flag>
     <flag name="wasm">Enable WebAssembly support</flag>
     <flag name="clippy">Install clippy</flag>
   </use>
