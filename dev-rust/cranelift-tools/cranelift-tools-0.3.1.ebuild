@@ -134,7 +134,7 @@ SRCHASH=faae51807d46e5ab2ec2ee257ed5a607b108af11
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
-LICENSE="Apache-2.0 WITH LLVM-exception" # Update to proper Gentoo format
+LICENSE="apache-2.0-with-llvm-exception" # Update to proper Gentoo format
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
