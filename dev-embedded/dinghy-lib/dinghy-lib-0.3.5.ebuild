@@ -157,7 +157,7 @@ xml-rs-0.7.0
 inherit cargo
 
 DESCRIPTION="Cross-compilation made easier - see main crate cargo-dinghy"
-HOMEPAGE="https://github.com/tildeio/helix"
+HOMEPAGE="https://github.com/snipsco/dinghy"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 LICENSE="MIT Apache-2.0" # Update to proper Gentoo format
