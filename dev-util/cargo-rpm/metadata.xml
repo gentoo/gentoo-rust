@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+ <email>maintainer-wanted@gentoo.org</email>
+ <name>none</name>
+</maintainer>
+<longdescription lang="en">
+  Build RPMs from Rust projects using Cargo
+</longdescription>
+</pkgmetadata>
+
