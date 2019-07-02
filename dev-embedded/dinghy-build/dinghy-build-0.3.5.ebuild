@@ -157,10 +157,10 @@ xml-rs-0.7.0
 inherit cargo
 
 DESCRIPTION="Cross-compilation made easier - helpers for build.rs scripts"
-HOMEPAGE="https://medium.com/snips-ai/dinghy-painless-rust-tests-and-benches-on-ios-and-android-c9f94f81d305#.c2sx7two8"
+HOMEPAGE="https://github.com/snipsco/dinghy"
 SRC_URI="$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
-LICENSE="MIT/Apache-2.0" # Update to proper Gentoo format
+LICENSE="MIT Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""

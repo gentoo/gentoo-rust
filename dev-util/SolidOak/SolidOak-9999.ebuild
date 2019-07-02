@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit eutils git-r3
+inherit cargo eutils git-r3
 
 DESCRIPTION="An IDE for Rust"
 HOMEPAGE="https://sekao.net/solidoak/"
@@ -13,6 +13,7 @@ LICENSE="public-domain"
 SLOT="0"
 KEYWORDS=""
 IUSE=""
+RESTRICT="network-sandbox"
 
 EGIT_REPO_URI="https://github.com/oakes/SolidOak.git"
 
@@ -26,7 +27,7 @@ DEPEND="${DEPEND}
 	dev-util/cargo"
 
 src_compile() {
-	cargo build --release -j5 || die
+	cargo build -j$(makeopts_jobs) --release || die
 }
 
 src_install() {

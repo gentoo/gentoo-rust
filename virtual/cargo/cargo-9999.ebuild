@@ -12,6 +12,6 @@ SLOT="0"
 KEYWORDS=""
 
 RDEPEND="|| (
-			=dev-lang/rust-${PV}*
-			=dev-lang/rust-bin-${PV}
+			~dev-lang/rust-${PV}
+			~dev-lang/rust-bin-${PV}
 		)"
