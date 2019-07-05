@@ -11,7 +11,7 @@ ABI_VER="$(get_version_component_range 1-2)"
 SLOT="dev/${ABI_VER}"
 MY_P="rustc-${PV}"
 SRC="${MY_P}-src.tar.xz"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 
 CHOST_amd64=x86_64-unknown-linux-gnu
 CHOST_x86=i686-unknown-linux-gnu
