@@ -38,7 +38,7 @@ RDEPEND="${CDEPEND}
 		net-libs/libssh2
 		net-misc/curl[ssl]
 	)"
-PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
+#PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 QA_PREBUILT="
