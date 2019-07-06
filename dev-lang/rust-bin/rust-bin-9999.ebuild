@@ -20,8 +20,6 @@ SLOT="nightly"
 KEYWORDS="~amd64 ~x86"
 IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
-#CARGO_DEPEND_VERSION="0.$(($(ver_cut 2) + 1)).0"
-
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
 	rustfmt? ( !dev-util/rustfmt )
@@ -37,7 +35,6 @@ RDEPEND="${CDEPEND}
 	net-misc/curl[ssl]
 	!dev-util/cargo
 	"
-#PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 QA_PREBUILT="
