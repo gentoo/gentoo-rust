@@ -18,26 +18,25 @@ ALL_RUSTLIB_TARGETS=( "${ALL_RUSTLIB_TARGETS[@]/#/rustlib_targets_}" )
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
 KEYWORDS="~amd64 ~x86"
-IUSE="cargo clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
-CARGO_DEPEND_VERSION="0.$(($(ver_cut 2) + 1)).0"
+#CARGO_DEPEND_VERSION="0.$(($(ver_cut 2) + 1)).0"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
 	!dev-lang/rust:0
-	cargo? ( !dev-util/cargo )
 	rustfmt? ( !dev-util/rustfmt )
 "
 DEPEND="${CDEPEND}
 	net-misc/wget
 "
 RDEPEND="${CDEPEND}
-	cargo? (
-		sys-libs/zlib
-		!libressl? ( dev-libs/openssl:0= )
-		libressl? ( dev-libs/libressl:0= )
-		net-libs/libssh2
-		net-misc/curl[ssl]
-	)"
+	sys-libs/zlib
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
+	net-libs/libssh2
+	net-misc/curl[ssl]
+	!dev-util/cargo
+	"
 #PDEPEND="!cargo? ( >=dev-util/cargo-${CARGO_DEPEND_VERSION} )"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
@@ -70,9 +69,8 @@ src_unpack() {
 
 src_install() {
 	local std=$(grep 'std' ./components | paste -s -d',')
-	local components="rustc,${std}"
+	local components="rustc,cargo,${std}"
 	use doc && components="${components},rust-docs"
-	use cargo && components="${components},cargo"
 	use clippy && components="${components},clippy-preview"
 	if use rls; then
 		local analysis=$(grep 'analysis' ./components)
@@ -102,11 +100,10 @@ src_install() {
 	dosym "../../opt/${P}/bin/${rustgdb}" "/usr/bin/${rustgdb}"
 	dosym "../../opt/${P}/bin/${rustlldb}" "/usr/bin/${rustlldb}"
 
-	if use cargo; then
-		local cargo=cargo-bin-${PV}
-		mv "${D}/opt/${P}/bin/cargo" "${D}/opt/${P}/bin/${cargo}" || die
-		dosym "../../opt/${P}/bin/${cargo}" "/usr/bin/${cargo}"
-	fi
+	local cargo=cargo-bin-${PV}
+	mv "${D}/opt/${P}/bin/cargo" "${D}/opt/${P}/bin/${cargo}" || die
+	dosym "../../opt/${P}/bin/${cargo}" "/usr/bin/${cargo}"
+
 	if use clippy; then
 		local clippy_driver=clippy-driver-bin-${PV}
 		local cargo_clippy=cargo-clippy-bin-${PV}
@@ -140,9 +137,9 @@ src_install() {
 	/usr/bin/rust-gdb
 	/usr/bin/rust-lldb
 	EOF
-	if use cargo; then
-		echo /usr/bin/cargo >> "${T}/provider-${P}"
-	fi
+
+	echo /usr/bin/cargo >> "${T}/provider-${P}"
+
 	if use clippy; then
 		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
