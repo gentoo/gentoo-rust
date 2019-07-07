@@ -21,7 +21,7 @@ IUSE=""
 CDEPEND="dev-db/sqlite"
 DEPEND="${CDEPEND}
 virtual/rust
-|| ( dev-util/cargo dev-util/cargo-bin )
+|| ( virtual/cargo dev-util/cargo-bin )
 "
 RDEPEND="${CDEPEND}
 dev-qt/qtchooser
