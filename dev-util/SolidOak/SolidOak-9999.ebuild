@@ -17,14 +17,14 @@ RESTRICT="network-sandbox"
 
 EGIT_REPO_URI="https://github.com/oakes/SolidOak.git"
 
-RDEPEND="virtual/rust:*
+RDEPEND="virtual/rust
 	dev-util/racer
 	x11-libs/vte:2.91
 	app-editors/neovim
 	>=x11-libs/gtk+-3.10
 	"
 DEPEND="${DEPEND}
-	dev-util/cargo"
+	virtual/cargo"
 
 src_compile() {
 	cargo build -j$(makeopts_jobs) --release || die
