@@ -140,7 +140,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND=""
+DEPEND=">=virtual/rust-1.35.0"
 RDEPEND=""
 
 S="${WORKDIR}"/cranelift-${SRCHASH}
