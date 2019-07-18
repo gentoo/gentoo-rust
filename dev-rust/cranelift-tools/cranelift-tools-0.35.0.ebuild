@@ -136,7 +136,7 @@ RESTRICT="mirror"
 LICENSE="apache-2.0-with-llvm-exception"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="test"
 
 DEPEND=">=virtual/rust-1.35.0"
 RDEPEND=""
@@ -151,6 +151,10 @@ src_configure() {
 src_compile() {
 	export CARGO_HOME="${ECARGO_HOME}"
 	cargo build -j$(makeopts_jobs) --release || die
+}
+
+src_test() {
+	cargo test || die "tests failed"
 }
 
 src_install() {
