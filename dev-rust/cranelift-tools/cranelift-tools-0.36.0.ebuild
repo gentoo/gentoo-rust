@@ -26,19 +26,19 @@ clap-2.33.0
 cloudabi-0.0.3
 cmake-0.1.40
 constant_time_eq-0.1.3
-cranelift-0.35.0
-cranelift-bforest-0.35.0
-cranelift-codegen-0.35.0
-cranelift-codegen-meta-0.35.0
-cranelift-entity-0.35.0
-cranelift-faerie-0.35.0
-cranelift-frontend-0.35.0
-cranelift-module-0.35.0
-cranelift-native-0.35.0
-cranelift-preopt-0.35.0
-cranelift-reader-0.35.0
-cranelift-simplejit-0.35.0
-cranelift-wasm-0.35.0
+cranelift-0.36.0
+cranelift-bforest-0.36.0
+cranelift-codegen-0.36.0
+cranelift-codegen-meta-0.36.0
+cranelift-entity-0.36.0
+cranelift-faerie-0.36.0
+cranelift-frontend-0.36.0
+cranelift-module-0.36.0
+cranelift-native-0.36.0
+cranelift-preopt-0.36.0
+cranelift-reader-0.36.0
+cranelift-simplejit-0.36.0
+cranelift-wasm-0.36.0
 dirs-1.0.5
 env_logger-0.6.2
 errno-0.2.4
@@ -81,8 +81,8 @@ raw-cpuid-6.1.0
 rdrand-0.4.0
 redox_syscall-0.1.56
 redox_users-0.3.0
-regex-1.1.9
-regex-syntax-0.6.8
+regex-1.2.0
+regex-syntax-0.6.10
 region-2.1.2
 rustc-demangle-0.1.15
 rustc_version-0.2.3
@@ -99,7 +99,7 @@ string-interner-0.6.3
 strsim-0.8.0
 structopt-0.2.18
 structopt-derive-0.2.18
-syn-0.15.39
+syn-0.15.40
 synstructure-0.10.2
 target-lexicon-0.4.0
 term-0.5.2
@@ -107,7 +107,7 @@ termcolor-1.0.5
 textwrap-0.11.0
 thread_local-0.3.6
 time-0.1.42
-ucd-util-0.1.3
+ucd-util-0.1.5
 unicode-segmentation-1.3.0
 unicode-width-0.1.5
 unicode-xid-0.1.0
@@ -128,7 +128,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=a4426e5f10c2ae0f143f8a502520566752497fc0
+SRCHASH=e7f2b719eebfb9280c3e38eae42a9ee25221a4e3
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
