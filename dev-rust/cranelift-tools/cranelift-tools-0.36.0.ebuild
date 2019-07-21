@@ -154,7 +154,8 @@ src_compile() {
 }
 
 src_test() {
-	cargo test || die "tests failed"
+	export RUST_BACKTRACE=1 
+	cargo test --all -j$(makeopts_jobs) || die "tests failed"
 }
 
 src_install() {
