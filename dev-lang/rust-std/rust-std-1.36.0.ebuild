@@ -17,7 +17,7 @@ SRC_URI="https://static.rust-lang.org/dist/"${P}"-"${RUSTHOST}".tar.xz"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
-KEYWORDS="~arm"
+KEYWORDS=""
 IUSE="+rust-std-thumbv7-neon"
 
 DEPEND=""
