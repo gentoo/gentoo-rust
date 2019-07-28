@@ -8,7 +8,7 @@ python:
 env:
     - PORTAGE_VER="2.3.67"
 before_install:
-    - sudo apt-get -qq update
+    # - sudo apt-get -qq update
     - pip install lxml pyyaml
 before_script:
     - sudo chmod a+rwX /etc/passwd /etc/group /etc /var /var/cache
