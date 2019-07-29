@@ -48,8 +48,11 @@ src_install() {
 		--disable-ldconfig \
 		|| die
 
-# INSTALL_MASK="${INSTALL_MASK} install.log rust-installer-version components uninstall.sh"
-
+	cd "${D}"/opt/"${RUST_PROVIDER}"/lib/rustlib || die
+	rm install.log || die
+	rm rust-installer-version || die
+	rm components || die
+	rm uninstall.sh || die
 }
 
 pkg_postinst() {
