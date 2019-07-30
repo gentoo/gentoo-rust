@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+ <email>maintainer-wanted@gentoo.org</email>
+ <name>none</name>
+</maintainer>
+ <use>
+   <flag name="rust-std-thumbv7-neon">Install thumbv7-neon for arm</flag>
+ </use>
+</pkgmetadata>
