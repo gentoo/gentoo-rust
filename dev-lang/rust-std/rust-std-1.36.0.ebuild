@@ -47,6 +47,10 @@ pkg_setup() {
 	elif use aarch64-gnu-std ; then
 		RUSTHOST=aarch64-unknown-linux-gnu
 	fi
+
+	ewarn "please make sure to have a full cross-compile"
+	ewarn "toolchain for your target installed via crossdev"
+	ewarn "for stripping of *.so libs to work."
 }
 
 src_unpack() {
