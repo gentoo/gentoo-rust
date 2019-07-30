@@ -36,7 +36,6 @@ QA_PREBUILT="
 "
 
 pkg_setup() {
-
 	if use armv6j-softfloat-std ; then
 		RUSTHOST=arm-unknown-linux-gnueabi
 	elif use armv6j-hardfloat-std ; then

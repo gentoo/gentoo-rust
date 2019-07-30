@@ -6,6 +6,18 @@
  <name>none</name>
 </maintainer>
  <use>
-   <flag name="rust-std-thumbv7-neon">Install thumbv7-neon for arm</flag>
+   <flag name="armv6j-softfloat-std">Install armv6j-softfloat-std for arm</flag>
+ </use>
+ <use>
+   <flag name="armv6j-hardfloat-std">Install armv6j-hardfloat-std for arm</flag>
+ </use>
+ <use>
+   <flag name="armv7-hardfloat-std">Install armv7-hardfloat-std for arm</flag>
+ </use>
+ <use>
+   <flag name="thumbv7-neon-std">Install thumbv7-neon-std for arm</flag>
+ </use>
+ <use>
+   <flag name="aarch64-gnu-std">Install aarch64-gnu-std for aarch64</flag>
  </use>
 </pkgmetadata>
