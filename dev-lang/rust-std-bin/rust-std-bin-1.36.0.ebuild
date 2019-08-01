@@ -10,13 +10,11 @@ MY_P="rust-std-${PV}"
 DESCRIPTION="std libraries for rust"
 HOMEPAGE="https://www.rust-lang.org/"
 
-#RUSTHOST="thumbv7neon-unknown-linux-gnueabihf"
-
-SRC_URI="armv6j-softfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabi.tar.xz )
-	armv6j-hardfloat-std? ( https://static.rust-lang.org/dist/"${P}"-arm-unknown-linux-gnueabihf.tar.xz )
-	armv7-hardfloat-std? (  https://static.rust-lang.org/dist/"${P}"-armv7-unknown-linux-gnueabihf.tar.xz )
-	thumbv7-neon-std? ( https://static.rust-lang.org/dist/"${P}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )
-	aarch64-gnu-std? ( https://static.rust-lang.org/dist/"${P}"-aarch64-unknown-linux-gnu.tar.xz ) "
+SRC_URI="armv6j-softfloat-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-arm-unknown-linux-gnueabi.tar.xz )
+	armv6j-hardfloat-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-arm-unknown-linux-gnueabihf.tar.xz )
+	armv7-hardfloat-std? (  https://static.rust-lang.org/dist/rust-std-"${PV}"-armv7-unknown-linux-gnueabihf.tar.xz )
+	thumbv7-neon-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )
+	aarch64-gnu-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-aarch64-unknown-linux-gnu.tar.xz ) "
 
 RUST_PROVIDER="rust-bin-1.36.0"
 
