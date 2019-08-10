@@ -6,13 +6,13 @@
 EAPI=7
 
 CRATES="
-aho-corasick-0.7.4
+aho-corasick-0.7.6
 ansi_term-0.11.0
 argon2rs-0.2.5
 arrayvec-0.4.11
 atty-0.2.13
 autocfg-0.1.5
-backtrace-0.3.33
+backtrace-0.3.34
 backtrace-sys-0.1.31
 bitflags-1.1.0
 blake2-rfc-0.2.18
@@ -24,21 +24,21 @@ cfg-if-0.1.9
 chrono-0.4.7
 clap-2.33.0
 cloudabi-0.0.3
-cmake-0.1.40
+cmake-0.1.41
 constant_time_eq-0.1.3
-cranelift-0.37.0
-cranelift-bforest-0.37.0
-cranelift-codegen-0.37.0
-cranelift-codegen-meta-0.37.0
-cranelift-entity-0.37.0
-cranelift-faerie-0.37.0
-cranelift-frontend-0.37.0
-cranelift-module-0.37.0
-cranelift-native-0.37.0
-cranelift-preopt-0.37.0
-cranelift-reader-0.37.0
-cranelift-simplejit-0.37.0
-cranelift-wasm-0.37.0
+cranelift-0.38.0
+cranelift-bforest-0.38.0
+cranelift-codegen-0.38.0
+cranelift-codegen-meta-0.38.0
+cranelift-entity-0.38.0
+cranelift-faerie-0.38.0
+cranelift-frontend-0.38.0
+cranelift-module-0.38.0
+cranelift-native-0.38.0
+cranelift-preopt-0.38.0
+cranelift-reader-0.38.0
+cranelift-simplejit-0.38.0
+cranelift-wasm-0.38.0
 dirs-1.0.5
 env_logger-0.6.2
 errno-0.2.4
@@ -128,7 +128,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=3c42749108f41e1d65a5647f94b2ae9d2e105d1d
+SRCHASH=81a02359304df32db0ff1e0c2088541de03d9875
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
