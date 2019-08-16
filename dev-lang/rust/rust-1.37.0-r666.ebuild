@@ -123,6 +123,7 @@ src_configure() {
 		release-debuginfo = $(toml_usex debug)
 		assertions = $(toml_usex debug)
 		targets = "${LLVM_TARGETS// /;}"
+		experimental-targets = ""
 		[build]
 		build = "${rust_target}"
 		host = ["${rust_target}"]
@@ -136,6 +137,7 @@ src_configure() {
 		vendor = true
 		extended = ${extended}
 		tools = [${tools}]
+		verbose = 2
 		[install]
 		prefix = "${EPREFIX}/usr"
 		libdir = "$(get_libdir)"
@@ -143,7 +145,7 @@ src_configure() {
 		mandir = "share/${P}/man"
 		[rust]
 		optimize = $(toml_usex !debug)
-		debuginfo = $(toml_usex debug)
+		debug = $(toml_usex debug)
 		debug-assertions = $(toml_usex debug)
 		default-linker = "$(tc-getCC)"
 		rpath = false
