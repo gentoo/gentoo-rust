@@ -157,10 +157,11 @@ RESTRICT="mirror"
 LICENSE="apache-2.0-with-llvm-exception"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="test"
+IUSE="cpu_flags_x86_sse2 test"
 
 DEPEND=">=virtual/rust-1.35.0"
 RDEPEND=""
+REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
 S="${WORKDIR}"/cranelift-${SRCHASH}
 
