@@ -154,7 +154,7 @@ SRCHASH=5534fd2c2f411dcdb981f992239fc0e96790312b
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
-LICENSE="apache-2.0-with-llvm-exception"
+LICENSE="Apache-2.0-with-LLVM-exceptions"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="cpu_flags_x86_sse2 test"
