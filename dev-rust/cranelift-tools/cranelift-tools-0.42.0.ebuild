@@ -151,7 +151,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="cpu_flags_x86_sse2 test"
 
-DEPEND=">=virtual/rust-1.35.0"
+DEPEND=">=virtual/rust-1.37.0"
 RDEPEND=""
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
 
