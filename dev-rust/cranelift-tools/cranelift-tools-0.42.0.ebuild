@@ -141,7 +141,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=cd43197bc3bec2a72e9a4449aba7d022d1ec7c82
+SRCHASH=117178cd8d12229c680c55e2b2a483a28ced84a2
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
