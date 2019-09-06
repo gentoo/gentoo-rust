@@ -12,36 +12,36 @@ arrayref-0.3.5
 arrayvec-0.4.11
 atty-0.2.13
 autocfg-0.1.6
-backtrace-0.3.35
+backtrace-0.3.37
 backtrace-sys-0.1.31
 base64-0.10.1
 bitflags-1.1.0
-blake2b_simd-0.5.7
+blake2b_simd-0.5.8
 byteorder-1.3.2
 capstone-0.6.0
 capstone-sys-0.10.0
-cc-1.0.41
+cc-1.0.42
 cfg-if-0.1.9
-chrono-0.4.7
+chrono-0.4.9
 clap-2.33.0
 clicolors-control-1.0.1
 cloudabi-0.0.3
 cmake-0.1.42
 console-0.8.0
 constant_time_eq-0.1.4
-cranelift-0.41.0
-cranelift-bforest-0.41.0
-cranelift-codegen-0.41.0
-cranelift-codegen-meta-0.41.0
-cranelift-entity-0.41.0
-cranelift-faerie-0.41.0
-cranelift-frontend-0.41.0
-cranelift-module-0.41.0
-cranelift-native-0.41.0
-cranelift-preopt-0.41.0
-cranelift-reader-0.41.0
-cranelift-simplejit-0.41.0
-cranelift-wasm-0.41.0
+cranelift-0.42.0
+cranelift-bforest-0.42.0
+cranelift-codegen-0.42.0
+cranelift-codegen-meta-0.42.0
+cranelift-entity-0.42.0
+cranelift-faerie-0.42.0
+cranelift-frontend-0.42.0
+cranelift-module-0.42.0
+cranelift-native-0.42.0
+cranelift-preopt-0.42.0
+cranelift-reader-0.42.0
+cranelift-simplejit-0.42.0
+cranelift-wasm-0.42.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
 dirs-sys-0.3.4
@@ -49,7 +49,7 @@ encode_unicode-0.3.6
 env_logger-0.6.2
 errno-0.2.4
 errno-dragonfly-0.1.1
-faerie-0.10.2
+faerie-0.11.0
 failure-0.1.5
 failure_derive-0.1.5
 file-per-thread-logger-0.1.2
@@ -57,7 +57,6 @@ filecheck-0.4.0
 fuchsia-cprng-0.1.1
 gcc-0.3.55
 glob-0.2.11
-goblin-0.0.23
 goblin-0.0.24
 hashbrown-0.5.0
 hashmap_core-0.1.11
@@ -93,8 +92,8 @@ raw-cpuid-6.1.0
 rdrand-0.4.0
 redox_syscall-0.1.56
 redox_users-0.3.1
-regex-1.2.1
-regex-syntax-0.6.11
+regex-1.3.1
+regex-syntax-0.6.12
 region-2.1.2
 rust-argon2-0.5.1
 rustc-demangle-0.1.16
@@ -110,12 +109,12 @@ serde-1.0.99
 serde_derive-1.0.99
 serde_json-1.0.40
 smallvec-0.6.10
-string-interner-0.6.3
+string-interner-0.7.1
 strsim-0.8.0
 syn-0.15.44
 syn-1.0.5
 synstructure-0.10.2
-target-lexicon-0.4.0
+target-lexicon-0.8.1
 term-0.6.1
 termcolor-1.0.5
 termios-0.3.1
@@ -142,7 +141,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=100fa1248e7b116589a0f2c00a81a2a16900f79e
+SRCHASH=cd43197bc3bec2a72e9a4449aba7d022d1ec7c82
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
