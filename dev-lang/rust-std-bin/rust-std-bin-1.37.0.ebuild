@@ -16,7 +16,7 @@ SRC_URI="armv6j-softfloat-std? ( https://static.rust-lang.org/dist/rust-std-"${P
 	thumbv7-neon-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-thumbv7neon-unknown-linux-gnueabihf.tar.xz )
 	aarch64-gnu-std? ( https://static.rust-lang.org/dist/rust-std-"${PV}"-aarch64-unknown-linux-gnu.tar.xz ) "
 
-RUST_PROVIDER="rust-bin-1.36.0"
+RUST_PROVIDER="rust-bin-1.37.0"
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="stable"
@@ -25,7 +25,7 @@ IUSE="aarch64-gnu-std armv6j-softfloat-std armv6j-hardfloat-std armv7-hardfloat-
 
 DEPEND=""
 RDEPEND="app-eselect/eselect-rust
-	=dev-lang/rust-bin-1.36.0-r0
+	=dev-lang/rust-bin-1.37.0-r0
 	!dev-lang/rust:0"
 
 QA_PREBUILT="
