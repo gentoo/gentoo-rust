@@ -81,9 +81,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 	x86? ( cpu_flags_x86_sse2 )
 "
 
-PATCHES=(
-	"${FILESDIR}/${P}-fix-codegen-path.patch"
-)
+#PATCHES=()
 
 S="${WORKDIR}/${MY_P}-src"
 
