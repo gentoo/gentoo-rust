@@ -47,7 +47,7 @@ LLVM_DEPEND="
 	)
 	<sys-devel/llvm-9:=
 "
-LLVM_MAX_SLOT=8
+LLVM_MAX_SLOT=9
 
 COMMON_DEPEND="
 	sys-libs/zlib
