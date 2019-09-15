@@ -17,7 +17,7 @@ ALL_RUSTLIB_TARGETS=( "${ALL_RUSTLIB_TARGETS[@]/#/rustlib_targets_}" )
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="nightly"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
@@ -48,6 +48,8 @@ src_unpack() {
 	local postfix
 	use amd64 && postfix=x86_64-unknown-linux-gnu
 	use x86 && postfix=i686-unknown-linux-gnu
+	use arm && postfix=armv7-unknown-linux-gnueabihf
+	use arm64 && postfix=aarch64-unknown-linux-gnu
 
 	wget "${MY_SRC_URI}-${postfix}.tar.xz" || die
 	unpack ./"rust-nightly-${postfix}.tar.xz"
