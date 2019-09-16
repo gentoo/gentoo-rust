@@ -42,12 +42,12 @@ IUSE="clippy cpu_flags_x86_sse2 debug doc libressl rls rustfmt system-llvm wasm 
 # 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:8[llvm_targets_WebAssembly?]
-		wasm? ( =sys-devel/lld-8* )
+		sys-devel/llvm:9[llvm_targets_WebAssembly?]
+		wasm? ( =sys-devel/lld-9* )
 	)
-	<sys-devel/llvm-9:=
+	<sys-devel/llvm-10:=
 "
-LLVM_MAX_SLOT=8
+LLVM_MAX_SLOT=9
 
 COMMON_DEPEND="
 	sys-libs/zlib
