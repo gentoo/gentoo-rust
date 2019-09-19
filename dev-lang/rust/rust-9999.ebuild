@@ -42,8 +42,8 @@ IUSE="clippy cpu_flags_x86_sse2 debug doc libressl rls rustfmt system-llvm wasm 
 # 3. Specify LLVM_MAX_SLOT, e.g. 8.
 LLVM_DEPEND="
 	|| (
-		sys-devel/llvm:9[llvm_targets_WebAssembly?]
-		wasm? ( =sys-devel/lld-9* )
+		sys-devel/llvm:8[llvm_targets_WebAssembly?]
+		wasm? ( >=sys-devel/lld-8 )
 	)
 	<sys-devel/llvm-10:=
 "
@@ -79,6 +79,7 @@ RDEPEND="${COMMON_DEPEND}
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 	wasm? ( llvm_targets_WebAssembly )
 	x86? ( cpu_flags_x86_sse2 )
+	?? ( system-llvm sanitize )
 "
 
 #PATCHES=()
@@ -109,7 +110,7 @@ pkg_setup() {
 	pre_build_checks
 	python-any-r1_pkg_setup
 	if use system-llvm; then
-		EGIT_SUBMODULES=( "*" "-src/llvm" )
+		EGIT_SUBMODULES=( "*" "-src/llvm-project" )
 		llvm_pkg_setup
 	fi
 }
