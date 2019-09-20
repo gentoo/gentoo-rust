@@ -20,28 +20,29 @@ blake2b_simd-0.5.8
 byteorder-1.3.2
 capstone-0.6.0
 capstone-sys-0.10.0
-cc-1.0.42
+cc-1.0.45
 cfg-if-0.1.9
 chrono-0.4.9
 clap-2.33.0
 clicolors-control-1.0.1
 cloudabi-0.0.3
 cmake-0.1.42
-console-0.8.0
+console-0.9.0
 constant_time_eq-0.1.4
-cranelift-0.42.0
-cranelift-bforest-0.42.0
-cranelift-codegen-0.42.0
-cranelift-codegen-meta-0.42.0
-cranelift-entity-0.42.0
-cranelift-faerie-0.42.0
-cranelift-frontend-0.42.0
-cranelift-module-0.42.0
-cranelift-native-0.42.0
-cranelift-preopt-0.42.0
-cranelift-reader-0.42.0
-cranelift-simplejit-0.42.0
-cranelift-wasm-0.42.0
+cranelift-0.43.0
+cranelift-bforest-0.43.0
+cranelift-codegen-0.43.0
+cranelift-codegen-meta-0.43.0
+cranelift-entity-0.43.0
+cranelift-faerie-0.43.0
+cranelift-frontend-0.43.0
+cranelift-module-0.43.0
+cranelift-native-0.43.0
+cranelift-preopt-0.43.0
+cranelift-reader-0.43.0
+cranelift-simplejit-0.43.0
+cranelift-wasm-0.43.0
+crc32fast-1.2.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
 dirs-sys-0.3.4
@@ -60,8 +61,8 @@ glob-0.2.11
 goblin-0.0.24
 hashbrown-0.5.0
 hashmap_core-0.1.11
-humantime-1.2.0
-indexmap-1.1.0
+humantime-1.3.0
+indexmap-1.2.0
 indicatif-0.11.0
 itoa-0.4.4
 lazy_static-1.4.0
@@ -76,12 +77,13 @@ num-integer-0.1.41
 num-traits-0.2.8
 num_cpus-1.10.1
 number_prefix-0.2.8
+object-0.14.0
 parking_lot-0.9.0
 parking_lot_core-0.6.2
 plain-0.2.3
 pretty_env_logger-0.3.1
 proc-macro2-0.4.30
-proc-macro2-1.0.2
+proc-macro2-1.0.3
 quick-error-1.2.2
 quote-0.6.13
 quote-1.0.2
@@ -105,8 +107,8 @@ scroll-0.9.2
 scroll_derive-0.9.5
 semver-0.9.0
 semver-parser-0.7.0
-serde-1.0.99
-serde_derive-1.0.99
+serde-1.0.101
+serde_derive-1.0.101
 serde_json-1.0.40
 smallvec-0.6.10
 string-interner-0.7.1
@@ -124,11 +126,12 @@ time-0.1.42
 unicode-width-0.1.6
 unicode-xid-0.1.0
 unicode-xid-0.2.0
+uuid-0.7.4
 vec_map-0.8.1
-wabt-0.9.1
-wabt-sys-0.6.1
+wabt-0.9.2
+wabt-sys-0.7.0
 walkdir-2.2.9
-wasmparser-0.37.1
+wasmparser-0.37.2
 winapi-0.3.8
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.2
@@ -141,7 +144,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=117178cd8d12229c680c55e2b2a483a28ced84a2
+SRCHASH=194902eb94b2fdbb03c8f105f490d94b84156f0f
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
