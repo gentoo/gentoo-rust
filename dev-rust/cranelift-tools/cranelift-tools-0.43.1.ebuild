@@ -29,19 +29,19 @@ cloudabi-0.0.3
 cmake-0.1.42
 console-0.9.0
 constant_time_eq-0.1.4
-cranelift-0.43.0
-cranelift-bforest-0.43.0
-cranelift-codegen-0.43.0
-cranelift-codegen-meta-0.43.0
-cranelift-entity-0.43.0
-cranelift-faerie-0.43.0
-cranelift-frontend-0.43.0
-cranelift-module-0.43.0
-cranelift-native-0.43.0
-cranelift-preopt-0.43.0
-cranelift-reader-0.43.0
-cranelift-simplejit-0.43.0
-cranelift-wasm-0.43.0
+cranelift-0.43.1
+cranelift-bforest-0.43.1
+cranelift-codegen-0.43.1
+cranelift-codegen-meta-0.43.1
+cranelift-entity-0.43.1
+cranelift-faerie-0.43.1
+cranelift-frontend-0.43.1
+cranelift-module-0.43.1
+cranelift-native-0.43.1
+cranelift-preopt-0.43.1
+cranelift-reader-0.43.1
+cranelift-simplejit-0.43.1
+cranelift-wasm-0.43.1
 crc32fast-1.2.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
@@ -144,7 +144,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=194902eb94b2fdbb03c8f105f490d94b84156f0f
+SRCHASH=002416975300776c4c20dd0f826c0cb9e16e5ba9
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
