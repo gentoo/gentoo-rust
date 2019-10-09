@@ -6,42 +6,46 @@
 EAPI=7
 
 CRATES="
+ahash-0.2.16
 aho-corasick-0.7.6
 ansi_term-0.11.0
 arrayref-0.3.5
-arrayvec-0.4.11
+arrayvec-0.4.12
 atty-0.2.13
 autocfg-0.1.6
-backtrace-0.3.37
+backtrace-0.3.38
 backtrace-sys-0.1.31
 base64-0.10.1
-bitflags-1.1.0
+bitflags-1.2.0
 blake2b_simd-0.5.8
 byteorder-1.3.2
+c2-chacha-0.2.2
 capstone-0.6.0
 capstone-sys-0.10.0
 cc-1.0.45
-cfg-if-0.1.9
+cfg-if-0.1.10
 chrono-0.4.9
 clap-2.33.0
 clicolors-control-1.0.1
 cloudabi-0.0.3
 cmake-0.1.42
 console-0.9.0
+const-random-0.1.6
+const-random-macro-0.1.6
 constant_time_eq-0.1.4
-cranelift-0.43.1
-cranelift-bforest-0.43.1
-cranelift-codegen-0.43.1
-cranelift-codegen-meta-0.43.1
-cranelift-entity-0.43.1
-cranelift-faerie-0.43.1
-cranelift-frontend-0.43.1
-cranelift-module-0.43.1
-cranelift-native-0.43.1
-cranelift-preopt-0.43.1
-cranelift-reader-0.43.1
-cranelift-simplejit-0.43.1
-cranelift-wasm-0.43.1
+cranelift-0.45.0
+cranelift-bforest-0.45.0
+cranelift-codegen-0.45.0
+cranelift-codegen-meta-0.45.0
+cranelift-entity-0.45.0
+cranelift-faerie-0.45.0
+cranelift-frontend-0.45.0
+cranelift-module-0.45.0
+cranelift-native-0.45.0
+cranelift-preopt-0.45.0
+cranelift-reader-0.45.0
+cranelift-simplejit-0.45.0
+cranelift-wasm-0.45.0
 crc32fast-1.2.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
@@ -57,10 +61,12 @@ file-per-thread-logger-0.1.2
 filecheck-0.4.0
 fuchsia-cprng-0.1.1
 gcc-0.3.55
+getrandom-0.1.12
+getrandom_package-0.1.20
 glob-0.2.11
 goblin-0.0.24
 hashbrown-0.5.0
-hashmap_core-0.1.11
+hashbrown-0.6.1
 humantime-1.3.0
 indexmap-1.2.0
 indicatif-0.11.0
@@ -72,7 +78,7 @@ log-0.4.8
 mach-0.2.3
 memchr-2.2.1
 memmap-0.7.0
-nodrop-0.1.13
+nodrop-0.1.14
 num-integer-0.1.41
 num-traits-0.2.8
 num_cpus-1.10.1
@@ -81,14 +87,20 @@ object-0.14.0
 parking_lot-0.9.0
 parking_lot_core-0.6.2
 plain-0.2.3
+ppv-lite86-0.2.5
 pretty_env_logger-0.3.1
+proc-macro-hack-0.5.10
 proc-macro2-0.4.30
-proc-macro2-1.0.3
+proc-macro2-1.0.5
 quick-error-1.2.2
 quote-0.6.13
 quote-1.0.2
+rand-0.7.2
+rand_chacha-0.2.1
 rand_core-0.3.1
 rand_core-0.4.2
+rand_core-0.5.1
+rand_hc-0.2.0
 rand_os-0.1.3
 raw-cpuid-6.1.0
 rdrand-0.4.0
@@ -109,7 +121,7 @@ semver-0.9.0
 semver-parser-0.7.0
 serde-1.0.101
 serde_derive-1.0.101
-serde_json-1.0.40
+serde_json-1.0.41
 smallvec-0.6.10
 string-interner-0.7.1
 strsim-0.8.0
@@ -131,7 +143,8 @@ vec_map-0.8.1
 wabt-0.9.2
 wabt-sys-0.7.0
 walkdir-2.2.9
-wasmparser-0.37.2
+wasi-0.7.0
+wasmparser-0.39.2
 winapi-0.3.8
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.2
@@ -144,7 +157,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/CraneStation/cranelift"
 
-SRCHASH=002416975300776c4c20dd0f826c0cb9e16e5ba9
+SRCHASH=64d546612b962957d2ac7a9233318da75fb770bd
 
 SRC_URI="https://github.com/CraneStation/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
