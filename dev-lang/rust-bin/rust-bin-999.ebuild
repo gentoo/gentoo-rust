@@ -18,6 +18,8 @@ ALL_RUSTLIB_TARGETS=( "${ALL_RUSTLIB_TARGETS[@]/#/rustlib_targets_}" )
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 SLOT="beta"
 KEYWORDS="~amd64 ~arm64 ~x86"
+RESTRICT="network-sandbox"
+
 IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND=">=app-eselect/eselect-rust-0.3_pre20150425
