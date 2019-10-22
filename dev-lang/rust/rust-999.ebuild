@@ -84,7 +84,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 "
 
 PATCHES=( 
-	"${FILESDIR}"/pr64823.patch
+	"${FILESDIR}"/pr65474.patch
 	)
 
 S="${WORKDIR}/${MY_P}-src"
