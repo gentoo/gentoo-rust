@@ -74,6 +74,7 @@ DEPEND="${COMMON_DEPEND}
 		>=sys-devel/clang-3.5
 	)
 	dev-util/cmake
+	app-arch/xz-utils
 "
 
 RDEPEND="${COMMON_DEPEND}
@@ -90,6 +91,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 
 PATCHES=( 
 	"${FILESDIR}"/pr65474.patch
+	"${FILESDIR}"/37c5cb8118b6de04dd5d4e5e43787c8b83339472.patch
 	)
 
 S="${WORKDIR}/${MY_P}-src"

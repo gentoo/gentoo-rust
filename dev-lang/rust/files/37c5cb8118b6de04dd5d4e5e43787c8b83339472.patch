@@ -1,0 +1,46 @@
+From 37c5cb8118b6de04dd5d4e5e43787c8b83339472 Mon Sep 17 00:00:00 2001
+From: stefson <hidden@yahoo.de>
+Date: Fri, 25 Oct 2019 13:20:03 +0200
+Subject: [PATCH] rust/src/bootstrap.py: change src url from tar.gz to tar.xz
+
+---
+ src/bootstrap/bootstrap.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/bootstrap/bootstrap.py b/src/bootstrap/bootstrap.py
+index 4caf36a6f2a5..6c2f522f50d6 100644
+--- a/src/bootstrap/bootstrap.py
++++ b/src/bootstrap/bootstrap.py
+@@ -105,7 +105,7 @@ def verify(path, sha_path, verbose):
+ def unpack(tarball, dst, verbose=False, match=None):
+     """Unpack the given tarball file"""
+     print("extracting", tarball)
+-    fname = os.path.basename(tarball).replace(".tar.gz", "")
++    fname = os.path.basename(tarball).replace(".tar.xz", "")
+     with contextlib.closing(tarfile.open(tarball)) as tar:
+         for member in tar.getnames():
+             if "/" not in member:
+@@ -349,12 +349,12 @@ def download_stage0(self):
+                  self.program_out_of_date(self.rustc_stamp())):
+             if os.path.exists(self.bin_root()):
+                 shutil.rmtree(self.bin_root())
+-            filename = "rust-std-{}-{}.tar.gz".format(
++            filename = "rust-std-{}-{}.tar.xz".format(
+                 rustc_channel, self.build)
+             pattern = "rust-std-{}".format(self.build)
+             self._download_stage0_helper(filename, pattern)
+ 
+-            filename = "rustc-{}-{}.tar.gz".format(rustc_channel, self.build)
++            filename = "rustc-{}-{}.tar.xz".format(rustc_channel, self.build)
+             self._download_stage0_helper(filename, "rustc")
+             self.fix_executable("{}/bin/rustc".format(self.bin_root()))
+             self.fix_executable("{}/bin/rustdoc".format(self.bin_root()))
+@@ -372,7 +372,7 @@ def download_stage0(self):
+         if self.cargo().startswith(self.bin_root()) and \
+                 (not os.path.exists(self.cargo()) or
+                  self.program_out_of_date(self.cargo_stamp())):
+-            filename = "cargo-{}-{}.tar.gz".format(cargo_channel, self.build)
++            filename = "cargo-{}-{}.tar.xz".format(cargo_channel, self.build)
+             self._download_stage0_helper(filename, "cargo")
+             self.fix_executable("{}/bin/cargo".format(self.bin_root()))
+             with output(self.cargo_stamp()) as cargo_stamp:
