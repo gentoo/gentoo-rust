@@ -74,7 +74,6 @@ DEPEND="${COMMON_DEPEND}
 		>=sys-devel/clang-3.5
 	)
 	dev-util/cmake
-	app-arch/xz-utils
 "
 
 RDEPEND="${COMMON_DEPEND}
