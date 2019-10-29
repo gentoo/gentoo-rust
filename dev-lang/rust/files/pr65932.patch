@@ -1,0 +1,79 @@
+From f59c3fdc0906d2af60b52e9d5782f2e3cf39ad03 Mon Sep 17 00:00:00 2001
+From: Guanqun Lu <guanqun.lu@gmail.com>
+Date: Tue, 29 Oct 2019 16:48:05 +0800
+Subject: [PATCH] download .tar.xz if python3 is used
+
+---
+ src/bootstrap/bootstrap.py | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/src/bootstrap/bootstrap.py b/src/bootstrap/bootstrap.py
+index 4caf36a6f2a5..efde8bd6ce10 100644
+--- a/src/bootstrap/bootstrap.py
++++ b/src/bootstrap/bootstrap.py
+@@ -102,10 +102,10 @@ def verify(path, sha_path, verbose):
+     return verified
+ 
+ 
+-def unpack(tarball, dst, verbose=False, match=None):
++def unpack(tarball, tarball_suffix, dst, verbose=False, match=None):
+     """Unpack the given tarball file"""
+     print("extracting", tarball)
+-    fname = os.path.basename(tarball).replace(".tar.gz", "")
++    fname = os.path.basename(tarball).replace(tarball_suffix, "")
+     with contextlib.closing(tarfile.open(tarball)) as tar:
+         for member in tar.getnames():
+             if "/" not in member:
+@@ -329,6 +329,7 @@ def __init__(self):
+         self.rust_root = ''
+         self.use_locked_deps = ''
+         self.use_vendored_sources = ''
++        self.tarball_suffix = '.tar.gz' if sys.version_info[0] == 2 else '.tar.xz'
+         self.verbose = False
+ 
+     def download_stage0(self):
+@@ -349,12 +350,13 @@ def download_stage0(self):
+                  self.program_out_of_date(self.rustc_stamp())):
+             if os.path.exists(self.bin_root()):
+                 shutil.rmtree(self.bin_root())
+-            filename = "rust-std-{}-{}.tar.gz".format(
+-                rustc_channel, self.build)
++            filename = "rust-std-{}-{}{}".format(
++                rustc_channel, self.build, self.tarball_suffix)
+             pattern = "rust-std-{}".format(self.build)
+             self._download_stage0_helper(filename, pattern)
+ 
+-            filename = "rustc-{}-{}.tar.gz".format(rustc_channel, self.build)
++            filename = "rustc-{}-{}{}".format(rustc_channel, self.build,
++                                              self.tarball_suffix)
+             self._download_stage0_helper(filename, "rustc")
+             self.fix_executable("{}/bin/rustc".format(self.bin_root()))
+             self.fix_executable("{}/bin/rustdoc".format(self.bin_root()))
+@@ -365,14 +367,15 @@ def download_stage0(self):
+             # libraries/binaries that are included in rust-std with
+             # the system MinGW ones.
+             if "pc-windows-gnu" in self.build:
+-                filename = "rust-mingw-{}-{}.tar.gz".format(
+-                    rustc_channel, self.build)
++                filename = "rust-mingw-{}-{}{}".format(
++                    rustc_channel, self.build, self.tarball_suffix)
+                 self._download_stage0_helper(filename, "rust-mingw")
+ 
+         if self.cargo().startswith(self.bin_root()) and \
+                 (not os.path.exists(self.cargo()) or
+                  self.program_out_of_date(self.cargo_stamp())):
+-            filename = "cargo-{}-{}.tar.gz".format(cargo_channel, self.build)
++            filename = "cargo-{}-{}{}".format(cargo_channel, self.build,
++                                              self.tarball_suffix)
+             self._download_stage0_helper(filename, "cargo")
+             self.fix_executable("{}/bin/cargo".format(self.bin_root()))
+             with output(self.cargo_stamp()) as cargo_stamp:
+@@ -388,7 +391,7 @@ def _download_stage0_helper(self, filename, pattern):
+         tarball = os.path.join(rustc_cache, filename)
+         if not os.path.exists(tarball):
+             get("{}/{}".format(url, filename), tarball, verbose=self.verbose)
+-        unpack(tarball, self.bin_root(), match=pattern, verbose=self.verbose)
++        unpack(tarball, self.tarball_suffix, self.bin_root(), match=pattern, verbose=self.verbose)
+ 
+     @staticmethod
+     def fix_executable(fname):
