@@ -5,7 +5,7 @@ Rust overlay
 
 # Update
 
-Overlay has been moved to the new [address](https://github.com/gentoo/gentoo-rust).
+Overlay has been moved to the new [address](https://gitweb.gentoo.org/repo/proj/rust.git).
 No user interaction is needed, layman will handle this automatically. Please, report any issues
 and make pull requests in the new repo.
 
