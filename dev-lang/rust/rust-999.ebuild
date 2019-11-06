@@ -89,8 +89,6 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 "
 
 PATCHES=( 
-	"${FILESDIR}"/pr65474.patch
-
 	# upstream issue: https://github.com/rust-lang/rust/issues/65757
 	"${FILESDIR}"/pr65932.patch
 
