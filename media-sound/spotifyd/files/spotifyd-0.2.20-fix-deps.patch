@@ -1,0 +1,36 @@
+diff --git a/Cargo.toml b/Cargo.toml
+index b7861fc..080dd41 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -6,6 +6,7 @@ version = "0.2.20"
+ 
+ [dependencies]
+ alsa = { version = "0.3", optional = true }
++cc = "1.0.47"
+ chrono = "0.4"
+ daemonize = "0.4"
+ dbus = { version = "0.6", optional = true }
+@@ -24,7 +25,6 @@ serde = { version = "1.0.99", features = ["derive"] }
+ serde_ini = "0.2.0"
+ sha-1 = "0.8"
+ simplelog = "0.7"
+-structopt = { git = "https://github.com/TeXitoi/structopt/", rev = "0c888e962d842f2c90c6c290d3a2a40947b37005", features = ["color"] }
+ syslog = "4.0.1"
+ tokio-core = "0.1"
+ tokio-io = "0.1"
+@@ -33,9 +33,14 @@ xdg = "2.2"
+ whoami = "0.5.3"
+ 
+ [dependencies.librespot]
++path = "../librespot-0.1.0"
+ default-features = false
+ features = ["with-tremor"]
+-git = "https://github.com/librespot-org/librespot.git"
++version = "0.1.0"
++
++[dependencies.structopt]
++features = ["color"]
++version = "0.3.2"
+ 
+ [dev-dependencies]
+ env_logger = "0.7"
