@@ -67,6 +67,10 @@ PDEPEND=""
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 
+PATCHES=(
+	"${FILESDIR}"/1.36.0-libressl.patch
+)
+
 S="${WORKDIR}/${MY_P}-src"
 
 toml_usex() {
