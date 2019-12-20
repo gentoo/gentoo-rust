@@ -88,13 +88,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 	?? ( system-llvm sanitize )
 "
 
-PATCHES=( 
-	# upstream issue: https://github.com/rust-lang/rust/issues/65757
-	"${FILESDIR}"/pr65932.patch
-
-	# this adds a thumbv7neon-musl target for neon support on musl with armv7
-	"${FILESDIR}"/pr66103.patch
-	)
+#PATCHES=( )
 
 S="${WORKDIR}/${MY_P}-src"
 
