@@ -46,13 +46,13 @@ LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 IUSE="clippy debug doc libressl rls rustfmt thumbv7neon wasm ${ALL_LLVM_TARGETS[*]}"
 
 RDEPEND=">=app-eselect/eselect-rust-20190311
-		sys-libs/zlib
-		!libressl? ( <dev-libs/openssl-1.1.2:= >=dev-libs/openssl-1.0.1:= )
-		libressl? ( <=dev-libs/libressl-2.9.0:= >=dev-libs/libressl-2.5:= )
-		net-libs/libssh2
-		net-libs/http-parser
-		net-misc/curl[ssl]
-		"
+	sys-libs/zlib
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
+	net-libs/libssh2
+	net-libs/http-parser
+	net-misc/curl[ssl]
+	"
 DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	|| (
