@@ -10,6 +10,11 @@ HOMEPAGE="https://www.rust-lang.org/"
 MY_SRC_URI="https://static.rust-lang.org/dist/rust-nightly"
 MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/rust-std-nightly"
 
+if [[ -v RUST_NIGHTLY_DATE ]]; then
+	MY_SRC_URI="https://static.rust-lang.org/dist/${RUST_NIGHTLY_DATE}/rust-nightly"
+	MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/${RUST_NIGHTLY_DATE}/rust-std-nightly"
+fi
+
 ALL_RUSTLIB_TARGETS=(
 	"wasm32-unknown-unknown"
 )
@@ -80,6 +85,9 @@ src_install() {
 		components="${components},rls-preview,${analysis}"
 	fi
 	use rustfmt && components="${components},rustfmt-preview"
+
+	elog "installing components: ${components}"
+
 	./install.sh \
 		--components="${components}" \
 		--disable-verify \
