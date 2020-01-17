@@ -40,6 +40,7 @@ cranelift-bforest-0.54.0
 cranelift-codegen-0.54.0
 cranelift-codegen-meta-0.54.0
 cranelift-entity-0.54.0
+cranelift-faerie-0.54.0
 cranelift-frontend-0.54.0
 cranelift-module-0.54.0
 cranelift-native-0.54.0
