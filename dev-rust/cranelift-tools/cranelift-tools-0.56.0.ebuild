@@ -35,19 +35,19 @@ console-0.9.1
 const-random-0.1.6
 const-random-macro-0.1.6
 constant_time_eq-0.1.5
-cranelift-0.55.0
-cranelift-bforest-0.55.0
-cranelift-codegen-0.55.0
-cranelift-codegen-meta-0.55.0
-cranelift-entity-0.55.0
-cranelift-faerie-0.55.0
-cranelift-frontend-0.55.0
-cranelift-module-0.55.0
-cranelift-native-0.55.0
-cranelift-preopt-0.55.0
-cranelift-reader-0.55.0
-cranelift-simplejit-0.55.0
-cranelift-wasm-0.55.0
+cranelift-0.56.0
+cranelift-bforest-0.56.0
+cranelift-codegen-0.56.0
+cranelift-codegen-meta-0.56.0
+cranelift-entity-0.56.0
+cranelift-faerie-0.56.0
+cranelift-frontend-0.56.0
+cranelift-module-0.56.0
+cranelift-native-0.56.0
+cranelift-preopt-0.56.0
+cranelift-reader-0.56.0
+cranelift-simplejit-0.56.0
+cranelift-wasm-0.56.0
 crc32fast-1.2.0
 crossbeam-utils-0.6.6
 dirs-2.0.2
@@ -153,7 +153,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/bytecodealliance/cranelift"
 
-SRCHASH=b01bee7c5269f72196b42e8bdd874425166bf429
+SRCHASH=0055663f42198c618bbf7e302b911d2f8dbf7c0c
 
 SRC_URI="https://github.com/bytecodealliance/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
