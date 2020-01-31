@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -17,7 +17,6 @@ IUSE=""
 EGIT_REPO_URI="https://github.com/servo/rust-bindgen.git"
 
 DEPEND=">=virtual/rust-999
-	virtual/cargo
 	>=sys-devel/clang-3.4.2-r100:*
 "
 RDEPEND="${DEPEND}"

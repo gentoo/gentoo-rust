@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -21,7 +21,6 @@ IUSE=""
 CDEPEND="dev-db/sqlite"
 DEPEND="${CDEPEND}
 virtual/rust
-|| ( virtual/cargo dev-util/cargo-bin )
 "
 RDEPEND="${CDEPEND}
 dev-qt/qtchooser

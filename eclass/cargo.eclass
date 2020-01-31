@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: cargo.eclass
@@ -13,7 +13,7 @@ if [[ -z ${_CARGO_ECLASS} ]]; then
 _CARGO_ECLASS=1
 
 CARGO_DEPEND=""
-[[ ${CATEGORY}/${PN} != dev-util/cargo ]] && CARGO_DEPEND="virtual/cargo"
+[[ ${CATEGORY}/${PN} != dev-lang/rust ]] && CARGO_DEPEND="virtual/rust"
 
 : ${CARGO_FETCH_CRATES:=not}
 

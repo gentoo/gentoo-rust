@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -23,8 +23,7 @@ RDEPEND="virtual/rust
 	app-editors/neovim
 	>=x11-libs/gtk+-3.10
 	"
-DEPEND="${DEPEND}
-	virtual/cargo"
+DEPEND="${DEPEND}"
 
 src_compile() {
 	cargo build -j$(makeopts_jobs) --release || die
