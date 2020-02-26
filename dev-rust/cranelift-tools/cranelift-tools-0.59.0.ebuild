@@ -32,19 +32,19 @@ console-0.9.2
 const-random-0.1.8
 const-random-macro-0.1.8
 constant_time_eq-0.1.5
-cranelift-0.58.0
-cranelift-bforest-0.58.0
-cranelift-codegen-0.58.0
-cranelift-codegen-meta-0.58.0
-cranelift-entity-0.58.0
-cranelift-faerie-0.58.0
-cranelift-frontend-0.58.0
-cranelift-module-0.58.0
-cranelift-native-0.58.0
-cranelift-preopt-0.58.0
-cranelift-reader-0.58.0
-cranelift-simplejit-0.58.0
-cranelift-wasm-0.58.0
+cranelift-0.59.0
+cranelift-bforest-0.59.0
+cranelift-codegen-0.59.0
+cranelift-codegen-meta-0.59.0
+cranelift-entity-0.59.0
+cranelift-faerie-0.59.0
+cranelift-frontend-0.59.0
+cranelift-module-0.59.0
+cranelift-native-0.59.0
+cranelift-preopt-0.59.0
+cranelift-reader-0.59.0
+cranelift-simplejit-0.59.0
+cranelift-wasm-0.59.0
 crc32fast-1.2.0
 crossbeam-utils-0.7.0
 dirs-2.0.2
@@ -126,9 +126,9 @@ uuid-0.8.1
 vec_map-0.8.1
 walkdir-2.3.1
 wasi-0.9.0+wasi-snapshot-preview1
-wasmparser-0.48.2
-wast-7.0.0
-wat-1.0.8
+wasmparser-0.51.0
+wast-8.0.0
+wat-1.0.9
 winapi-0.3.8
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-util-0.1.3
@@ -139,7 +139,7 @@ inherit cargo
 DESCRIPTION="Binaries for testing the Cranelift libraries"
 HOMEPAGE="https://github.com/bytecodealliance/cranelift"
 
-SRCHASH=dca43765212e0afb0a9ac8901111b236beb4208d
+SRCHASH=ea922e17f9c5febffe8f43019bc8697cf4656f04
 
 SRC_URI="https://github.com/bytecodealliance/cranelift/archive/${SRCHASH}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris ${CRATES})"
