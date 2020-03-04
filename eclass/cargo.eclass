@@ -39,11 +39,11 @@ cargo_crate_uris() {
 	readonly regex='^(.*)-([0-9]+\.[0-9]+\.[0-9]+.*)$'
 	local crate
 	for crate in "$@"; do
-		if [[ "${CARGO_FETCH_CRATES}" == "not" ]]; then
 		local name version url
 		[[ $crate =~ $regex ]] || die "Could not parse name and version from crate: $crate"
 		name="${BASH_REMATCH[1]}"
 		version="${BASH_REMATCH[2]}"
+		if [[ "${CARGO_FETCH_CRATES}" == "not" ]]; then
 			url="https://crates.io/api/v1/crates/${name}/${version}/download -> ${crate}.crate"
 		else
 			url=""
