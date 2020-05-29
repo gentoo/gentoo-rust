@@ -1,0 +1,11 @@
+--- a/src/commands/ssh_auth_attempts.rs	2019-11-24 23:09:09.860598624 +0300
++++ b/src/commands/ssh_auth_attempts.rs	2019-11-24 23:10:22.146596281 +0300
+@@ -77,7 +77,7 @@
+ impl KeyPath {
+     fn first() -> Self {
+         KeyPath {
+-            location: KeyLocation::Local,
++            location: KeyLocation::Pijul,
+             typ: KeyType::Ed25519,
+         }
+     }
