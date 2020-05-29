@@ -90,8 +90,8 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 QA_FLAGS_IGNORED="
 	usr/bin/.*-${PV}
 	usr/lib.*/lib.*.so
-	usr/$(get_libdir)/${P}/rustlib/.*/codegen-backends/librustc_codegen_llvm-llvm.so
-	usr/$(get_libdir)/${P}/rustlib/.*/lib/lib.*.so
+	usr/lib.*/${P}/rustlib/.*/codegen-backends/librustc_codegen_llvm-llvm.so
+	usr/lib.*/${P}/rustlib/.*/lib/lib.*.so
 "
 
 # tests need a bit more work, currently they are causing multiple
