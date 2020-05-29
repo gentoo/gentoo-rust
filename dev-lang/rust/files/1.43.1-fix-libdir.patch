@@ -1,0 +1,70 @@
+diff --git a/src/bootstrap/builder.rs b/src/bootstrap/builder.rs
+index eb0199fd020..c33657549ba 100644
+--- a/src/bootstrap/builder.rs
++++ b/src/bootstrap/builder.rs
+@@ -646,6 +646,7 @@ impl<'a> Builder<'a> {
+     pub fn sysroot_libdir_relative(&self, compiler: Compiler) -> &Path {
+         match self.config.libdir_relative() {
+             Some(relative_libdir) if compiler.stage >= 1 => relative_libdir,
++            _ if compiler.stage == 0 => &self.build.initial_libdir,
+             _ => Path::new("lib"),
+         }
+     }
+diff --git a/src/bootstrap/lib.rs b/src/bootstrap/lib.rs
+index a476d25f102..7fe4496ca45 100644
+--- a/src/bootstrap/lib.rs
++++ b/src/bootstrap/lib.rs
+@@ -242,6 +242,7 @@ pub struct Build {
+     initial_rustc: PathBuf,
+     initial_cargo: PathBuf,
+     initial_lld: PathBuf,
++    initial_libdir: PathBuf,
+ 
+     // Runtime state filled in later on
+     // C/C++ compilers and archiver for all targets
+@@ -343,18 +344,38 @@ impl Build {
+         // we always try to use git for LLVM builds
+         let in_tree_llvm_info = channel::GitInfo::new(false, &src.join("src/llvm-project"));
+ 
+-        let initial_sysroot = config.initial_rustc.parent().unwrap().parent().unwrap();
+-        let initial_lld = initial_sysroot
+-            .join("lib")
+-            .join("rustlib")
+-            .join(config.build)
+-            .join("bin")
+-            .join("rust-lld");
++        let initial_target_libdir_str = output(
++            Command::new(&config.initial_rustc)
++                .arg("--target")
++                .arg(config.build)
++                .arg("--print")
++                .arg("target-libdir"),
++        );
++        let initial_target_dir = Path::new(&initial_target_libdir_str).parent().unwrap();
++        let initial_lld = initial_target_dir.join("bin").join("rust-lld");
++
++        let initial_sysroot = output(
++            Command::new(&config.initial_rustc)
++                .arg("--print")
++                .arg("sysroot"),
++        );
++        println!("stage0 sysroot: {}", initial_sysroot);
++        let initial_libdir_full = initial_target_dir
++            .parent()
++            .unwrap()
++            .parent()
++            .unwrap();
++        println!("stage0 libdir: {}", initial_libdir_full.display());
++        let initial_libdir = initial_libdir_full
++            .strip_prefix(initial_sysroot.trim())
++            .unwrap()
++            .to_path_buf();
+ 
+         let mut build = Build {
+             initial_rustc: config.initial_rustc.clone(),
+             initial_cargo: config.initial_cargo.clone(),
+             initial_lld,
++            initial_libdir,
+             local_rebuild: config.local_rebuild,
+             fail_fast: config.cmd.fail_fast(),
+             doc_tests: config.cmd.doc_tests(),
