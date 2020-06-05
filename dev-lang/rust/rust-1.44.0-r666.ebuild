@@ -67,10 +67,6 @@ PDEPEND=""
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 
-PATCHES=(
-	"${FILESDIR}"/1.40.0-add-soname.patch
-)
-
 S="${WORKDIR}/${MY_P}-src"
 
 toml_usex() {
