@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7,8} pypy )
 
 inherit multiprocessing multilib-build python-any-r1 toolchain-funcs versionator
 
@@ -18,13 +18,13 @@ CHOST_x86=i686-unknown-linux-gnu
 CHOST_arm64=aarch64-unknown-linux-gnu
 CHOST_arm=armv7-unknown-linux-gnueabihf
 
-RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).0"
+RUST_STAGE0_VERSION="1.$(($(get_version_component_range 2) - 1)).1"
 RUST_STAGE0_amd64="rust-${RUST_STAGE0_VERSION}-${CHOST_amd64}"
 RUST_STAGE0_x86="rust-${RUST_STAGE0_VERSION}-${CHOST_x86}"
 RUST_STAGE0_arm64="rust-${RUST_STAGE0_VERSION}-${CHOST_arm64}"
 RUST_STAGE0_armv7="rust-${RUST_STAGE0_VERSION}-${CHOST_arm}"
 
-CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).0"
+CARGO_DEPEND_VERSION="0.$(($(get_version_component_range 2))).1"
 
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
