@@ -8,10 +8,12 @@ inherit eutils bash-completion-r1
 DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="https://www.rust-lang.org/"
 MY_SRC_URI="https://static.rust-lang.org/dist/rust-nightly"
+MY_SRC_SRC_URI="https://static.rust-lang.org/dist/rust-src-nightly.tar.xz"
 MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/rust-std-nightly"
 
 if [[ -v RUST_NIGHTLY_DATE ]]; then
 	MY_SRC_URI="https://static.rust-lang.org/dist/${RUST_NIGHTLY_DATE}/rust-nightly"
+	MY_SRC_SRC_URI="https://static.rust-lang.org/dist/${RUST_NIGHTLY_DATE}/rust-src-nightly.tar.xz"
 	MY_STDLIB_SRC_URI="https://static.rust-lang.org/dist/${RUST_NIGHTLY_DATE}/rust-std-nightly"
 fi
 
@@ -25,7 +27,7 @@ SLOT="nightly"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -43,7 +45,8 @@ RDEPEND="${CDEPEND}
 	net-misc/curl[ssl]
 	!dev-util/cargo
 	"
-REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )"
+REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )
+	rls? ( source )"
 
 QA_PREBUILT="
 	opt/${P}/bin/*-${PV}
@@ -74,12 +77,20 @@ src_unpack() {
 			cat "${WORKDIR}/rust-std-nightly-${target}/components" >> "${S}/components"
 		fi
 	done
+
+	if use source; then
+		wget "${MY_SRC_SRC_URI}" || die
+		unpack ./"rust-src-nightly.tar.xz"
+		mv "${WORKDIR}/rust-src-nightly/rust-src" "${S}/" || die
+		cat "${WORKDIR}/rust-src-nightly/components" >> "${S}/components"
+	fi
 }
 
 src_install() {
 	local std=$(grep 'std' ./components | paste -s -d',')
 	local components="rustc,cargo,${std}"
 	use doc && components="${components},rust-docs"
+	use source && components="${components},rust-src"
 	use clippy && components="${components},clippy-preview"
 	if use rls; then
 		local analysis=$(grep 'analysis' ./components)
