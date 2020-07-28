@@ -27,7 +27,7 @@ SLOT="nightly"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rust-analyzer rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -46,7 +46,8 @@ RDEPEND="${CDEPEND}
 	!dev-util/cargo
 	"
 REQUIRED_USE="x86? ( cpu_flags_x86_sse2 )
-	rls? ( source )"
+	rls? ( source )
+	rust-analyzer? ( source )"
 
 QA_PREBUILT="
 	opt/${P}/bin/*-${PV}
@@ -96,6 +97,10 @@ src_install() {
 		local analysis=$(grep 'analysis' ./components)
 		components="${components},rls-preview,${analysis}"
 	fi
+	if use rust-analyzer; then
+		local analysis=$(grep 'analysis' ./components)
+		components="${components},rust-analyzer-preview,${analysis}"
+	fi
 	use rustfmt && components="${components},rustfmt-preview"
 
 	elog "installing components: ${components}"
@@ -140,6 +145,11 @@ src_install() {
 		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
 		dosym "../../opt/${P}/bin/${rls}" "/usr/bin/${rls}"
 	fi
+	if use rust-analyzer; then
+		local rust_analyzer=rust-analyzer-bin-${PV}
+		mv "${D}/opt/${P}/bin/rust-analyzer" "${D}/opt/${P}/bin/${rust_analyzer}" || die
+		dosym "../../opt/${P}/bin/${rust_analyzer}" "/usr/bin/${rust_analyzer}"
+	fi
 	if use rustfmt; then
 		local rustfmt=rustfmt-bin-${PV}
 		local cargo_fmt=cargo-fmt-bin-${PV}
@@ -169,6 +179,9 @@ src_install() {
 	fi
 	if use rls; then
 		echo /usr/bin/rls >> "${T}/provider-${P}"
+	fi
+	if use rust-analyzer; then
+		echo /usr/bin/rust-analyzer >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
 		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
