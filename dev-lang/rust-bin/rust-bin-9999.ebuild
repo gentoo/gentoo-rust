@@ -27,7 +27,7 @@ SLOT="nightly"
 KEYWORDS=""
 RESTRICT="network-sandbox"
 
-IUSE="clippy cpu_flags_x86_sse2 doc libressl rls rust-analyzer rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 doc libressl miri rls rust-analyzer rustfmt source ${ALL_RUSTLIB_TARGETS[*]}"
 
 CDEPEND="
 	>=app-eselect/eselect-rust-0.3_pre20150425
@@ -93,6 +93,7 @@ src_install() {
 	use doc && components="${components},rust-docs"
 	use source && components="${components},rust-src"
 	use clippy && components="${components},clippy-preview"
+	use miri && components="${components},miri-preview"
 	if use rls; then
 		local analysis=$(grep 'analysis' ./components)
 		components="${components},rls-preview,${analysis}"
@@ -140,6 +141,14 @@ src_install() {
 		dosym "../../opt/${P}/bin/${clippy_driver}" "/usr/bin/${clippy_driver}"
 		dosym "../../opt/${P}/bin/${cargo_clippy}" "/usr/bin/${cargo_clippy}"
 	fi
+	if use miri; then
+		local miri=miri-bin-${PV}
+		local cargo_miri=cargo-miri-bin-${PV}
+		mv "${D}/opt/${P}/bin/miri" "${D}/opt/${P}/bin/${miri}" || die
+		mv "${D}/opt/${P}/bin/cargo-miri" "${D}/opt/${P}/bin/${cargo_miri}" || die
+		dosym "../../opt/${P}/bin/${miri}" "/usr/bin/${miri}"
+		dosym "../../opt/${P}/bin/${cargo_miri}" "/usr/bin/${cargo_miri}"
+	fi
 	if use rls; then
 		local rls=rls-bin-${PV}
 		mv "${D}/opt/${P}/bin/rls" "${D}/opt/${P}/bin/${rls}" || die
@@ -176,6 +185,10 @@ src_install() {
 	if use clippy; then
 		echo /usr/bin/clippy-driver >> "${T}/provider-${P}"
 		echo /usr/bin/cargo-clippy >> "${T}/provider-${P}"
+	fi
+	if use miri; then
+		echo /usr/bin/miri >> "${T}/provider-${P}"
+		echo /usr/bin/cargo-miri >> "${T}/provider-${P}"
 	fi
 	if use rls; then
 		echo /usr/bin/rls >> "${T}/provider-${P}"
