@@ -127,6 +127,7 @@ serde_json-1.0.55
 serde_urlencoded-0.6.1
 sha-1-0.8.2
 smallvec-1.4.0
+starship_module_config_derive-0.1.1
 static_assertions-0.3.4
 strsim-0.8.0
 syn-1.0.30
