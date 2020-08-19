@@ -238,7 +238,3 @@ RDEPEND="
 libressl? ( dev-libs/libressl:0= )
 "
 DEPEND="${DEPEND} virtual/pkgconfig"
-
-src_install() {
-	cargo_src_install --path=.
-}
