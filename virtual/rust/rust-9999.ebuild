@@ -1,7 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
+
+inherit multilib-build
 
 DESCRIPTION="Virtual for Rust language compiler"
 HOMEPAGE=""
@@ -11,5 +13,5 @@ LICENSE=""
 SLOT="0"
 KEYWORDS=""
 
-DEPEND=""
-RDEPEND="|| ( =dev-lang/rust-${PV}* =dev-lang/rust-bin-${PV}* )"
+BDEPEND=""
+RDEPEND="|| ( =dev-lang/rust-${PVR}*[${MULTILIB_USEDEP}] =dev-lang/rust-bin-${PV}*[${MULTILIB_USEDEP}] )"

@@ -50,23 +50,8 @@ LLVM_DEPEND="
 "
 LLVM_MAX_SLOT=10
 
-# libgit2 should be at least same as bungled into libgit-sys #707746
-COMMON_DEPEND="
-	>=dev-libs/libgit2-0.99:=
-	net-libs/libssh2:=
-	net-libs/http-parser:=
-	net-misc/curl:=[ssl]
-	sys-libs/zlib:=
-	!libressl? ( dev-libs/openssl:0= )
-	libressl? ( dev-libs/libressl:0= )
-	elibc_musl? ( sys-libs/libunwind )
-	system-llvm? (
-		${LLVM_DEPEND}
-	)
-"
-
-DEPEND="${COMMON_DEPEND}
-	${PYTHON_DEPS}
+BDEPEND="${PYTHON_DEPS}
+	app-eselect/eselect-rust
 	|| (
 		>=sys-devel/gcc-4.7
 		>=sys-devel/clang-3.5
@@ -77,8 +62,23 @@ DEPEND="${COMMON_DEPEND}
 	)
 "
 
-RDEPEND="${COMMON_DEPEND}
-	>=app-eselect/eselect-rust-20190311
+# libgit2 should be at least same as bundled into libgit-sys #707746
+DEPEND="
+	>=dev-libs/libgit2-0.99:=
+	net-libs/libssh2:=
+	net-libs/http-parser:=
+	net-misc/curl:=[http2,ssl]
+	sys-libs/zlib:=
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
+	elibc_musl? ( sys-libs/libunwind )
+	system-llvm? (
+		${LLVM_DEPEND}
+	)
+"
+
+RDEPEND="${DEPEND}
+	app-eselect/eselect-rust
 "
 
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
@@ -87,22 +87,25 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )
 	?? ( system-llvm sanitize )
 "
 
+# we don't use cmake.eclass, but can get a warnin -l
+CMAKE_WARN_UNUSED_CLI=no
+
 QA_FLAGS_IGNORED="
 	usr/bin/.*-${PV}
-	usr/lib.*/lib.*.so
-	usr/lib.*/${P}/rustlib/.*/codegen-backends/librustc_codegen_llvm-llvm.so
-	usr/lib.*/${P}/rustlib/.*/lib/lib.*.so
+	usr/lib.*/${P}/lib.*.so.*
+	usr/lib.*/${P}/rustlib/.*/bin/.*
+	usr/lib.*/${P}/rustlib/.*/lib/lib.*.so.*
+"
+
+QA_SONAME="
+	usr/lib.*/${P}/lib.*.so.*
+	usr/lib.*/${P}/rustlib/.*/lib/lib.*.so.*
 "
 
 # tests need a bit more work, currently they are causing multiple
 # re-compilations and somewhat fragile.
 RESTRICT="test network-sandbox"
 
-QA_SONAME="usr/lib.*/librustc_macros.*.so"
-
-PATCHES=(
-	"${FILESDIR}"/1.43.1-fix-libdir.patch
-)
 
 S="${WORKDIR}/${MY_P}-src"
 
@@ -111,13 +114,21 @@ toml_usex() {
 }
 
 pre_build_checks() {
-	CHECKREQS_DISK_BUILD="9G"
+	local M=6144
+	M=$(( $(usex clippy 128 0) + ${M} ))
+	M=$(( $(usex miri 128 0) + ${M} ))
+	M=$(( $(usex rls 512 0) + ${M} ))
+	M=$(( $(usex rustfmt 256 0) + ${M} ))
+	M=$(( $(usex system-llvm 0 2048) + ${M} ))
+	M=$(( $(usex wasm 256 0) + ${M} ))
+	M=$(( $(usex debug 15 10) * ${M} / 10 ))
 	eshopts_push -s extglob
 	if is-flagq '-g?(gdb)?([1-9])'; then
-		CHECKREQS_DISK_BUILD="15G"
+		M=$(( 15 * ${M} / 10 ))
 	fi
 	eshopts_pop
-	check-reqs_pkg_setup
+	M=$(( $(usex doc 256 0) + ${M} ))
+	CHECKREQS_DISK_BUILD=${M}M check-reqs_pkg_${EBUILD_PHASE}
 }
 
 pkg_pretend() {
@@ -167,6 +178,11 @@ src_configure() {
 	done
 	if use wasm; then
 		rust_targets="${rust_targets},\"wasm32-unknown-unknown\""
+		if use system-llvm; then
+			# un-hardcode rust-lld linker for this target
+			# https://bugs.gentoo.org/715348
+			sed -i '/linker:/ s/rust-lld/wasm-ld/' src/librustc_target/spec/wasm32_base.rs || die
+		fi
 	fi
 	rust_targets="${rust_targets#,}"
 
@@ -183,8 +199,6 @@ src_configure() {
 	if use rustfmt; then
 		tools="\"rustfmt\",$tools"
 	fi
-
-	local rust_stage0_root="${WORKDIR}"/rust-stage0
 
 	rust_target="$(rust_abi)"
 
@@ -274,6 +288,83 @@ src_configure() {
 		EOF
 	fi
 
+	if [[ -n ${I_KNOW_WHAT_I_AM_DOING_CROSS} ]]; then #whitespace intentionally shifted below
+	# experimental cross support
+	# discussion: https://bugs.gentoo.org/679878
+	# TODO: c*flags, clang, system-llvm, cargo.eclass target support
+	# it would be much better if we could split out stdlib
+	# complilation to separate ebuild and abuse CATEGORY to
+	# just install to /usr/lib/rustlib/<target>
+
+	# extra targets defined as a bash array
+	# spec format:  <LLVM target>:<rust-target>:<CTARGET>
+	# best place would be /etc/portage/env/dev-lang/rust
+	# Example:
+	# RUST_CROSS_TARGETS=(
+	#	"AArch64:aarch64-unknown-linux-gnu:aarch64-unknown-linux-gnu"
+	# )
+	# no extra hand holding is done, no target transformations, all
+	# values are passed as-is with just basic checks, so it's up to user to supply correct values
+	# valid rust targets can be obtained with
+	# 	rustc --print target-list
+	# matching cross toolchain has to be installed
+	# matching LLVM_TARGET has to be enabled for both rust and llvm (if using system one)
+	# only gcc toolchains installed with crossdev are checked for now.
+
+	# BUG: we can't pass host flags to cross compiler, so just filter for now
+	# BUG: this should be more fine-grained.
+	filter-flags '-mcpu=*' '-march=*' '-mtune=*'
+
+	local cross_target_spec
+	for cross_target_spec in "${RUST_CROSS_TARGETS[@]}";do
+		# extracts first element form <LLVM target>:<rust-target>:<CTARGET>
+		local cross_llvm_target="${cross_target_spec%%:*}"
+		# extracts toolchain triples, <rust-target>:<CTARGET>
+		local cross_triples="${cross_target_spec#*:}"
+		# extracts first element after before : separator
+		local cross_rust_target="${cross_triples%%:*}"
+		# extracts last element after : separator
+		local cross_toolchain="${cross_triples##*:}"
+		use llvm_targets_${cross_llvm_target} || die "need llvm_targets_${cross_llvm_target} target enabled"
+		command -v ${cross_toolchain}-gcc > /dev/null 2>&1 || die "need ${cross_toolchain} cross toolchain"
+
+		cat <<- EOF >> "${S}"/config.toml
+			[target.${cross_rust_target}]
+			cc = "${cross_toolchain}-gcc"
+			cxx = "${cross_toolchain}-g++"
+			linker = "${cross_toolchain}-gcc"
+			ar = "${cross_toolchain}-ar"
+		EOF
+		if use system-llvm; then
+			cat <<- EOF >> "${S}"/config.toml
+				llvm-config = "$(get_llvm_prefix "${LLVM_MAX_SLOT}")/bin/llvm-config"
+			EOF
+		fi
+
+		# append cross target to "normal" target list
+		# example 'target = ["powerpc64le-unknown-linux-gnu"]'
+		# becomes 'target = ["powerpc64le-unknown-linux-gnu","aarch64-unknown-linux-gnu"]'
+
+		rust_targets="${rust_targets},\"${cross_rust_target}\""
+		sed -i "/^target = \[/ s#\[.*\]#\[${rust_targets}\]#" config.toml || die
+
+		ewarn
+		ewarn "Enabled ${cross_rust_target} rust target"
+		ewarn "Using ${cross_toolchain} cross toolchain"
+		ewarn
+		if ! has_version -b 'sys-devel/binutils[multitarget]' ; then
+			ewarn "'sys-devel/binutils[multitarget]' is not installed"
+			ewarn "'strip' will be unable to strip cross libraries"
+			ewarn "cross targets will be installed with full debug information"
+			ewarn "enable 'multitarget' USE flag for binutils to be able to strip object files"
+			ewarn
+			ewarn "Alternatively llvm-strip can be used, it supports stripping any target"
+			ewarn "define STRIP=\"llvm-strip\" to use it (experimental)"
+			ewarn
+		fi
+	done
+	fi # I_KNOW_WHAT_I_AM_DOING_CROSS
+
 	einfo "Rust configured with the following settings:"
 	cat "${S}"/config.toml || die
 }
@@ -300,8 +391,6 @@ src_test() {
 }
 
 src_install() {
-	local rust_target abi_libdir
-
 	env $(cat "${S}"/config.env) DESTDIR="${D}" \
 		"${EPYTHON}" ./x.py install -vv --config="${S}"/config.toml -j$(makeopts_jobs) || die
 
@@ -311,8 +400,8 @@ src_install() {
 	dobashcomp build/tmp/dist/cargo-image/etc/bash_completion.d/cargo
 
 	# fix collision with stable rust #675026
-	rmdir "${ED}"/usr/share/bash-completion/completions/cargo || die
-	rmdir "${ED}"/usr/share/zsh/site-functions/_cargo || die
+	rm "${ED}"/usr/share/bash-completion/completions/cargo || die
+	rm "${ED}"/usr/share/zsh/site-functions/_cargo || die
 
 	mv "${ED}/usr/bin/rustc" "${ED}/usr/bin/rustc-${PV}" || die
 	mv "${ED}/usr/bin/rustdoc" "${ED}/usr/bin/rustdoc-${PV}" || die
@@ -336,21 +425,33 @@ src_install() {
 		mv "${ED}/usr/bin/cargo-fmt" "${ED}/usr/bin/cargo-fmt-${PV}" || die
 	fi
 
+	# Copy shared library versions of standard libraries for all targets
+	# into the system's abi-dependent lib directories because the rust
+	# installer only does so for the native ABI.
+
+	local abi_libdir rust_target
+	for v in $(multilib_get_enabled_abi_pairs); do
+		if [ ${v##*.} = ${DEFAULT_ABI} ]; then
+			continue
+		fi
+		abi_libdir=$(get_abi_LIBDIR ${v##*.})
+		rust_target=$(rust_abi $(get_abi_CHOST ${v##*.}))
+		mkdir -p "${ED}/usr/${abi_libdir}/${P}"
+		cp "${ED}/usr/$(get_libdir)/${P}/rustlib/${rust_target}/lib"/*.so \
+		   "${ED}/usr/${abi_libdir}/${P}" || die
+	done
+
+	# versioned libdir/mandir support
+	newenvd - "50${P}" <<-_EOF_
+		LDPATH="${EPREFIX}/usr/$(get_libdir)/${P}"
+		MANPATH="${EPREFIX}/usr/share/${P}/man"
+	_EOF_
+
 	dodoc COPYRIGHT
+	rm -rf "${ED}/usr/$(get_libdir)/${P}"/*.old || die
 	rm "${ED}/usr/share/doc/${P}"/*.old || die
 	rm "${ED}/usr/share/doc/${P}/LICENSE-APACHE" || die
 	rm "${ED}/usr/share/doc/${P}/LICENSE-MIT" || die
-
-	cat <<-EOF > "${T}"/50${P}
-		LDPATH="${EPREFIX}/usr/$(get_libdir)/${P}"
-		MANPATH="${EPREFIX}/usr/share/${P}/man"
-	EOF
-	if use rls; then
-		cat <<-EOF >> "${T}"/50${P}
-		RUST_SRC_PATH="${EPREFIX}/usr/lib/${P}/rustlib/src/rust/src/"
-		EOF
-	fi
-	doenvd "${T}"/50${P}
 
 	# note: eselect-rust adds EROOT to all paths below
 	cat <<-EOF > "${T}/provider-${P}"
