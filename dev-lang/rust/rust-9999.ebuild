@@ -257,6 +257,7 @@ src_configure() {
 		lld = $(usex system-llvm false $(toml_usex wasm))
 		backtrace-on-ice = true
 		jemalloc = false
+		deny-warnings = false
 		[dist]
 		src-tarball = false
 	EOF
