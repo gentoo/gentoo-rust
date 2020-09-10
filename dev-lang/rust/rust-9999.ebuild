@@ -30,7 +30,7 @@ LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/?}
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
 
-IUSE="clippy cpu_flags_x86_sse2 debug doc libressl miri parallel-compiler rls rustfmt system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
+IUSE="clippy cpu_flags_x86_sse2 debug doc libressl miri parallel-compiler rls rustfmt rust-analyzer system-llvm wasm sanitize ${ALL_LLVM_TARGETS[*]}"
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling more than one slot
@@ -118,6 +118,7 @@ pre_build_checks() {
 	M=$(( $(usex clippy 128 0) + ${M} ))
 	M=$(( $(usex miri 128 0) + ${M} ))
 	M=$(( $(usex rls 512 0) + ${M} ))
+	M=$(( $(usex rust-analyzer 512 0) + ${M} ))
 	M=$(( $(usex rustfmt 256 0) + ${M} ))
 	M=$(( $(usex system-llvm 0 2048) + ${M} ))
 	M=$(( $(usex wasm 256 0) + ${M} ))
@@ -181,7 +182,7 @@ src_configure() {
 		if use system-llvm; then
 			# un-hardcode rust-lld linker for this target
 			# https://bugs.gentoo.org/715348
-			sed -i '/linker:/ s/rust-lld/wasm-ld/' src/librustc_target/spec/wasm32_base.rs || die
+			sed -i '/linker:/ s/rust-lld/wasm-ld/' compiler/rustc_target/src/spec/wasm32_base.rs || die
 		fi
 	fi
 	rust_targets="${rust_targets#,}"
@@ -194,10 +195,16 @@ src_configure() {
 		tools="\"miri\",$tools"
 	fi
 	if use rls; then
-		tools="\"rls\",\"analysis\",\"src\",$tools"
+		tools="\"rls\",$tools"
 	fi
 	if use rustfmt; then
 		tools="\"rustfmt\",$tools"
+	fi
+	if use rust-analyzer; then
+		tools="\"rust-analyzer\",$tools"
+	fi
+	if [ use rls -o use rust-analyzer ]; then
+		tools="\"analysis\",\"src\",$tools"
 	fi
 
 	rust_target="$(rust_abi)"
@@ -420,6 +427,9 @@ src_install() {
 	if use rls; then
 		mv "${ED}/usr/bin/rls" "${ED}/usr/bin/rls-${PV}" || die
 	fi
+	if use rust-analyzer; then
+		mv "${ED}/usr/bin/rust-analyzer" "${ED}/usr/bin/rust-analyzer-${PV}" || die
+	fi
 	if use rustfmt; then
 		mv "${ED}/usr/bin/rustfmt" "${ED}/usr/bin/rustfmt-${PV}" || die
 		mv "${ED}/usr/bin/cargo-fmt" "${ED}/usr/bin/cargo-fmt-${PV}" || die
@@ -471,6 +481,9 @@ src_install() {
 	fi
 	if use rls; then
 		echo /usr/bin/rls >> "${T}/provider-${P}"
+	fi
+	if use rust-analyzer; then
+		echo /usr/bin/rust-analyzer >> "${T}/provider-${P}"
 	fi
 	if use rustfmt; then
 		echo /usr/bin/rustfmt >> "${T}/provider-${P}"
