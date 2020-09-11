@@ -6,9 +6,9 @@ EAPI="6"
 inherit eutils
 
 DESCRIPTION="The Servo web browser"
-HOMEPAGE="https://servo-builds.s3.amazonaws.com/index.html"
+HOMEPAGE="https://servo.org/"
 
-MY_SRC_URI="https://servo-builds.s3.amazonaws.com/nightly/linux/servo-latest.tar.gz"
+MY_SRC_URI="https://download.servo.org/nightly/linux/servo-latest.tar.gz"
 
 LICENSE="MPL-2.0"
 SLOT="0"
