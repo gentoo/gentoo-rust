@@ -203,7 +203,7 @@ src_configure() {
 	if use rust-analyzer; then
 		tools="\"rust-analyzer\",$tools"
 	fi
-	if [ use rls -o use rust-analyzer ]; then
+	if [ use rls ] || [ use rust-analyzer ]; then
 		tools="\"analysis\",\"src\",$tools"
 	fi
 
