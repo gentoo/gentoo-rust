@@ -1,19 +1,20 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
 inherit eutils
 
 DESCRIPTION="The Servo web browser"
-HOMEPAGE="https://servo-builds.s3.amazonaws.com/index.html"
+HOMEPAGE="https://servo.org/"
 
-MY_SRC_URI="https://servo-builds.s3.amazonaws.com/nightly/linux/servo-latest.tar.gz"
+MY_SRC_URI="https://download.servo.org/nightly/linux/servo-latest.tar.gz"
 
 LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="-* ~amd64"
 IUSE=""
+RESTRICT="network-sandbox"
 
 DEPEND=""
 RDEPEND=""
