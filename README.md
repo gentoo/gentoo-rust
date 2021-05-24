@@ -1,3 +1,5 @@
+# STALE/UNMAINTAINED. do not use.
+
 Rust overlay
 ============
 
