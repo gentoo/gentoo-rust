@@ -1,0 +1,16 @@
+Title: rust-overlay repository is deprecated
+Author: Georgy Yakovlev <gyakovlev@gentoo.org>
+Posted: 2021-05-24
+Revision: 1
+News-Item-Format: 2.0
+
+Gentoo Rust team no longer manages this repository or keeps
+it updated.
+
+It is recommended to remove this repository from your system.
+
+If you still require packages from this overlay, you can copy
+those to your local overlay or submit ebuilds to GURU[1]
+
+[1] https://wiki.gentoo.org/wiki/Project:GURU/Information_for_Contributors
+
