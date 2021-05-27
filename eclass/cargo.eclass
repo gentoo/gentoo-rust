@@ -152,7 +152,8 @@ cargo_src_install() {
 
 	cargo install -j $(makeopts_jobs) --root="${D}/usr" --path . $(usex debug --debug "") "$@" \
 		|| die "cargo install failed"
-	rm -f "${D}/usr/.crates.toml"
+	rm -f "${D}/usr/.crates.toml" || die
+	rm -f "${D}/usr/.crates2.json" || die
 
 	[ -d "${S}/man" ] && doman "${S}/man" || return 0
 }
